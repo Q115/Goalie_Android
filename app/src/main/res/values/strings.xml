@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Goalie</string>
+    <string name="tab_my_goal">My Goals</string>
+    <string name="tab_requests">Requests</string>
+    <string name="tab_feeds">Feeds</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- Menu -->
+    <string name="action_profile">Profile</string>
+    <string name="action_settings">New Settings</string>
+
+    <!-- Tab My Goals -->
+    <string name="access_profile">Image of Referee</string>
+    <string name="fab_new">New Goal</string>
+    <string name="fab_popular">Popular Goals</string>
+</resources>

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "599250445655",
+    "firebase_url": "https://goalie-83a1c.firebaseio.com",
+    "project_id": "goalie-83a1c",
+    "storage_bucket": "goalie-83a1c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599250445655:android:f5fb18bc7413df52",
+        "android_client_info": {
+          "package_name": "com.github.q115.goalie_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599250445655-a5i3cbothbjbvc0ckpsvjs4npt89tm0u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHbdCUJ89HjBQBDel0bCwO0kwujaEmQZU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

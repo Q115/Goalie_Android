@@ -1,2 +1,2 @@
 # Goalie
-Reach your goals and get support from friends
+Get support from friends to reach your goals
