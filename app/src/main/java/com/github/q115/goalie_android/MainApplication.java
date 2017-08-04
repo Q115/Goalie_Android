@@ -1,6 +1,7 @@
 package com.github.q115.goalie_android;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 
 import com.github.q115.goalie_android.https.MainVolleyRequestQueue;
@@ -32,18 +33,18 @@ public class MainApplication extends Application {
         startService(new Intent(this, InstanceIDService.class));
 
         // instantiate app data
-        initialize();
+        initialize(this);
     }
 
-    public void initialize() {
+    public void initialize(Context context) {
         if (mInstance == null) {
             mInstance = new MainApplication();
 
-            ImageHelper.getInstance().initialize(this);
-            UserHelper.getmInstance().initalize();
-            PreferenceHelper.getInstance().initialize(this);
+            ImageHelper.getInstance().initialize(context);
+            UserHelper.getInstance().initialize();
+            PreferenceHelper.getInstance().initialize(context);
             ReadDatabase();
-            UserHelper.getmInstance().LoadContacts();
+            UserHelper.getInstance().LoadContacts();
         }
     }
 
@@ -52,7 +53,7 @@ public class MainApplication extends Application {
             List<User> users = SQLite.select().from(User.class).queryList();
             //populate contacts
             for (User user : users) {
-                UserHelper.getmInstance().getAllContacts().put(user.username, user);
+                UserHelper.getInstance().getAllContacts().put(user.username, user);
             }
         } catch (OutOfMemoryError outOfMemoryException) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.MainApplication, "Too many entries: " + outOfMemoryException.toString());

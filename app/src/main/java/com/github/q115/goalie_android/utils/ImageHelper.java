@@ -78,21 +78,6 @@ public class ImageHelper {
     }
 
     /// <summary>
-    /// Rename image on private local storage
-    /// </summary>
-    public void renameImageFromPrivateStorage(String oldImageName, String newImageName, ImageType imageType) {
-        try {
-            String oldFilePath = getImagePrivateStorageDirectory(oldImageName + imageTypeToExtension(imageType));
-            String newFilePath = getImagePrivateStorageDirectory(newImageName + imageTypeToExtension(imageType));
-            File oldFile = new File(oldFilePath);
-            if (oldFile.exists())
-                oldFile.renameTo(new File(newFilePath));
-        } catch (Exception ex) {
-            Diagnostic.logError(DiagnosticFlag.ImageHelper, "Error deleting local image: " + ex.toString());
-        }
-    }
-
-    /// <summary>
     /// Delete the image on private local storage
     /// </summary>
     public void deleteImageFromPrivateStorage(String imageName, ImageType imageType) {

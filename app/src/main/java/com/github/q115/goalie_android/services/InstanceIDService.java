@@ -51,13 +51,13 @@ public class InstanceIDService extends FirebaseInstanceIdService {
         else if (pushID.length() < 24) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to obtain correct token");
             return;
-        } else if (UserHelper.getmInstance().getOwnerProfile() == null) {
+        } else if (UserHelper.getInstance().getOwnerProfile() == null) {
             return;
         }
 
         //update the server
-        if (UserHelper.getmInstance().getOwnerProfile().username != null && !UserHelper.getmInstance().getOwnerProfile().username.isEmpty()) {
-            // TODO Preferences.getmInstance().setPushID(pushID);
+        if (UserHelper.getInstance().getOwnerProfile().username != null && !UserHelper.getInstance().getOwnerProfile().username.isEmpty()) {
+            // TODO Preferences.getInstance().setPushID(pushID);
         }
     }
 }

@@ -41,7 +41,7 @@ public class UserHelper {
     private UserHelper() {
     }
 
-    public static synchronized UserHelper getmInstance() {
+    public static synchronized UserHelper getInstance() {
         if (mInstance == null) {
             mInstance = new UserHelper();
         }
@@ -49,7 +49,7 @@ public class UserHelper {
         return mInstance;
     }
 
-    public void initalize() {
+    public void initialize() {
         mAllContacts = new HashMap<>();
         mOwnerProfile = new User();
     }

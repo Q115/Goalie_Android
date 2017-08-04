@@ -1,0 +1,102 @@
+package com.github.q115.goalie_android;
+
+import android.graphics.Bitmap;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.ImageHelper;
+import com.github.q115.goalie_android.utils.PreferenceHelper;
+import com.github.q115.goalie_android.utils.UserHelper;
+import com.raizlabs.android.dbflow.config.FlowManager;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import test_util.TestUtil;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static test_util.TestUtil.ReadDatabase;
+
+/**
+ * Instrumentation test, which will execute on an Android device.
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+@RunWith(AndroidJUnit4.class)
+public class UserHelperInstrumentedTest {
+
+    @BeforeClass
+    public static void init() {
+        FlowManager.init(InstrumentationRegistry.getTargetContext());
+    }
+
+    @Test
+    public void initalization_isCorrect() throws Exception {
+        UserHelper.getInstance().initialize();
+        assertNotNull(UserHelper.getInstance().getAllContacts());
+        assertNotNull(UserHelper.getInstance().getOwnerProfile());
+        assertEquals(0, UserHelper.getInstance().getAllContacts().size());
+        assertTrue(TestUtil.isUserEqual(UserHelper.getInstance().getOwnerProfile(), new User()));
+    }
+
+    @Test
+    public void isUsernameValid_isCorrect() throws Exception {
+        assertTrue(UserHelper.isUsernameValid("username"));
+        assertTrue(UserHelper.isUsernameValid("ue"));
+        assertFalse(UserHelper.isUsernameValid("u:sername"));
+        assertFalse(UserHelper.isUsernameValid(""));
+        assertFalse(UserHelper.isUsernameValid("u\\e"));
+        assertFalse(UserHelper.isUsernameValid("u/e"));
+        assertFalse(UserHelper.isUsernameValid("u e"));
+        assertFalse(UserHelper.isUsernameValid("u/e"));
+        assertFalse(UserHelper.isUsernameValid("admin"));
+    }
+
+    @Test
+    public void userSavedIsPersisted_isCorrect() throws Exception {
+        User testUser = new User("username2", "bio2", 200, 9999);
+        addUser(testUser);
+        UserHelper.getInstance().getAllContacts().clear();
+
+        ReadDatabase();
+
+        assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
+        assertTrue(TestUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
+    }
+
+    @Test
+    public void loadContacts_isCorrect() throws Exception {
+        User testUser = new User("username3", "bio3", 300, 99999);
+        addUser(testUser);
+        assertNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);
+        UserHelper.getInstance().getAllContacts().clear();
+
+        // save a image for this user
+        ImageHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
+        Bitmap newImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        ImageHelper.getInstance().saveImageToPrivateSorageSync(testUser.username, newImage, ImageHelper.ImageType.PNG);
+        assertTrue(ImageHelper.getInstance().isImageOnPrivateStorage(testUser.username, ImageHelper.ImageType.PNG));
+        testUser.profileBitmapImage = newImage;
+
+        ReadDatabase();
+        UserHelper.getInstance().LoadContacts();
+
+        assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
+        assertTrue(TestUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
+        assertNotNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);
+    }
+
+    private void addUser(User user) throws Exception {
+        UserHelper.getInstance().initialize();
+        assertEquals(0, UserHelper.getInstance().getAllContacts().size());
+        UserHelper.getInstance().addUser(user);
+        assertEquals(1, UserHelper.getInstance().getAllContacts().size());
+        assertTrue(TestUtil.isUserEqual(user, UserHelper.getInstance().getAllContacts().get(user.username)));
+    }
+}

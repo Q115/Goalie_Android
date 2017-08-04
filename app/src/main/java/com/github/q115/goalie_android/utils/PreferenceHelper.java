@@ -50,11 +50,13 @@ public class PreferenceHelper {
     /// </summary>
     public void initialize(Context context) {
         mSharedPreferences = context.getSharedPreferences(Constants.PreferenceFileName, Context.MODE_PRIVATE);
-        mPushID = mSharedPreferences.getString(PreferenceValue.PushID.toString(), null);
-        mAccountUsername = mSharedPreferences.getString(PreferenceValue.AccountUsername.toString(), null);
+        mPushID = mSharedPreferences.getString(PreferenceValue.PushID.toString(), "");
+        mAccountUsername = mSharedPreferences.getString(PreferenceValue.AccountUsername.toString(), "");
     }
 
     private void commitStringPreference(PreferenceValue key, String value) {
+        if(mSharedPreferences == null)
+            return;
         SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
         switch (key) {
             case PushID:
