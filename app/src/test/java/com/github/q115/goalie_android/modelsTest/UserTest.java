@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 public class UserTest {
     @Test
-    public void initalization_isCorrect() throws Exception {
+    public void initalization() throws Exception {
         User userTest = null;
 
         User user1 = new User();

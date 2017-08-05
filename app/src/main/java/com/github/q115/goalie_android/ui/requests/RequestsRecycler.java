@@ -1,4 +1,4 @@
-package com.github.q115.goalie_android.ui.my_goals;
+package com.github.q115.goalie_android.ui.requests;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -8,8 +8,12 @@ import android.view.ViewGroup;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.BaseGoalRecyler;
 
-public class MyGoalsRecycler extends BaseGoalRecyler {
-    public MyGoalsRecycler(FragmentActivity context) {
+/**
+ * Created by Qi on 8/4/2017.
+ */
+
+public class RequestsRecycler extends BaseGoalRecyler {
+    public RequestsRecycler(FragmentActivity context) {
         super(context);
     }
 
@@ -17,7 +21,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     //it to the ViewHolder.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_my_goal, parent, false);
+        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_request, parent, false);
         return new BaseGoalsHolder(itemView);
     }
 
@@ -26,7 +30,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        /*
+/*
         final int index = position;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,7 +38,6 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
 
             }
         });
-        */
+*/
     }
 }
-

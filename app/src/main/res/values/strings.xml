@@ -7,10 +7,17 @@
 
     <!-- Menu -->
     <string name="action_profile">Profile</string>
-    <string name="action_settings">New Settings</string>
+    <string name="action_friends">Friends</string>
 
     <!-- Tab My Goals -->
     <string name="access_profile">Image of Referee</string>
+    <string name="friend_profile">Image of Friend</string>
     <string name="fab_new">New Goal</string>
     <string name="fab_popular">Popular Goals</string>
+
+    <string name="profile">Profile</string>
+    <string name="friends">Friends</string>
+    <string name="edit">Edit</string>
+    <string name="profile_activities">Activities</string>
+    <string name="no_profile_activities">No activities yet</string>
 </resources>

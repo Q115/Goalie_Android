@@ -24,27 +24,27 @@ public class PreferenceHelperInstrumentedTest {
     }
 
     @Test
-    public void initalization_isCorrect() throws Exception {
+    public void initalization() throws Exception {
         assertNotNull(PreferenceHelper.getInstance().getPushID());
         assertNotNull(PreferenceHelper.getInstance().getAccountUsername());
     }
 
     @Test
-    public void setPushID_isCorrect() throws Exception {
+    public void setPushID() throws Exception {
         PreferenceHelper.getInstance().setPushID("new pushID");
         assertEquals("new pushID", PreferenceHelper.getInstance().getPushID());
     }
 
     @Test
-    public void setAccountUsername_isCorrect() throws Exception {
+    public void setAccountUsername() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername("new AccountUsername");
         assertEquals("new AccountUsername", PreferenceHelper.getInstance().getAccountUsername());
     }
 
     @Test
-    public void storedOnDisk_isCorrect() throws Exception {
-        setAccountUsername_isCorrect();
-        setPushID_isCorrect();
+    public void storedOnDisk() throws Exception {
+        setAccountUsername();
+        setPushID();
         PreferenceHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
 
         assertEquals("new pushID", PreferenceHelper.getInstance().getPushID());

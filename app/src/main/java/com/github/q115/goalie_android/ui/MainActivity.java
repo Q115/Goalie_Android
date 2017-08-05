@@ -1,6 +1,7 @@
 package com.github.q115.goalie_android.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,13 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
-import com.github.q115.goalie_android.ui.my_goals.MyGoalsFragment;
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
+import com.github.q115.goalie_android.ui.friends.FriendActivity;
+import com.github.q115.goalie_android.ui.my_goals.MyGoalsFragment;
+import com.github.q115.goalie_android.ui.my_goals.MyGoalsPresenter;
+import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.ui.requests.RequestsFragment;
+import com.github.q115.goalie_android.utils.UserHelper;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements MainActivityView {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -26,32 +30,61 @@ public class MainActivity extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
+    private MainActivityPagerAdapter mSectionsPagerAdapter;
+    private MainActivityPresenter mPresenter;
+    private MyGoalsPresenter mMyGoalsPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Create the presenter
+        mPresenter = new MainActivityPresenter(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mMyGoalsPresenter.closeFABMenu();
+                AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+                appBarLayout.setExpanded(true, true);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
+    @Override
+    public void setPresenter(MainActivityPresenter presenter) {
+        mPresenter = presenter;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,22 +98,29 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
+            case R.id.action_friends:
+                startActivity(FriendActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username));
                 return true;
             case R.id.action_profile:
+                startActivity(ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username));
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onBackPressed() {
+        if (!mMyGoalsPresenter.isFABOpen()) {
+            super.onBackPressed();
+        } else {
+            mMyGoalsPresenter.closeFABMenu();
+        }
+    }
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+    // Create 3 fragments
+    private class MainActivityPagerAdapter extends FragmentPagerAdapter {
+        public MainActivityPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -88,7 +128,9 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return MyGoalsFragment.newInstance();
+                    MyGoalsFragment fm = MyGoalsFragment.newInstance();
+                    mMyGoalsPresenter = new MyGoalsPresenter(fm);
+                    return fm;
                 case 1:
                     return RequestsFragment.newInstance();
                 case 2:
@@ -99,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 3;
         }
 

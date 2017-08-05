@@ -27,12 +27,12 @@ public class ImageHelperInstrumentedTest {
     }
 
     @Test
-    public void initalization_isCorrect() throws Exception {
+    public void initalization() throws Exception {
         assertNotNull(ImageHelper.getInstance().getImagePrivateStorageDirectory(""));
     }
 
     @Test
-    public void saveAndDeleteImage_isCorrect() throws Exception {
+    public void saveAndDeleteImage() throws Exception {
         String imageName = "newImage";
         ImageHelper.getInstance().deleteImageFromPrivateStorage(imageName, ImageHelper.ImageType.PNG);
 
@@ -55,7 +55,7 @@ public class ImageHelperInstrumentedTest {
     }
 
     @Test
-    public void bitmapToByte_isCorrect() throws Exception {
+    public void bitmapToByte() throws Exception {
         Bitmap newImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
         // compressed image shouldn't be bigger

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 public class GoalTest {
     @Test
-    public void initalization_isCorrect() throws Exception {
+    public void initalization() throws Exception {
         Goal goalTest = null;
 
         Goal goal1 = new Goal();

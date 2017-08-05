@@ -29,7 +29,7 @@ public class FeedsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_tab_feeds, container, false);
         RecyclerView feedList = rootView.findViewById(R.id.feed_list);
         feedList.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedList.setAdapter(new MyGoalsRecycler(getActivity()));
+        feedList.setAdapter(new FeedsRecycler(getActivity()));
 
         return rootView;
     }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/goal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        tool:text="Lose 5 pounds" />
+
+    <TextView
+        android:id="@+id/goal_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        tool:text="start: August 11, 2017" />
+
+    <TextView
+        android:id="@+id/goal_end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        tool:text="end: August 31, 2017" />
+
+    <TextView
+        android:id="@+id/goal_wager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        tool:text="wagered: 100" />
+
+    <TextView
+        android:id="@+id/goal_encouragement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textStyle="italic"
+        tool:text="'you can do it!'" />
+</LinearLayout>

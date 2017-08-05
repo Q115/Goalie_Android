@@ -29,7 +29,7 @@ public class RequestsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_tab_requests, container, false);
         RecyclerView requestList = rootView.findViewById(R.id.request_list);
         requestList.setLayoutManager(new LinearLayoutManager(getContext()));
-        requestList.setAdapter(new MyGoalsRecycler(getActivity()));
+        requestList.setAdapter(new RequestsRecycler(getActivity()));
         return rootView;
     }
 }

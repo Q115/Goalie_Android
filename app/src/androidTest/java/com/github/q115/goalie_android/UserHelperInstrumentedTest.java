@@ -6,7 +6,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper;
-import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
@@ -37,7 +36,7 @@ public class UserHelperInstrumentedTest {
     }
 
     @Test
-    public void initalization_isCorrect() throws Exception {
+    public void initalization() throws Exception {
         UserHelper.getInstance().initialize();
         assertNotNull(UserHelper.getInstance().getAllContacts());
         assertNotNull(UserHelper.getInstance().getOwnerProfile());
@@ -46,7 +45,7 @@ public class UserHelperInstrumentedTest {
     }
 
     @Test
-    public void isUsernameValid_isCorrect() throws Exception {
+    public void isUsernameValid() throws Exception {
         assertTrue(UserHelper.isUsernameValid("username"));
         assertTrue(UserHelper.isUsernameValid("ue"));
         assertFalse(UserHelper.isUsernameValid("u:sername"));
@@ -59,7 +58,7 @@ public class UserHelperInstrumentedTest {
     }
 
     @Test
-    public void userSavedIsPersisted_isCorrect() throws Exception {
+    public void userSavedIsPersisted() throws Exception {
         User testUser = new User("username2", "bio2", 200, 9999);
         addUser(testUser);
         UserHelper.getInstance().getAllContacts().clear();
@@ -71,7 +70,7 @@ public class UserHelperInstrumentedTest {
     }
 
     @Test
-    public void loadContacts_isCorrect() throws Exception {
+    public void loadContacts() throws Exception {
         User testUser = new User("username3", "bio3", 300, 99999);
         addUser(testUser);
         assertNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);

@@ -2,6 +2,7 @@ package com.github.q115.goalie_android.ui.my_goals;
 
 import android.animation.Animator;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,13 +13,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.my_goals.MyGoalsRecycler;
 
-public class MyGoalsFragment extends Fragment {
-    private boolean isFABOpen;
+public class MyGoalsFragment extends Fragment implements MyGoalsView {
+    private FloatingActionButton mFAB;
     private LinearLayout mFABMenu1;
     private LinearLayout mFABMenu2;
     private Animator.AnimatorListener mAnimatorListener;
+    private RecyclerView mGoalList;
+    private MyGoalsPresenter mMyGoalsPresenter;
 
     public MyGoalsFragment() {
     }
@@ -31,12 +33,12 @@ public class MyGoalsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_my_goals, container, false);
-
-        RecyclerView goalList = rootView.findViewById(R.id.goal_list);
-        goalList.setLayoutManager(new LinearLayoutManager(getContext()));
-        goalList.setAdapter(new MyGoalsRecycler(getActivity()));
-
         View.OnClickListener toggleFABClickListener = toggleFABClickListener();
+
+        mGoalList = rootView.findViewById(R.id.goal_list);
+        mGoalList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mGoalList.setAdapter(new MyGoalsRecycler(getActivity()));
+
         mFABMenu1 = rootView.findViewById(R.id.fab_menu1);
         mFABMenu1.setOnClickListener(toggleFABClickListener);
         mFABMenu1.setVisibility(View.GONE);
@@ -45,8 +47,8 @@ public class MyGoalsFragment extends Fragment {
         mFABMenu2.setOnClickListener(toggleFABClickListener);
         mFABMenu2.setVisibility(View.GONE);
 
-        FloatingActionButton fab = rootView.findViewById(R.id.fab_new_goal);
-        fab.setOnClickListener(toggleFABClickListener);
+        mFAB = rootView.findViewById(R.id.fab_new_goal);
+        mFAB.setOnClickListener(toggleFABClickListener);
 
         return rootView;
     }
@@ -57,28 +59,37 @@ public class MyGoalsFragment extends Fragment {
         closeFABMenu();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMyGoalsPresenter.start();
+    }
+
+    @Override
+    public void setPresenter(MyGoalsPresenter presenter) {
+        mMyGoalsPresenter = presenter;
+    }
+
     private View.OnClickListener toggleFABClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isFABOpen) {
-                    showFABMenu();
-                } else {
-                    closeFABMenu();
-                }
+                mMyGoalsPresenter.toggleFAB();
             }
         };
     }
 
-    private void showFABMenu() {
-        isFABOpen = true;
+    public void showFABMenu() {
+        if (mGoalList != null)
+            mGoalList.animate().alpha(0.3f);
         mFABMenu1.setVisibility(View.VISIBLE);
         mFABMenu2.setVisibility(View.VISIBLE);
         mFABMenu1.animate().translationY(-getResources().getDimension(R.dimen.fab_goal1_translate));
         mFABMenu2.animate().translationY(-getResources().getDimension(R.dimen.fab_goal2_translate));
+        mFAB.animate().rotation(45f);
     }
 
-    private void closeFABMenu() {
+    public void closeFABMenu() {
         if (mAnimatorListener == null) {
             mAnimatorListener = new Animator.AnimatorListener() {
                 @Override
@@ -88,7 +99,7 @@ public class MyGoalsFragment extends Fragment {
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
-                    if (!isFABOpen) {
+                    if (!mMyGoalsPresenter.isFABOpen()) {
                         mFABMenu1.setVisibility(View.GONE);
                         mFABMenu2.setVisibility(View.GONE);
                     }
@@ -106,18 +117,10 @@ public class MyGoalsFragment extends Fragment {
             };
         }
 
-        isFABOpen = false;
+        if (mGoalList != null)
+            mGoalList.animate().alpha(1f);
         mFABMenu1.animate().translationY(0);
         mFABMenu2.animate().translationY(0).setListener(mAnimatorListener);
+        mFAB.animate().rotation(0);
     }
-
-    /*
-    @Override
-    public void onBackPressed() {
-        if(!isFABOpen){
-            super.onBackPressed();
-        }else{
-            closeFABMenu();
-        }
-    }*/
 }
