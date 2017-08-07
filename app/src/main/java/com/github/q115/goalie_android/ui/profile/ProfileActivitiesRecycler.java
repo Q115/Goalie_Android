@@ -14,7 +14,7 @@ import com.github.q115.goalie_android.ui.feeds.FeedsRecycler;
  * Created by Qi on 8/4/2017.
  */
 
-public class ProfileActivityRecycler extends RecyclerView.Adapter {
+public class ProfileActivitiesRecycler extends RecyclerView.Adapter {
     public class ProfileActivityHolder extends RecyclerView.ViewHolder {
         private TextView mGoalPerson;
         private TextView mGoalResult;
@@ -34,7 +34,7 @@ public class ProfileActivityRecycler extends RecyclerView.Adapter {
 
     protected FragmentActivity mContext;
 
-    public ProfileActivityRecycler(FragmentActivity context) {
+    public ProfileActivitiesRecycler(FragmentActivity context) {
         this.mContext = context;
     }
 
@@ -63,7 +63,7 @@ public class ProfileActivityRecycler extends RecyclerView.Adapter {
         viewHolder.mGoalPerson.setText("Chris");
         viewHolder.mGoalPerson.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
 
-        viewHolder.mGoalResult.setText("Completed a job worth 10 points");
+        viewHolder.mGoalResult.setText("Completed a job profileViewworth 10 points");
         viewHolder.mGoalQuote.setText("i Did it!!");
         viewHolder.mUpvoteCount.setText("100");
         viewHolder.mUpvoteCount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_up, 0, 0, 0);

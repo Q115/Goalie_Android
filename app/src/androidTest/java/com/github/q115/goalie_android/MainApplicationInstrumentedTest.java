@@ -3,6 +3,9 @@ package com.github.q115.goalie_android;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.q115.goalie_android.utilsTest.ImageHelperInstrumentedTest;
+import com.github.q115.goalie_android.utilsTest.PreferenceHelperInstrumentedTest;
+import com.github.q115.goalie_android.utilsTest.UserHelperInstrumentedTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

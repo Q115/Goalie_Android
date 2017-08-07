@@ -80,15 +80,13 @@ public class ImageHelper {
     /// <summary>
     /// Delete the image on private local storage
     /// </summary>
-    public void deleteImageFromPrivateStorage(String imageName, ImageType imageType) {
-        try {
-            String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
-            File file = new File(filePath);
-            if (file.exists())
-                file.delete();
-        } catch (Exception ex) {
-            Diagnostic.logError(DiagnosticFlag.ImageHelper, "Error deleting local image: " + ex.toString());
-        }
+    public boolean deleteImageFromPrivateStorage(String imageName, ImageType imageType) {
+        String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
+        File file = new File(filePath);
+        if (file.exists())
+            return file.delete();
+        else
+            return false;
     }
 
     /// <summary>
@@ -111,14 +109,9 @@ public class ImageHelper {
     /// change bitmap to jpg byte array
     /// </summary>
     public static byte[] bitmapToByte(Bitmap img) {
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            img.compress(Bitmap.CompressFormat.JPEG, Constants.ImageJPGQuality, stream);
-            return stream.toByteArray();
-        } catch (Exception e) {
-            Diagnostic.logError(DiagnosticFlag.ImageHelper, "bitmapToByte() Failed" + e.toString());
-        }
-        return new byte[0];
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.JPEG, Constants.ImageJPGQuality, stream);
+        return stream.toByteArray();
     }
 
     /// <summary>
@@ -186,8 +179,8 @@ public class ImageHelper {
             options.inJustDecodeBounds = false;
 
             return BitmapFactory.decodeStream(contentResolver.openInputStream(uri), null, options);
-        } catch (Exception e) {
-            Diagnostic.logError(DiagnosticFlag.ImageHelper, "decodeSampledBitmapFromUri() Failed" + e.toString());
+        } catch (FileNotFoundException fnfe) {
+            Diagnostic.logError(DiagnosticFlag.ImageHelper, "decodeSampledBitmapFromUri() FAILED" + fnfe.toString());
         }
         return null;
     }

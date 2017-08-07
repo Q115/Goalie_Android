@@ -93,7 +93,7 @@ public class UserHelper {
     }
 
     public static boolean isUsernameValid(String username) {
-        boolean isValid = (username != null && username.length() > 0 && username.length() <= Constants.MaxUsernameLength) && !username.equals("admin");
+        boolean isValid = (username != null && username.length() >= 4 && username.length() <= Constants.MaxUsernameLength) && !username.equals("admin");
         return isValid && !username.contains(":") && !username.contains(" ") && !username.contains("/") && !username.contains("\\");
     }
 }

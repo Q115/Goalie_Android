@@ -71,6 +71,6 @@ public class PreferenceHelper {
 
         prefEditor.putString(key.toString(), value);
         if (!prefEditor.commit())
-            Diagnostic.logError(DiagnosticFlag.Preferences, key.toString() + " commitStringPreference Failed");
+            Diagnostic.logError(DiagnosticFlag.Preferences, key.toString() + " commitStringPreference FAILED");
     }
 }

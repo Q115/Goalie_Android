@@ -14,7 +14,8 @@ import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
-import com.github.q115.goalie_android.ui.friends.FriendActivity;
+import com.github.q115.goalie_android.ui.friends.FriendsActivity;
+import com.github.q115.goalie_android.ui.login.LoginActivity;
 import com.github.q115.goalie_android.ui.my_goals.MyGoalsFragment;
 import com.github.q115.goalie_android.ui.my_goals.MyGoalsPresenter;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
@@ -74,10 +75,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         tabLayout.setupWithViewPager(mViewPager);
     }
 
-
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         mPresenter.start();
     }
 
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
         switch (id) {
             case R.id.action_friends:
-                startActivity(FriendActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username));
+                startActivity(FriendsActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username));
                 return true;
             case R.id.action_profile:
                 startActivity(ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username));
@@ -116,6 +116,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         } else {
             mMyGoalsPresenter.closeFABMenu();
         }
+    }
+
+    @Override
+    public void showLogin() {
+        startActivity(LoginActivity.newIntent(this));
     }
 
     // Create 3 fragments

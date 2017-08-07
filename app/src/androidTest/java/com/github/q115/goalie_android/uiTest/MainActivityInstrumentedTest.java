@@ -1,14 +1,18 @@
-package com.github.q115.goalie_android;
+package com.github.q115.goalie_android.uiTest;
 
 import android.app.Instrumentation;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
+import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.MainActivity;
-import com.github.q115.goalie_android.ui.friends.FriendActivity;
+import com.github.q115.goalie_android.ui.friends.FriendsActivity;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -23,7 +27,7 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by Qi on 8/5/2017.
  */
-
+@RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<MainActivity> mMainActivityTestRule =
@@ -32,7 +36,7 @@ public class MainActivityInstrumentedTest {
     @Test
     public void viewCorrectlyLaidout() throws Exception {
         // menus
-        onView(withId(R.id.action_profile)).check(matches(isDisplayed()));
+        onView(ViewMatchers.withId(R.id.action_profile)).check(matches(isDisplayed()));
         onView(withId(R.id.action_profile)).check(matches(isDisplayed()));
 
         // my goals fragment is shown
@@ -74,10 +78,10 @@ public class MainActivityInstrumentedTest {
     @Test
     public void menuClickFriendsGoesToFriends() throws Exception {
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation()
-                .addMonitor(FriendActivity.class.getName(), null, false);
+                .addMonitor(FriendsActivity.class.getName(), null, false);
 
         onView(withId(R.id.action_friends)).perform(click());
-        FriendActivity targetActivity = (FriendActivity) activityMonitor.waitForActivity();
+        FriendsActivity targetActivity = (FriendsActivity) activityMonitor.waitForActivity();
         assertNotNull("Target Activity is not launched", targetActivity);
     }
 }

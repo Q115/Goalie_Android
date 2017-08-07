@@ -1,23 +1,44 @@
 <resources>
     <string name="app_name">Goalie</string>
+
+    <!-- Menu -->
+    <string name="action_profile">Profile</string>
+    <string name="action_friends">Friends</string>
+    <string name="action_invite_friends">Invite</string>
+    <string name="action_add_friends">Add</string>
+
+    <!-- Main -->
     <string name="tab_my_goal">My Goals</string>
     <string name="tab_requests">Requests</string>
     <string name="tab_feeds">Feeds</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-    <!-- Menu -->
-    <string name="action_profile">Profile</string>
-    <string name="action_friends">Friends</string>
-
-    <!-- Tab My Goals -->
+    <!-- My Goals -->
     <string name="access_profile">Image of Referee</string>
     <string name="friend_profile">Image of Friend</string>
     <string name="fab_new">New Goal</string>
     <string name="fab_popular">Popular Goals</string>
 
-    <string name="profile">Profile</string>
+    <!-- Friends -->
     <string name="friends">Friends</string>
+    <string name="no_friends">No friends yet</string>
+
+    <!-- Login -->
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="username_error">Invalid Characters in Username. Must not contain \':\', \'/\', \'\\\' or space</string>
+    <string name="username_hint">Username should be 4 or more characters.</string>
+    <string name="register">Register</string>
+    <string name="welcome">Welcome!</string>
+
+    <!-- Profile -->
+    <string name="profile">Profile</string>
     <string name="edit">Edit</string>
     <string name="profile_activities">Activities</string>
     <string name="no_profile_activities">No activities yet</string>
+    <string name="image_selection_error">Failed to read photo, please choose another.</string>
+    <string name="image_taking_error">Image failed to be fetched from Camera. Try selecting an existing one.</string>
+
+    <!-- Network -->
+    <string name="connecting">Connecting...</string>
 </resources>

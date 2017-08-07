@@ -59,9 +59,9 @@ public class MessagingService extends FirebaseMessagingService {
                     // TODO
                 }
             } catch (JSONException je) {
-                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to parse JSON");
+                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "FAILED to parse JSON");
             } catch (Exception e) {
-                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to handle notification data");
+                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "FAILED to handle notification data");
             }
         }
     }

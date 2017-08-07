@@ -17,6 +17,8 @@
 package com.github.q115.goalie_android.services;
 
 import com.github.q115.goalie_android.Diagnostic;
+import com.github.q115.goalie_android.https.RESTRegister;
+import com.github.q115.goalie_android.https.RESTUpdateMeta;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -49,15 +51,24 @@ public class InstanceIDService extends FirebaseInstanceIdService {
         if (pushID == null || pushID.equals(PreferenceHelper.getInstance().getPushID()) || pushID.isEmpty())
             return;
         else if (pushID.length() < 24) {
-            Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to obtain correct token");
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "FAILED to obtain correct token");
             return;
         } else if (UserHelper.getInstance().getOwnerProfile() == null) {
             return;
         }
 
-        //update the server
-        if (UserHelper.getInstance().getOwnerProfile().username != null && !UserHelper.getInstance().getOwnerProfile().username.isEmpty()) {
-            // TODO Preferences.getInstance().setPushID(pushID);
+        // check whether we need to send up to server or not
+        if (UserHelper.getInstance().getOwnerProfile().username == null || UserHelper.getInstance().getOwnerProfile().username.isEmpty()) {
+            // let register take care of sending this to server
+            PreferenceHelper.getInstance().setPushID(pushID);
+        } else if (RESTRegister.isRegistering()) {
+            // let register take care of sending this to server after register call completes
+            PreferenceHelper.getInstance().setPushID(pushID);
+        } else {
+            // update the old pushID on server
+            RESTUpdateMeta rest = new RESTUpdateMeta(UserHelper.getInstance().getOwnerProfile().username, pushID);
+            rest.setListener(null);
+            rest.execute();
         }
     }
 }

@@ -5,12 +5,9 @@ public class Constants {
 
     public static final String PreferenceFileName = "PreferenceFileName";
 
-    public static final String FailedToConnect = "Connection failure, please ensure internet connection is active.";
-    public static final String FailedToSend = "Failed to reach server, please try again.";
-    public static final String Failed = "Failed";
-
-    public static final String ImageSelectionError = "Failed to read photo, please choose another.";
-    public static final String ImageTakingError = "Image failed to be fetched from Camera. Try selecting an existing one.";
+    public static final String FAILED_TO_CONNECT = "Connection failure, please ensure internet connection is active.";
+    public static final String FAILED_TO_Send = "Failed to reach server, please try again.";
+    public static final String FAILED = "Failed";
 
     public static final int MaxUsernameLength = 30;
     public static final int MaxAboutmeLength = 80;
@@ -21,8 +18,8 @@ public class Constants {
     public static final float RoundedProfile = 10f; // the bigger the value the more square the image
     public static final float CircleProfile = 2f; // 2 = circle, the bigger the value the more square the image
 
-    public static final int AsyncConnectionTimeout = 9 * 1000; // 9 seconds
-    public static final int AsyncConnectionExtendedTimeout = 16 * 1000; // 16 seconds
+    public static final int ASYNC_CONNECTION_NORMAL_TIMEOUT = 9 * 1000; // 9 seconds
+    public static final int ASYNC_CONNECTION_EXTENDED_TIMEOUT = 16 * 1000; // 16 seconds
 
     public static final int MY_PERMISSIONS_REQUEST_STORAGE = 22;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 23;

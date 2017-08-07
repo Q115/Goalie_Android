@@ -1,8 +1,5 @@
-package com.github.q115.goalie_android.uiTest;
+package com.github.q115.goalie_android.presenterTest;
 
-import android.widget.Button;
-
-import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.my_goals.MyGoalsPresenter;
 import com.github.q115.goalie_android.ui.my_goals.MyGoalsView;
 
@@ -12,7 +9,6 @@ import org.mockito.Mock;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -22,29 +18,29 @@ import static org.mockito.Mockito.verify;
  */
 
 public class MyGoalsPresenterUnitTest {
-    private MyGoalsPresenter presenter;
+    private MyGoalsPresenter mPresenter;
 
     @Mock
-    private MyGoalsView view;
+    private MyGoalsView mView;
 
     @Before
     public void setup() {
-        view = mock(MyGoalsView.class);
-        presenter = new MyGoalsPresenter(view);
-        verify(view).setPresenter(presenter);
+        mView = mock(MyGoalsView.class);
+        mPresenter = new MyGoalsPresenter(mView);
+        verify(mView).setPresenter(mPresenter);
     }
 
     @Test
     public void newGoalsClick() {
         // expands menu
-        presenter.toggleFAB();
-        verify(view, never()).closeFABMenu();
-        verify(view).showFABMenu();
-        assertTrue(presenter.isFABOpen());
+        mPresenter.toggleFAB();
+        verify(mView, never()).closeFABMenu();
+        verify(mView).showFABMenu();
+        assertTrue(mPresenter.isFABOpen());
 
         // collapse menu
-        presenter.toggleFAB();
-        verify(view).closeFABMenu();
-        assertFalse(presenter.isFABOpen());
+        mPresenter.toggleFAB();
+        verify(mView).closeFABMenu();
+        assertFalse(mPresenter.isFABOpen());
     }
 }

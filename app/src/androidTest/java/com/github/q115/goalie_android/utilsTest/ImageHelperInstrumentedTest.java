@@ -1,4 +1,4 @@
-package com.github.q115.goalie_android;
+package com.github.q115.goalie_android.utilsTest;
 
 import android.graphics.Bitmap;
 import android.support.test.InstrumentationRegistry;

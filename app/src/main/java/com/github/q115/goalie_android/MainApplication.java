@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
-import com.github.q115.goalie_android.https.MainVolleyRequestQueue;
+import com.github.q115.goalie_android.https.VolleyRequestQueue;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.services.InstanceIDService;
 import com.github.q115.goalie_android.utils.ImageHelper;
@@ -27,7 +27,7 @@ public class MainApplication extends Application {
         FlowManager.init(new FlowConfig.Builder(this).build());
 
         // instantiate volley request
-        MainVolleyRequestQueue.getInstance().initialize(this);
+        VolleyRequestQueue.getInstance().initialize(this);
 
         // start push notification service
         startService(new Intent(this, InstanceIDService.class));

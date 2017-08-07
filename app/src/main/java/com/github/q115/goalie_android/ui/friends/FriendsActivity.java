@@ -1,4 +1,4 @@
-package com.github.q115.goalie_android.ui.profile;
+package com.github.q115.goalie_android.ui.friends;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,30 +14,29 @@ import com.github.q115.goalie_android.R;
  * Created by Qi on 8/5/2017.
  */
 
-public class ProfileActivity extends AppCompatActivity {
+public class FriendsActivity extends AppCompatActivity {
     public static Intent newIntent(Context context, String username) {
-        Intent newIntent = new Intent(context, ProfileActivity.class);
+        Intent newIntent = new Intent(context, FriendsActivity.class);
         newIntent.putExtra("username", username);
         return newIntent;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_friend);
 
         FragmentManager fm = getSupportFragmentManager();
-        ProfileFragment profileFragment = (ProfileFragment)fm.findFragmentByTag("profileFragment");
-        if (profileFragment == null) {
+        FriendsListFragment friendsListFragment = (FriendsListFragment)fm.findFragmentByTag("friendsListFragment");
+        if (friendsListFragment == null) {
             FragmentTransaction ft = fm.beginTransaction();
-            profileFragment = ProfileFragment.newInstance();
-            ft.add(android.R.id.content, profileFragment, "profileFragment");
+            friendsListFragment = FriendsListFragment.newInstance();
+            ft.add(android.R.id.content, friendsListFragment, "friendsListFragment");
             ft.commit();
         }
 
         // Create the presenter
-        new ProfilePresenter(profileFragment);
+        new FriendsListPresenter(friendsListFragment);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

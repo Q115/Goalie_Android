@@ -29,8 +29,12 @@
         </activity>
 
         <activity
-            android:name=".ui.friends.FriendActivity"
+            android:name=".ui.friends.FriendsActivity"
             android:label="@string/friends">
+        </activity>
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/login">
         </activity>
 
         <!-- Crop -->

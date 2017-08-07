@@ -1,4 +1,4 @@
-package com.github.q115.goalie_android;
+package com.github.q115.goalie_android.utilsTest;
 
 import android.graphics.Bitmap;
 import android.support.test.InstrumentationRegistry;
@@ -9,6 +9,7 @@ import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,11 @@ public class UserHelperInstrumentedTest {
     @BeforeClass
     public static void init() {
         FlowManager.init(InstrumentationRegistry.getTargetContext());
+    }
+
+    @AfterClass
+    public static void teardown() {
+        FlowManager.reset();
     }
 
     @Test

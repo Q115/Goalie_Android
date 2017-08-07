@@ -1,10 +1,14 @@
-package com.github.q115.goalie_android;
+package com.github.q115.goalie_android.utilsTest;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +25,12 @@ public class PreferenceHelperInstrumentedTest {
     @Before
     public void init() throws Exception {
         PreferenceHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
+    }
+
+    @AfterClass
+    public static void teardown() throws Exception {
+        SharedPreferences sp = InstrumentationRegistry.getTargetContext().getSharedPreferences(Constants.PreferenceFileName, Context.MODE_PRIVATE);
+        sp.edit().clear().commit();
     }
 
     @Test

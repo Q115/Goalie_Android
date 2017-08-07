@@ -14,7 +14,9 @@ import com.github.q115.goalie_android.R;
  * Created by Qi on 8/4/2017.
  */
 
-public class FriendsListFragment extends Fragment {
+public class FriendsListFragment extends Fragment implements FriendsListView {
+    private FriendsListPresenter mPresenter;
+
     public FriendsListFragment() {
     }
 
@@ -32,5 +34,17 @@ public class FriendsListFragment extends Fragment {
         friendsList.setAdapter(new FriendsRecycler(getActivity()));
 
         return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
+    @Override
+    public void setPresenter(FriendsListPresenter presenter) {
+        mPresenter = presenter;
     }
 }

@@ -9,21 +9,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-public class MainVolleyRequestQueue {
+public class VolleyRequestQueue {
     // warnimg ignored because this class is only created using the application context
-    private static MainVolleyRequestQueue mInstance;
+    private static VolleyRequestQueue mInstance;
     public static Context mContext;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
 
-    public static synchronized MainVolleyRequestQueue getInstance() {
+    public static synchronized VolleyRequestQueue getInstance() {
         if (mInstance == null) {
-            mInstance = new MainVolleyRequestQueue();
+            mInstance = new VolleyRequestQueue();
         }
         return mInstance;
     }
 
-    private MainVolleyRequestQueue() {
+    private VolleyRequestQueue() {
         super();
     }
 
