@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            tool:text="Completed a goal for 5 points" />
+            tool:text="Completed a goal for 5 reputation" />
 
         <TextView
             android:id="@+id/goal_quote"

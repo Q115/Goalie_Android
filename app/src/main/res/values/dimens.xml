@@ -5,6 +5,4 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="fab_goal1_translate">116dp</dimen>
     <dimen name="fab_goal2_translate">64dp</dimen>
-    <dimen name="profile_image_width">600px</dimen>
-    <dimen name="profile_image_height">600px</dimen>
 </resources>

@@ -5,5 +5,5 @@ import com.raizlabs.android.dbflow.annotation.Database;
 @Database(name = MainDB.NAME, version = MainDB.VERSION)
 public class MainDB {
     static final String NAME = "MainDB";
-    static final int VERSION = 1;
+    static final int VERSION = 2;
 }

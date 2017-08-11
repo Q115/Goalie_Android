@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.utils;
 
+import android.content.Context;
+
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.User;
@@ -76,7 +78,7 @@ public class UserHelper {
         try {
             if (mAllContacts.containsKey(user.username)) {
                 User oldUser = mAllContacts.get(user.username);
-                oldUser.points = user.points;
+                oldUser.reputation = user.reputation;
                 oldUser.bio = user.bio.length() > 0 ? user.bio : oldUser.bio;
                 oldUser.profileBitmapImage = user.profileBitmapImage != null ? user.profileBitmapImage : oldUser.profileBitmapImage;
                 oldUser.lastPhotoModifiedTime = user.lastPhotoModifiedTime > 0 ? user.lastPhotoModifiedTime : oldUser.lastPhotoModifiedTime;
@@ -93,7 +95,7 @@ public class UserHelper {
     }
 
     public static boolean isUsernameValid(String username) {
-        boolean isValid = (username != null && username.length() >= 4 && username.length() <= Constants.MaxUsernameLength) && !username.equals("admin");
+        boolean isValid = (username != null && username.length() >= 4 && username.length() <= Constants.MAX_USERNAME_LENGTH) && !username.equals("admin");
         return isValid && !username.contains(":") && !username.contains(" ") && !username.contains("/") && !username.contains("\\");
     }
 }

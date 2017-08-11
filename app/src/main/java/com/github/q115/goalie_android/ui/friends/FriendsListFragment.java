@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.models.User;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -41,10 +42,38 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
     public void onResume() {
         super.onResume();
         mPresenter.start();
+        reload(false);
     }
 
     @Override
     public void setPresenter(FriendsListPresenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public void onAddContactDialog(User user) {
+        if (getView() != null) {
+            RecyclerView friendsList = getView().findViewById(R.id.friends_list);
+            FriendsRecycler friendsRecycler = (FriendsRecycler) friendsList.getAdapter();
+            friendsRecycler.addUserToList(user);
+        }
+    }
+
+    @Override
+    public void reload(boolean shouldReloadList) {
+        if (getView() != null) {
+            RecyclerView friendsList = getView().findViewById(R.id.friends_list);
+
+            if (friendsList.getAdapter().getItemCount() == 0) {
+                friendsList.setVisibility(View.GONE);
+                getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            } else {
+                friendsList.setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.empty).setVisibility(View.GONE);
+            }
+
+            if (shouldReloadList)
+                friendsList.getAdapter().notifyDataSetChanged();
+        }
     }
 }

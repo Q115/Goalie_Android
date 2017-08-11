@@ -14,12 +14,14 @@ import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
+import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
 import com.github.q115.goalie_android.ui.login.LoginActivity;
 import com.github.q115.goalie_android.ui.my_goals.MyGoalsFragment;
 import com.github.q115.goalie_android.ui.my_goals.MyGoalsPresenter;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.ui.requests.RequestsFragment;
+import com.github.q115.goalie_android.ui.requests.RequestsPresenter;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 public class MainActivity extends AppCompatActivity implements MainActivityView {
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     private MainActivityPagerAdapter mSectionsPagerAdapter;
     private MainActivityPresenter mPresenter;
     private MyGoalsPresenter mMyGoalsPresenter;
+    private RequestsPresenter mRequestsPresenter;
+    private FeedsPresenter mFeedsPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,12 +119,24 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
             super.onBackPressed();
         } else {
             mMyGoalsPresenter.closeFABMenu();
+            reloadAll();
         }
     }
 
     @Override
     public void showLogin() {
         startActivity(LoginActivity.newIntent(this));
+    }
+
+    public void reloadAll() {
+        if (mMyGoalsPresenter != null)
+            mMyGoalsPresenter.reload();
+
+        if (mRequestsPresenter != null)
+            mRequestsPresenter.reload();
+
+        if (mFeedsPresenter != null)
+            mFeedsPresenter.reload();
     }
 
     // Create 3 fragments
@@ -133,13 +149,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    MyGoalsFragment fm = MyGoalsFragment.newInstance();
-                    mMyGoalsPresenter = new MyGoalsPresenter(fm);
-                    return fm;
+                    FeedsFragment fm3 = FeedsFragment.newInstance();
+                    mFeedsPresenter = new FeedsPresenter(fm3);
+                    return fm3;
                 case 1:
-                    return RequestsFragment.newInstance();
+                    MyGoalsFragment fm1 = MyGoalsFragment.newInstance();
+                    mMyGoalsPresenter = new MyGoalsPresenter(fm1);
+                    return fm1;
                 case 2:
-                    return FeedsFragment.newInstance();
+                    RequestsFragment fm2 = RequestsFragment.newInstance();
+                    mRequestsPresenter = new RequestsPresenter(fm2);
+                    return fm2;
             }
             return null;
         }
@@ -153,11 +173,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return getString(R.string.tab_my_goal);
-                case 1:
-                    return getString(R.string.tab_requests);
-                case 2:
                     return getString(R.string.tab_feeds);
+                case 1:
+                    return getString(R.string.tab_my_goal);
+                case 2:
+                    return getString(R.string.tab_requests);
             }
             return null;
         }

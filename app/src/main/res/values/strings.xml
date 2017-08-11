@@ -11,7 +11,6 @@
     <string name="tab_my_goal">My Goals</string>
     <string name="tab_requests">Requests</string>
     <string name="tab_feeds">Feeds</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- My Goals -->
     <string name="access_profile">Image of Referee</string>
@@ -22,6 +21,13 @@
     <!-- Friends -->
     <string name="friends">Friends</string>
     <string name="no_friends">No friends yet</string>
+    <string name="enter_username">Enter the username you wish to add as contact.</string>
+    <string name="add_title">Add Friend</string>
+    <string name="add">Add</string>
+    <string name="adding">Adding</string>
+    <string name="already_friends">Already friends with this user.</string>
+    <string name="no_self">Cannot add yourself as a friend.</string>
+    <string name="join_me">Help me reach my goals by being my Referee! Join Goalie with me at https://coverse.co/dl</string>
 
     <!-- Login -->
     <string name="login">Login</string>
@@ -38,7 +44,21 @@
     <string name="no_profile_activities">No activities yet</string>
     <string name="image_selection_error">Failed to read photo, please choose another.</string>
     <string name="image_taking_error">Image failed to be fetched from Camera. Try selecting an existing one.</string>
+    <string name="reputation">Reputation: %d</string>
+    <string name="uploaded">Uploaded</string>
+
+    <string name="bio_hint">Tell us about yourself</string>
+    <string name="update">Update</string>
+    <string name="cancel">Cancel</string>
+    <string name="update_title">Update Information</string>
+
+    <!-- Feed -->
+    <string name="feed_title">Completed a goal worth %d reputation</string>
 
     <!-- Network -->
-    <string name="connecting">Connecting...</string>
+    <string name="connecting">Connecting&#8230;</string>
+    <string name="uploading">Uploading&#8230;</string>
+    <string name="error_updating">Error updating: %s</string>
+    <string name="updating">Updating</string>
+    <string name="updated">Updated</string>
 </resources>

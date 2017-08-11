@@ -91,4 +91,9 @@ public class LoginActivityInstrumentedTest {
         onView(withId(R.id.btn_register)).perform(click());
         onView(withId(R.id.register_server_response)).check(matches(withText("taken")));
     }
+
+    @Test
+    public void rotate() throws Exception {
+        // Todo
+    }
 }

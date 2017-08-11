@@ -84,4 +84,9 @@ public class MainActivityInstrumentedTest {
         FriendsActivity targetActivity = (FriendsActivity) activityMonitor.waitForActivity();
         assertNotNull("Target Activity is not launched", targetActivity);
     }
+
+    @Test
+    public void rotate() throws Exception {
+        // Todo
+    }
 }

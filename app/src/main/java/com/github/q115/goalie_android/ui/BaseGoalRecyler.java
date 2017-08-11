@@ -3,14 +3,20 @@ package com.github.q115.goalie_android.ui;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.ui.my_goals.MyGoalsRecycler;
+import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.ImageHelper;
+import com.github.q115.goalie_android.utils.UserHelper;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -41,14 +47,14 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
 
     public BaseGoalRecyler(FragmentActivity context) {
         this.mContext = context;
-        mGoalList = new ArrayList<>();
+        this.mGoalList = new ArrayList<>();
     }
 
     @Override
     public int getItemCount() {
-        return 10;
-        // TODO
-        //return mGoalList.size();
+        if (mGoalList != null)
+            return mGoalList.size();
+        return 0;
     }
 
     //Bind our current data to your view holder.  Think of this as the equivalent
@@ -57,22 +63,23 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
 
-        //Bind our data from our data source to our View References
-        viewHolder.mTitleTxt.setText("lose 5 lbs");
-        viewHolder.mStartDateTxt.setText("august 31, 2017");
-        viewHolder.mEndDateTxt.setText("august 31, 2017");
-        viewHolder.mWagerTxt.setText("100");
-        viewHolder.mEncouragementTxt.setText("you can do it");
-/*
-        final int index = position;
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Goal goal = mGoalList.get(position);
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
 
-            }
-        });
-*/
-        viewHolder.mRefereeTxt.setText("chris");
-        viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
+        //Bind our data from our data source to our View References
+        viewHolder.mTitleTxt.setText(goal.title);
+        viewHolder.mStartDateTxt.setText(df.format(new Date(goal.startDate)));
+        viewHolder.mEndDateTxt.setText(df.format(new Date(goal.endDate)));
+        viewHolder.mWagerTxt.setText(String.valueOf(goal.wager));
+        viewHolder.mEncouragementTxt.setText(goal.encouragement);
+
+        viewHolder.mRefereeTxt.setText(goal.referee);
+
+        User user = UserHelper.getInstance().getAllContacts().get(goal.referee);
+        if (user.profileBitmapImage == null)
+            viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
+        else
+            viewHolder.mRefereeTxt.setCompoundDrawables(null, ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
+                    user.profileBitmapImage, Constants.CIRCLE_PROFILE), null, null);
     }
 }

@@ -8,6 +8,10 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @Table(database = MainDB.class)
 public class Goal extends BaseModel {
+    public enum GoalCompleteResult {
+        None, Ongoing, Success, Failed, Cancelled
+    }
+
     @PrimaryKey
     @Column
     public String guid;
@@ -16,23 +20,43 @@ public class Goal extends BaseModel {
     public String title;
 
     @Column
-    public long deadline; //millisecond epoch since 1970
+    public long startDate;
+
+    @Column
+    public long endDate; //millisecond epoch since 1970
 
     @Column
     public long wager;
 
+    @Column
+    public String encouragement;
+
+    @Column
+    public GoalCompleteResult goalCompleteResult;
+
+    @Column
+    public String referee;
+
     public Goal() {
         guid = "";
         title = "";
-        deadline = 0;
+        startDate = 0;
+        endDate = 0;
         wager = 0;
+        encouragement = "";
+        goalCompleteResult = GoalCompleteResult.None;
+        referee = "";
     }
 
-    public Goal(String guid, String title, long deadline, long wager) {
+    public Goal(String guid, String title, long startDate, long endDate, long wager, String encouragement, GoalCompleteResult goalCompleteResult, String referee) {
         this();
         this.guid = guid;
         this.title = title;
-        this.deadline = deadline;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.wager = wager;
+        this.encouragement = encouragement;
+        this.goalCompleteResult = goalCompleteResult;
+        this.referee = referee;
     }
 }

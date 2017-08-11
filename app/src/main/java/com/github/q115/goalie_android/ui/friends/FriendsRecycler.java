@@ -1,14 +1,24 @@
 package com.github.q115.goalie_android.ui.friends;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.feeds.FeedsRecycler;
+import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.ImageHelper;
+import com.github.q115.goalie_android.utils.UserHelper;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -16,40 +26,66 @@ import com.github.q115.goalie_android.ui.feeds.FeedsRecycler;
 
 public class FriendsRecycler extends RecyclerView.Adapter {
     public class FriendsHolder extends RecyclerView.ViewHolder {
-        private TextView mGoalPerson;
-        private TextView mGoalResult;
-        private TextView mGoalQuote;
-        private TextView mUpvoteCount;
-        private Button mGoalFeedAction;
+        private ImageView mFriendImage;
+        private TextView mFriendName;
+        private TextView mFriendReputation;
 
         public FriendsHolder(View itemView) {
             super(itemView);
-            mGoalPerson = itemView.findViewById(R.id.goal_person);
-            mGoalResult = itemView.findViewById(R.id.goal_result);
-            mGoalQuote = itemView.findViewById(R.id.goal_quote);
-            mUpvoteCount = itemView.findViewById(R.id.upvote_count);
-            mGoalFeedAction = itemView.findViewById(R.id.goal_feed_action);
+            mFriendImage = itemView.findViewById(R.id.friend_image);
+            mFriendName = itemView.findViewById(R.id.friend_name);
+            mFriendReputation = itemView.findViewById(R.id.friend_reputation);
         }
     }
 
     protected FragmentActivity mContext;
+    protected ArrayList<User> mUserList;
 
     public FriendsRecycler(FragmentActivity context) {
         this.mContext = context;
+
+        // remove self and display all others
+        HashMap<String, User> tempHashMap = new HashMap<>(UserHelper.getInstance().getAllContacts());
+        tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
+        mUserList = new ArrayList<>(tempHashMap.values());
+        Collections.sort(mUserList, new Comparator<User>() {
+            @Override
+            public int compare(User a1, User a2) {
+                return a2.username.compareTo(a1.username);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return 10;
-        // TODO
-        //return mGoalList.size();
+        return mUserList.size();
+    }
+
+    public void addUserToList(User user) {
+        if (user == null)
+            return;
+
+        mUserList.add(user);
+        Collections.sort(mUserList, new Comparator<User>() {
+            @Override
+            public int compare(User a1, User a2) {
+                return a2.username.compareTo(a1.username);
+            }
+        });
+
+        super.notifyDataSetChanged();
+    }
+
+    public void notifyDataSetChanged(ArrayList<User> userList) {
+        mUserList = userList;
+        super.notifyDataSetChanged();
     }
 
     //Must override, this inflates our Layout and instantiates and assigns
     //it to the ViewHolder.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_feed, parent, false);
+        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_friend, parent, false);
         return new FriendsHolder(itemView);
     }
 
@@ -60,22 +96,14 @@ public class FriendsRecycler extends RecyclerView.Adapter {
         FriendsHolder viewHolder = (FriendsHolder) holder;
 
         //Bind our data from our data source to our View References
-        viewHolder.mGoalPerson.setText("Chris");
-        viewHolder.mGoalPerson.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
+        User user = mUserList.get(position);
+        viewHolder.mFriendName.setText(user.username);
+        viewHolder.mFriendReputation.setText(String.valueOf(user.reputation));
 
-        viewHolder.mGoalResult.setText("Completed a job worth 10 points");
-        viewHolder.mGoalQuote.setText("i Did it!!");
-        viewHolder.mUpvoteCount.setText("100");
-        viewHolder.mUpvoteCount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_up, 0, 0, 0);
-
-/*
-        final int index = position;
-        viewHolder.mGoalFeedAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-*/
+        if (user.profileBitmapImage == null)
+            viewHolder.mFriendImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_profile_default_small));
+        else
+            viewHolder.mFriendImage.setImageDrawable(ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
+                    user.profileBitmapImage, Constants.CIRCLE_PROFILE));
     }
 }

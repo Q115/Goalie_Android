@@ -53,7 +53,7 @@ public class UserHelperInstrumentedTest {
     @Test
     public void isUsernameValid() throws Exception {
         assertTrue(UserHelper.isUsernameValid("username"));
-        assertTrue(UserHelper.isUsernameValid("ue"));
+        assertFalse(UserHelper.isUsernameValid("ue"));
         assertFalse(UserHelper.isUsernameValid("u:sername"));
         assertFalse(UserHelper.isUsernameValid(""));
         assertFalse(UserHelper.isUsernameValid("u\\e"));

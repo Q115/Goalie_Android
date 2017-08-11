@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.q115.goalie_android">
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -25,18 +27,20 @@
         </activity>
         <activity
             android:name=".ui.profile.ProfileActivity"
-            android:label="@string/profile">
-        </activity>
+            android:label="@string/profile" />
 
         <activity
             android:name=".ui.friends.FriendsActivity"
-            android:label="@string/friends">
-        </activity>
+            android:label="@string/friends" />
         <activity
             android:name=".ui.login.LoginActivity"
-            android:label="@string/login">
-        </activity>
-
+            android:label="@string/login" />
+        <activity
+            android:name=".ui.my_goals.new_goal.NewGoalActivity"
+            android:label="@string/fab_new" />
+        <activity
+            android:name=".ui.my_goals.popular_goal.PopularGoalActivity"
+            android:label="@string/fab_popular" />
         <!-- Crop -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -56,5 +60,16 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.github.q115.goalie_android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/files" />
+        </provider>
+
     </application>
 </manifest>

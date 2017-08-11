@@ -9,30 +9,33 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
+import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
+import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_NORMAL_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 /**
- * Created by Qi on 8/6/2017.
+ * Created by Qi on 8/8/2017.
  */
 
-public class RESTUpdateMeta {
-    private RESTUpdateMeta.Listener mList;
-    private String mPushID;
+public class RESTUpdateUserInfo {
+    private RESTUpdateUserInfo.Listener mList;
+    private String mBio;
     private String mUsername;
+    private String mPushID;
 
-    public RESTUpdateMeta(String username, String pushID) {
-        mPushID = pushID;
+    public RESTUpdateUserInfo(String username, String bio, String pushID) {
+        mBio = bio;
         mUsername = username;
+        mPushID = pushID;
     }
 
     public interface Listener {
@@ -41,15 +44,17 @@ public class RESTUpdateMeta {
         void onFailure(String errMsg);
     }
 
-    public void setListener(RESTUpdateMeta.Listener mList) {
+    public void setListener(RESTUpdateUserInfo.Listener mList) {
         this.mList = mList;
     }
 
     public void execute() {
-        final String url = URL + "/updatemeta";
+        final String url = URL + "/updateuserinfo";
         StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                UserHelper.getInstance().getOwnerProfile().bio = mBio;
+                UserHelper.getInstance().addUser(UserHelper.getInstance().getOwnerProfile());
                 PreferenceHelper.getInstance().setPushID(mPushID);
 
                 if (mList != null)
@@ -76,20 +81,22 @@ public class RESTUpdateMeta {
             public ArrayMap<String, String> getHeaders() {
                 ArrayMap<String, String> mHeaders = new ArrayMap<>();
                 mHeaders.put("Content-Type", "application/json");
+                mHeaders.put("username", mUsername);
                 return mHeaders;
             }
 
             @Override
             public byte[] getBody() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("pushID", mPushID);
+                params.put("bio", mBio);
                 params.put("username", mUsername);
+                params.put("pushID", mPushID);
                 return new JSONObject(params).toString().getBytes();
             }
         };
 
         req.setRetryPolicy(new DefaultRetryPolicy(
-                ASYNC_CONNECTION_EXTENDED_TIMEOUT,
+                ASYNC_CONNECTION_NORMAL_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);

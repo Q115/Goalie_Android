@@ -9,6 +9,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.ArrayList;
+
 @Table(database = MainDB.class)
 public class User extends BaseModel {
     @Column
@@ -22,17 +24,25 @@ public class User extends BaseModel {
     public long lastPhotoModifiedTime;
 
     @Column
-    public long points;
+    public long reputation;
 
     @ColumnIgnore
     public Bitmap profileBitmapImage;
 
+    @ColumnIgnore
+    public ArrayList<Goal> activieGoals;
+
+    @ColumnIgnore
+    public ArrayList<Goal> finishedGoals;
+
     public User() {
         username = "";
         bio = "";
-        points = 100;
+        reputation = 100;
         lastPhotoModifiedTime = 0;
         profileBitmapImage = null;
+        activieGoals = null;
+        finishedGoals = null;
     }
 
     public User(String username) {
@@ -40,16 +50,16 @@ public class User extends BaseModel {
         this.username = username;
     }
 
-    public User(String username, long points) {
+    public User(String username, long reputation) {
         this();
         this.username = username;
-        this.points = points;
+        this.reputation = reputation;
     }
 
-    public User(String username, String bio, long points, long lastPhotoModifiedTime) {
+    public User(String username, String bio, long reputation, long lastPhotoModifiedTime) {
         this();
         this.username = username;
-        this.points = points;
+        this.reputation = reputation;
         this.bio = bio;
         this.lastPhotoModifiedTime = lastPhotoModifiedTime;
     }

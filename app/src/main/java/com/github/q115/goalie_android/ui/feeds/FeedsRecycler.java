@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.models.GoalFeed;
+
+import java.util.ArrayList;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -31,17 +34,17 @@ public class FeedsRecycler extends RecyclerView.Adapter {
         }
     }
 
-    protected FragmentActivity mContext;
+    private FragmentActivity mContext;
+    private ArrayList<GoalFeed> mGoalFeedList;
 
     public FeedsRecycler(FragmentActivity context) {
         this.mContext = context;
+        mGoalFeedList = new ArrayList<>();
     }
 
     @Override
     public int getItemCount() {
-        return 10;
-        // TODO
-        //return mGoalList.size();
+        return mGoalFeedList.size();
     }
 
     //Must override, this inflates our Layout and instantiates and assigns
@@ -58,23 +61,15 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FeedsHolder viewHolder = (FeedsHolder) holder;
 
+        GoalFeed feed = mGoalFeedList.get(position);
+
         //Bind our data from our data source to our View References
-        viewHolder.mGoalPerson.setText("Chris");
+        viewHolder.mGoalPerson.setText(feed.fromUsername);
         viewHolder.mGoalPerson.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
 
-        viewHolder.mGoalResult.setText("Completed a job worth 10 points");
-        viewHolder.mGoalQuote.setText("i Did it!!");
-        viewHolder.mUpvoteCount.setText("100");
+        viewHolder.mGoalResult.setText(String.format(mContext.getString(R.string.feed_title), feed.wager));
+        viewHolder.mGoalQuote.setText(feed.encouragement);
+        viewHolder.mUpvoteCount.setText(String.valueOf(feed.upvoteCount));
         viewHolder.mUpvoteCount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_up, 0, 0, 0);
-
-/*
-        final int index = position;
-        viewHolder.mGoalFeedAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-*/
     }
 }

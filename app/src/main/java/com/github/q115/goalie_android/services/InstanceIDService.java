@@ -18,7 +18,7 @@ package com.github.q115.goalie_android.services;
 
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.https.RESTRegister;
-import com.github.q115.goalie_android.https.RESTUpdateMeta;
+import com.github.q115.goalie_android.https.RESTUpdateUserInfo;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -66,7 +66,8 @@ public class InstanceIDService extends FirebaseInstanceIdService {
             PreferenceHelper.getInstance().setPushID(pushID);
         } else {
             // update the old pushID on server
-            RESTUpdateMeta rest = new RESTUpdateMeta(UserHelper.getInstance().getOwnerProfile().username, pushID);
+            RESTUpdateUserInfo rest = new RESTUpdateUserInfo(UserHelper.getInstance().getOwnerProfile().username,
+                    UserHelper.getInstance().getOwnerProfile().bio, pushID);
             rest.setListener(null);
             rest.execute();
         }

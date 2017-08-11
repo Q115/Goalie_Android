@@ -10,4 +10,12 @@ public interface MyGoalsView extends BaseView<MyGoalsPresenter> {
     void showFABMenu();
 
     void closeFABMenu();
+
+    void showRefresher(boolean shouldShow);
+
+    void syncError(String msg);
+
+    void syncSuccess();
+
+    void reload();
 }

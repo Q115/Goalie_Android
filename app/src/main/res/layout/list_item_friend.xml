@@ -23,4 +23,11 @@
         android:gravity="center_vertical"
         android:textSize="20sp"
         tool:text="Chris" />
+    <TextView
+        android:id="@+id/friend_reputation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:textSize="14sp"
+        tool:text="120" />
 </LinearLayout>

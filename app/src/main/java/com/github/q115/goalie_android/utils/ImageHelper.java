@@ -2,7 +2,6 @@ package com.github.q115.goalie_android.utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,10 +38,7 @@ public class ImageHelper {
     }
 
     public void initialize(Context context) {
-        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
-        File directory = cw.getDir("images", Context.MODE_PRIVATE);
-
-        mImageDirectory = directory.getPath();
+        mImageDirectory = new File(context.getFilesDir() + "/images").getPath();
     }
 
     public void saveImageToPrivateSorageSync(String imageName, Bitmap bitmapImage, ImageType imageType) {
@@ -52,8 +48,7 @@ public class ImageHelper {
         String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
         try {
             FileOutputStream DestinationFile = new FileOutputStream(filePath);
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, Constants.ImageJPGQuality, DestinationFile);
-            return;
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, Constants.IMAGE_JPG_QUALITY, DestinationFile);
         } catch (FileNotFoundException fnf) {
             Diagnostic.logError(DiagnosticFlag.ImageHelper, "Error saving image to InternalStorage: " + fnf.toString());
         }
@@ -89,6 +84,24 @@ public class ImageHelper {
             return false;
     }
 
+    public boolean renameImageFromPrivateStorage(String oldImageName, ImageType oldImageType, String newImageName, ImageType newImageType) {
+       //saveImageToPrivateSorageSync(String imageName, Bitmap bitmapImage, ImageType imageType)
+        //deleteImageFromPrivateStorage(String imageName, ImageType imageType);
+
+        String oldFilePath = getImagePrivateStorageDirectory(oldImageName + imageTypeToExtension(oldImageType));
+        String newFilePath = getImagePrivateStorageDirectory(newImageName + imageTypeToExtension(newImageType));
+        File oldFile = new File(oldFilePath);
+        File newFile = new File(newFilePath);
+
+        if (oldFile.exists()) {
+            if (newFile.exists() && newFile.delete()) {
+                oldFile.renameTo(newFile);
+            }
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// Check if given image is already on phone
     /// </summary>
@@ -100,7 +113,7 @@ public class ImageHelper {
     /// <summary>
     /// Path to local image directory
     /// </summary>
-    /// <returns>/data/data/yourapp/app_data/images</returns>
+    /// <returns>/data/data/yourapp/files/images</returns>
     public String getImagePrivateStorageDirectory(String imageNameWithType) {
         return new File(mImageDirectory, imageNameWithType).getPath();
     }
@@ -110,7 +123,7 @@ public class ImageHelper {
     /// </summary>
     public static byte[] bitmapToByte(Bitmap img) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.JPEG, Constants.ImageJPGQuality, stream);
+        img.compress(Bitmap.CompressFormat.JPEG, Constants.IMAGE_JPG_QUALITY, stream);
         return stream.toByteArray();
     }
 

@@ -49,13 +49,14 @@ public class PreferenceHelper {
     /// Initialize all the preference settings. Should only be called from MainApplication class
     /// </summary>
     public void initialize(Context context) {
-        mSharedPreferences = context.getSharedPreferences(Constants.PreferenceFileName, Context.MODE_PRIVATE);
+        mSharedPreferences = context.getSharedPreferences(Constants.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         mPushID = mSharedPreferences.getString(PreferenceValue.PushID.toString(), "");
         mAccountUsername = mSharedPreferences.getString(PreferenceValue.AccountUsername.toString(), "");
+        UserHelper.getInstance().getOwnerProfile().username = mAccountUsername;
     }
 
     private void commitStringPreference(PreferenceValue key, String value) {
-        if(mSharedPreferences == null)
+        if (mSharedPreferences == null)
             return;
         SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
         switch (key) {

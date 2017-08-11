@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.my_goals.MyGoalsRecycler;
+import com.github.q115.goalie_android.ui.my_goals.MyGoalsPresenter;
 
-public class FeedsFragment extends Fragment {
+public class FeedsFragment extends Fragment implements FeedsView {
     public FeedsFragment() {
     }
 
@@ -35,7 +35,30 @@ public class FeedsFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onResume() {
+        super.onResume();
+       // mMyGoalsPresenter.start();
+    }
+
+    @Override
+    public void setPresenter(FeedsPresenter presenter) {
+        //mMyGoalsPresenter = presenter;
+    }
+
+    @Override
+    public void showRefresher(boolean shouldShow) {
+    }
+
+    @Override
+    public void syncError(String msg) {
+    }
+
+    @Override
+    public void syncSuccess() {
+    }
+
+    @Override
+    public void reload() {
+
     }
 }

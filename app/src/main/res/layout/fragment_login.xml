@@ -10,7 +10,10 @@
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/username" />
+        android:hint="@string/username"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textNoSuggestions"
+        android:maxLength="@integer/username_length" />
 
     <TextView
         android:layout_width="match_parent"

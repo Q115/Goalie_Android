@@ -59,12 +59,14 @@ public class RESTRegister {
             public void onResponse(String response) {
                 UserHelper.getInstance().getOwnerProfile().username = mUsername;
                 UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+                PreferenceHelper.getInstance().setAccountUsername(mUsername);
 
                 isRegistering = false;
 
                 // update pushID if one came while you were registering
-                if ((mPushID == null || !mPushID.isEmpty()) && !PreferenceHelper.getInstance().getPushID().isEmpty()) {
-                    RESTUpdateMeta rest = new RESTUpdateMeta(mUsername, PreferenceHelper.getInstance().getPushID());
+                if ((mPushID == null || mPushID.isEmpty()) && !PreferenceHelper.getInstance().getPushID().isEmpty()) {
+                    RESTUpdateUserInfo rest = new RESTUpdateUserInfo(mUsername,
+                            UserHelper.getInstance().getOwnerProfile().bio, PreferenceHelper.getInstance().getPushID());
                     rest.setListener(null);
                     rest.execute();
                 }
@@ -92,6 +94,7 @@ public class RESTRegister {
             public ArrayMap<String, String> getHeaders() {
                 ArrayMap<String, String> mHeaders = new ArrayMap<>();
                 mHeaders.put("Content-Type", "application/json");
+                mHeaders.put("username", mUsername);
                 return mHeaders;
             }
 
@@ -99,6 +102,7 @@ public class RESTRegister {
             public byte[] getBody() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("username", mUsername);
+                params.put("device", "android");
                 params.put("pushID", mPushID);
                 return new JSONObject(params).toString().getBytes();
             }

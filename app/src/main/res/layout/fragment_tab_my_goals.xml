@@ -4,10 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/goal_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/goal_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/fab_menu1"
@@ -30,7 +36,8 @@
         <android.support.design.widget.FloatingActionButton
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_fab_new" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +61,8 @@
         <android.support.design.widget.FloatingActionButton
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:srcCompat="@android:drawable/ic_dialog_map" />
+            android:scaleType="center"
+            android:src="@drawable/ic_fab_popular" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -64,5 +72,6 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="72dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_action_start_session" />
+        android:scaleType="center"
+        android:src="@drawable/ic_fab_add" />
 </FrameLayout>

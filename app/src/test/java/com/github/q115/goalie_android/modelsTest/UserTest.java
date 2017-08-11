@@ -21,9 +21,11 @@ public class UserTest {
         User user1 = new User();
         assertEquals("", user1.username);
         assertEquals("", user1.bio);
-        assertEquals(100, user1.points);
+        assertEquals(100, user1.reputation);
         assertEquals(0, user1.lastPhotoModifiedTime);
         assertEquals(null, user1.profileBitmapImage);
+        assertEquals(null, user1.activieGoals);
+        assertEquals(null, user1.finishedGoals);
 
         User user2 = new User("username");
         userTest = new User();
@@ -34,13 +36,13 @@ public class UserTest {
         User user3 = new User("username2", 200);
         userTest = new User();
         userTest.username = "username2";
-        userTest.points = 200;
+        userTest.reputation = 200;
         assertTrue(TestUtil.isUserEqual(user3, userTest));
 
         User user4 = new User("username3", "bio", 300, 999);
         userTest = new User();
         userTest.username = "username3";
-        userTest.points = 300;
+        userTest.reputation = 300;
         userTest.bio = "bio";
         userTest.lastPhotoModifiedTime = 999;
         assertTrue(TestUtil.isUserEqual(user4, userTest));

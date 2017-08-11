@@ -2,19 +2,17 @@ package com.github.q115.goalie_android.presenterTest;
 
 import android.test.mock.MockContext;
 
-import com.github.q115.goalie_android.MainApplication;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
 import com.github.q115.goalie_android.ui.login.LoginPresenter;
 import com.github.q115.goalie_android.ui.login.LoginView;
+import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
@@ -41,6 +39,7 @@ public class LoginPresenterUnitTest {
         MockitoAnnotations.initMocks(this);
 
         VolleyRequestQueue.getInstance().initialize(RuntimeEnvironment.application);
+        UserHelper.getInstance().initialize();
 
         mView = mock(LoginView.class);
         mPresenter = new LoginPresenter(mView);

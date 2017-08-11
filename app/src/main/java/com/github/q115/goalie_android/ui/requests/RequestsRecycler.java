@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.BaseGoalRecyler;
 
+import java.util.ArrayList;
+
 /**
  * Created by Qi on 8/4/2017.
  */

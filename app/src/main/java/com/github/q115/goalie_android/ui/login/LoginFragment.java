@@ -3,9 +3,12 @@ package com.github.q115.goalie_android.ui.login;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +42,8 @@ public class LoginFragment extends Fragment implements LoginView {
             }
         });
 
+        EditText username = rootView.findViewById(R.id.username);
+        username.setOnEditorActionListener(handleEditorAction());
         serverMsg = rootView.findViewById(R.id.register_server_response);
         serverMsg.setVisibility(View.GONE);
 
@@ -58,6 +63,21 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void setPresenter(LoginPresenter presenter) {
         mPresenter = presenter;
+    }
+
+
+    private EditText.OnEditorActionListener handleEditorAction() {
+        return new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_DONE && getView() != null) {
+                    serverMsg.setVisibility(View.GONE);
+                    mPresenter.register(getActivity(), ((TextView) getView().findViewById(R.id.username)).getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        };
     }
 
     @Override

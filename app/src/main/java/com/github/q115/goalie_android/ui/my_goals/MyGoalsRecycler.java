@@ -18,7 +18,16 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_my_goal, parent, false);
-        return new BaseGoalsHolder(itemView);
+        BaseGoalsHolder viewHolder = new BaseGoalsHolder(itemView);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        return viewHolder;
     }
 
     //Bind our current data to your view holder.  Think of this as the equivalent
@@ -26,15 +35,6 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        /*
-        final int index = position;
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        */
     }
 }
 

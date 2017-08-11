@@ -29,7 +29,7 @@ public class PreferenceHelperInstrumentedTest {
 
     @AfterClass
     public static void teardown() throws Exception {
-        SharedPreferences sp = InstrumentationRegistry.getTargetContext().getSharedPreferences(Constants.PreferenceFileName, Context.MODE_PRIVATE);
+        SharedPreferences sp = InstrumentationRegistry.getTargetContext().getSharedPreferences(Constants.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         sp.edit().clear().commit();
     }
 
