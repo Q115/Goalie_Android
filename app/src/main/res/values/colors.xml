@@ -8,9 +8,12 @@
     <color name="transparent">#00000000</color>
 
     <!-- Light -->
+    <color name="darkestGray">#222</color>
+    <color name="darkGray">#444</color>
     <color name="darkLightGray">#666</color>
     <color name="gray">#999</color>
     <color name="lightGray">#ccc</color>
+    <color name="lightestGray">#eee</color>
     <color name="white">#ffffffff</color>
 
     <!-- Hues -->

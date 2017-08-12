@@ -3,15 +3,12 @@ package com.github.q115.goalie_android.ui.my_goals.new_goal;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.friends.AddContactDialog;
 
 /**
  * Created by Qi on 8/11/2017.
@@ -28,11 +25,13 @@ public class NewGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_goal);
 
+        String title = getIntent().getStringExtra("title");
+
         FragmentManager fm = getSupportFragmentManager();
         NewGoalFragment newGoalFragment = (NewGoalFragment) fm.findFragmentByTag("newGoalFragment");
         if (newGoalFragment == null) {
             FragmentTransaction ft = fm.beginTransaction();
-            newGoalFragment = NewGoalFragment.newInstance();
+            newGoalFragment = NewGoalFragment.newInstance(title);
             ft.add(android.R.id.content, newGoalFragment, "newGoalFragment");
             ft.commit();
         }

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -45,6 +46,10 @@ public class FriendsRecycler extends RecyclerView.Adapter {
         this.mContext = context;
 
         // remove self and display all others
+        TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
+        tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
+        mUserList = new ArrayList<>(tempHashMap.values());
+        /*
         HashMap<String, User> tempHashMap = new HashMap<>(UserHelper.getInstance().getAllContacts());
         tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
         mUserList = new ArrayList<>(tempHashMap.values());
@@ -54,6 +59,7 @@ public class FriendsRecycler extends RecyclerView.Adapter {
                 return a2.username.compareTo(a1.username);
             }
         });
+        */
     }
 
     @Override

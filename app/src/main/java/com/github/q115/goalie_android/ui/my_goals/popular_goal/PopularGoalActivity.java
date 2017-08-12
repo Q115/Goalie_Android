@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import com.github.q115.goalie_android.R;
 
 /**
- * Created by Qi on 8/11/2017.
+ * TODO not used at this time.
  */
 
 public class PopularGoalActivity extends AppCompatActivity {

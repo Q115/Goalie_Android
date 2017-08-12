@@ -55,6 +55,30 @@
     <!-- Feed -->
     <string name="feed_title">Completed a goal worth %d reputation</string>
 
+    <!-- New Goal -->
+    <string name="title">Title</string>
+    <string name="title_hint">What would you like to accomplish?</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="pick_time">Pick Time</string>
+    <string name="wager">Wager</string>
+    <string name="wagered" formatted="false">%d of %d Reputation</string>
+    <string name="percent" formatted="false">%d%%</string>
+    <string name="encouragement">Encouragement</string>
+    <string name="encouragement_hint">Say something to motiviate yourself</string>
+    <string name="referee">Referee</string>
+    <string name="or">or</string>
+    <string name="new_referee_hint">Username of Referee</string>
+    <string name="set_goal">Set Goal</string>
+
+    <!-- Popular Goal -->
+    <string-array name="popular_goals">
+        <item>Complete a Goal</item>
+        <item>Get Fit</item>
+        <item>Start New Habit</item>
+        <item>Improve a Relationship</item>
+    </string-array>
+
     <!-- Network -->
     <string name="connecting">Connecting&#8230;</string>
     <string name="uploading">Uploading&#8230;</string>

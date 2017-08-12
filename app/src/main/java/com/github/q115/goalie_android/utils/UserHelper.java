@@ -8,15 +8,17 @@ import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper.ImageType;
 
 import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 
 public class UserHelper {
     /// <summary>
     /// username -> User
     /// </summary>
-    private HashMap<String, User> mAllContacts;
+    private SortedMap<String, User> mAllContacts;
 
-    public HashMap<String, User> getAllContacts() {
+    public SortedMap<String, User> getAllContacts() {
         return mAllContacts;
     }
 
@@ -52,7 +54,7 @@ public class UserHelper {
     }
 
     public void initialize() {
-        mAllContacts = new HashMap<>();
+        mAllContacts = new TreeMap<>();
         mOwnerProfile = new User();
     }
 

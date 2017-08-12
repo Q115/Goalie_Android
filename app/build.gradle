@@ -59,6 +59,9 @@ dependencies {
 
     //image preview
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+
+    // datetimepicker
+    compile 'com.appeaser.sublimepickerlibrary:sublimepickerlibrary:2.1.1'
 }
 
 // ADD THIS AT THE BOTTOM
