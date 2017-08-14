@@ -1,11 +1,14 @@
 package com.github.q115.goalie_android.ui.my_goals.new_goal;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
+
+import java.util.HashMap;
 
 /**
  * Created by Qi on 8/11/2017.
  */
 
 public class NewGoalFragment extends Fragment implements NewGoalView {
+    private ProgressDialog mProgressDialog;
     private NewGoalPresenter mNewGoalPresenter;
     private String mTitle;
 
@@ -54,13 +61,14 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_goal, container, false);
 
         // title
         mGoalTitle = rootView.findViewById(R.id.goal_title);
-        if (mTitle != null)
+        if (mTitle != null && mGoalTitle.getText().length() == 0)
             mGoalTitle.setText(mTitle);
 
         // start & end
@@ -89,17 +97,27 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
         // Referee
         mGoalRefereeSpinner = rootView.findViewById(R.id.goal_referee_spinner);
         mGoalRefereeSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mNewGoalPresenter.refereeArray()));
-        mGoalRefereeSpinner.setOnItemSelectedListener(mNewGoalPresenter.mSelectionChangedListener);
+        mGoalRefereeSpinner.setOnItemSelectedListener(mNewGoalPresenter.getSelectionChangedListener());
         mGoalRefereeText = rootView.findViewById(R.id.goal_referee);
-        mGoalRefereeText.addTextChangedListener(mNewGoalPresenter.mTextChangedListener);
+        mGoalRefereeText.addTextChangedListener(mNewGoalPresenter.getTextChangedListener());
 
         // set goal
         rootView.findViewById(R.id.set_goal).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNewGoalPresenter.setGoal();
+                mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString(), mGoalEncouragement.getText().toString(),
+                        mGoalRefereeSpinner.getSelectedItemPosition() == 0 ? mGoalRefereeText.getText().toString() : (String) mGoalRefereeSpinner.getSelectedItem());
             }
         });
+
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.connecting));
+        mProgressDialog.setCancelable(false);
+
+        if (savedInstanceState != null) {
+            mNewGoalPresenter.restore((HashMap<String, String>) savedInstanceState.getSerializable("presenter"));
+        }
+
         return rootView;
     }
 
@@ -112,6 +130,14 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     @Override
     public void setPresenter(NewGoalPresenter presenter) {
         mNewGoalPresenter = presenter;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable("presenter", mNewGoalPresenter.save());
+        // Edittext values are saved by default
+
+        super.onSaveInstanceState(outState);
     }
 
     public void showTimePicker(int viewID) {
@@ -159,14 +185,42 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
             if (imm != null && getActivity().getCurrentFocus() != null) {
                 imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
             }
-            mGoalRefereeText.removeTextChangedListener(mNewGoalPresenter.mTextChangedListener);
+            mGoalRefereeText.removeTextChangedListener(mNewGoalPresenter.getTextChangedListener());
             mGoalRefereeText.setText("");
-            mGoalRefereeText.addTextChangedListener(mNewGoalPresenter.mTextChangedListener);
+            mGoalRefereeText.addTextChangedListener(mNewGoalPresenter.getTextChangedListener());
         } else {
-            // TODO
-            mGoalRefereeSpinner.setOnItemSelectedListener(null);
             mGoalRefereeSpinner.setSelection(0);
-            mGoalRefereeSpinner.setOnItemSelectedListener(mNewGoalPresenter.mSelectionChangedListener);
+        }
+    }
+
+    @Override
+    public void onSetGoal(boolean isSuccessful, String errMsg) {
+        if (isSuccessful) {
+            Toast.makeText(getActivity(), getString(R.string.ok_goal), Toast.LENGTH_SHORT).show();
+            getActivity().setResult(Constants.RESULT_GOAL_SET);
+            getActivity().finish();
+        } else {
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+            alertDialog.setTitle(getString(R.string.error_goal));
+            alertDialog.setMessage(errMsg);
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ok), (DialogInterface.OnClickListener) null);
+            alertDialog.show();
+        }
+    }
+
+    @Override
+    public void updateProgress(boolean shouldShow) {
+        if (shouldShow) {
+            mProgressDialog.show();
+        } else if (mProgressDialog.isShowing()) {
+            mProgressDialog.cancel();
+        }
+    }
+
+    @Override
+    public void updateReferee(boolean isFromSpinner, int position) {
+        if (isFromSpinner) {
+            mGoalRefereeSpinner.setSelection(position);
         }
     }
 }

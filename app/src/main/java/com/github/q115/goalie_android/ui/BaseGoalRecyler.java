@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -24,12 +26,12 @@ import java.util.Locale;
 
 public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
     public class BaseGoalsHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTxt;
-        private TextView mEndDateTxt;
-        private TextView mStartDateTxt;
-        private TextView mWagerTxt;
-        private TextView mEncouragementTxt;
-        private TextView mRefereeTxt;
+        public TextView mTitleTxt;
+        public TextView mEndDateTxt;
+        public TextView mStartDateTxt;
+        public TextView mWagerTxt;
+        public TextView mEncouragementTxt;
+        public TextView mRefereeTxt;
 
         public BaseGoalsHolder(View itemView) {
             super(itemView);
@@ -44,10 +46,16 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
 
     protected FragmentActivity mContext;
     protected ArrayList<Goal> mGoalList;
+    protected static HashMap<String, Bitmap> mImages;
+    protected DateFormat mDF;
 
     public BaseGoalRecyler(FragmentActivity context) {
         this.mContext = context;
         this.mGoalList = new ArrayList<>();
+        mDF = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
+
+        if (mImages == null)
+            mImages = new HashMap<>();
     }
 
     @Override
@@ -64,13 +72,12 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
 
         Goal goal = mGoalList.get(position);
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
 
         //Bind our data from our data source to our View References
         viewHolder.mTitleTxt.setText(goal.title);
-        viewHolder.mStartDateTxt.setText(df.format(new Date(goal.startDate)));
-        viewHolder.mEndDateTxt.setText(df.format(new Date(goal.endDate)));
-        viewHolder.mWagerTxt.setText(String.valueOf(goal.wager));
+        viewHolder.mStartDateTxt.setText(String.format(mContext.getString(R.string.start_), mDF.format(new Date(goal.startDate))));
+        viewHolder.mEndDateTxt.setText(String.format(mContext.getString(R.string.end_), mDF.format(new Date(goal.endDate))));
+        viewHolder.mWagerTxt.setText(String.format(mContext.getString(R.string.reputation_), goal.wager));
         viewHolder.mEncouragementTxt.setText(goal.encouragement);
 
         viewHolder.mRefereeTxt.setText(goal.referee);
@@ -78,8 +85,16 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         User user = UserHelper.getInstance().getAllContacts().get(goal.referee);
         if (user.profileBitmapImage == null)
             viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
-        else
-            viewHolder.mRefereeTxt.setCompoundDrawables(null, ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
-                    user.profileBitmapImage, Constants.CIRCLE_PROFILE), null, null);
+        else {
+            Bitmap profileBitmapImage = mImages.get(user.username);
+
+            if (profileBitmapImage == null) {
+                int size = ImageHelper.dpToPx(mContext.getResources(), 75);
+                profileBitmapImage = Bitmap.createScaledBitmap(user.profileBitmapImage, size, size, false);
+                mImages.put(user.username, profileBitmapImage);
+            }
+            viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(null, ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
+                    profileBitmapImage, Constants.CIRCLE_PROFILE), null, null);
+        }
     }
 }

@@ -1,13 +1,12 @@
 package com.github.q115.goalie_android.utils;
 
-import android.content.Context;
-
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper.ImageType;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -20,6 +19,12 @@ public class UserHelper {
 
     public SortedMap<String, User> getAllContacts() {
         return mAllContacts;
+    }
+
+    private ArrayList<Goal> mRequests;
+
+    public ArrayList<Goal> getRequests() {
+        return mRequests;
     }
 
     /// <summary>
@@ -56,6 +61,7 @@ public class UserHelper {
     public void initialize() {
         mAllContacts = new TreeMap<>();
         mOwnerProfile = new User();
+        mRequests = new ArrayList<>();
     }
 
     /// <summary>
@@ -92,6 +98,25 @@ public class UserHelper {
             return true;
         } catch (Exception ex) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding user: " + ex.toString());
+            return false;
+        }
+    }
+
+    public boolean addGoal(Goal goal) {
+        try {
+            goal.save();
+            if (!goal.createdByUsername.equals(mOwnerProfile.username)) {
+                mRequests.add(goal);
+            } else {
+                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing)
+                    mOwnerProfile.addActivitGoal(goal);
+                else
+                    mOwnerProfile.addCompleteGoal(goal);
+            }
+
+            return true;
+        } catch (Exception ex) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
             return false;
         }
     }

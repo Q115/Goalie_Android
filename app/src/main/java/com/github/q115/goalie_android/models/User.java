@@ -63,4 +63,16 @@ public class User extends BaseModel {
         this.bio = bio;
         this.lastPhotoModifiedTime = lastPhotoModifiedTime;
     }
+
+    public void addActivitGoal(Goal goal) {
+        if (activieGoals == null)
+            activieGoals = new ArrayList<>();
+        activieGoals.add(goal);
+    }
+
+    public void addCompleteGoal(Goal goal) {
+        if (finishedGoals == null)
+            finishedGoals = new ArrayList<>();
+        finishedGoals.add(goal);
+    }
 }

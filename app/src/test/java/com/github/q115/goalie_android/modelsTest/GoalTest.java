@@ -28,9 +28,10 @@ public class GoalTest {
         assertEquals(0, goal1.wager);
         assertEquals(Goal.GoalCompleteResult.None, goal1.goalCompleteResult);
 
-        Goal goal2 = new Goal("guid", "title", 111, 999, 100, "encouragement", Success, "referee");
+        Goal goal2 = new Goal("guid", "createdByUsername", "title", 111, 999, 100, "encouragement", Success, "referee");
         goalTest = new Goal();
         goalTest.guid = "guid";
+        goalTest.createdByUsername = "createdByUsername";
         goalTest.title = "title";
         goalTest.startDate = 111;
         goalTest.endDate = 999;

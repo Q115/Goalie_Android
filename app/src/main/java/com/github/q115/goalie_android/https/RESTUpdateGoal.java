@@ -8,8 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.utils.PreferenceHelper;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
@@ -24,16 +23,17 @@ import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 /**
- * Created by Qi on 8/10/2017.
+ * Created by Qi on 8/13/2017.
  */
 
-public class RESTSync {
-    private RESTSync.Listener mList;
+public class RESTUpdateGoal {
+    private RESTUpdateGoal.Listener mList;
     private String mUsername;
-    private static boolean isSyncing;
+    private Goal.GoalCompleteResult mGoalCompleteResult;
 
-    public RESTSync(String username) {
+    public RESTUpdateGoal(String username, Goal.GoalCompleteResult goalCompleteResult) {
         mUsername = username;
+        mGoalCompleteResult = goalCompleteResult;
     }
 
     public interface Listener {
@@ -42,28 +42,24 @@ public class RESTSync {
         void onFailure(String errMsg);
     }
 
-    public static boolean isSyncing() {
-        return isSyncing;
-    }
-
-    public void setListener(RESTSync.Listener mList) {
+    public void setListener(RESTUpdateGoal.Listener mList) {
         this.mList = mList;
     }
 
     public void execute() {
-        final String url = URL + "/sync";
-        isSyncing = true;
+        final String url = URL + "/updategoal";
         StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // TODO
+               // Goal goal = new Goal(response, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement, Goal.GoalCompleteResult.Ongoing, mReferee);
+               // UserHelper.getInstance().addGoal(goal);
+
                 if (mList != null)
                     mList.onSuccess();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                isSyncing = false;
                 if (mList == null)
                     return;
                 if (error == null || error.networkResponse == null) {
@@ -89,6 +85,7 @@ public class RESTSync {
             public byte[] getBody() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("username", mUsername);
+                params.put("goalCompleteResult", String.valueOf(mGoalCompleteResult));
                 return new JSONObject(params).toString().getBytes();
             }
         };

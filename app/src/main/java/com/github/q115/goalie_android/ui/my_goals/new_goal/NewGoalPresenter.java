@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.my_goals.new_goal;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.ui.BasePresenter;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -18,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -26,28 +29,54 @@ import java.util.Locale;
 
 public class NewGoalPresenter implements BasePresenter {
     private final NewGoalView mNewGoalView;
-    private boolean isResetNotHandled = false;
-    private String mBeforeText;
-    private String mAfterText;
-
-    public TextWatcher mTextChangedListener = textChanged();
-    public AdapterView.OnItemSelectedListener mSelectionChangedListener = selectionChanged();
-
+    private boolean mShouldIgnore;
+    private long mStart;
+    private long mEnd;
+    private int mCurrentSelection = 0;
     private int mWagerIncrement = 1;
     private static final int WAGER_INCREMENT = 5;
 
+    private TextWatcher mTextChangedListener = textChanged();
+
+    public TextWatcher getTextChangedListener() {
+        return mTextChangedListener;
+    }
+
+    private AdapterView.OnItemSelectedListener mSelectionChangedListener = selectionChanged();
+
+    public AdapterView.OnItemSelectedListener getSelectionChangedListener() {
+        return mSelectionChangedListener;
+    }
 
     public NewGoalPresenter(@NonNull NewGoalView newGoalView) {
         mNewGoalView = newGoalView;
+        mStart = System.currentTimeMillis();
         mNewGoalView.setPresenter(this);
     }
 
     public void start() {
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
-        mNewGoalView.updateTime(true, df.format(new Date(System.currentTimeMillis())));
-
+        mNewGoalView.updateTime(true, timeString(mStart));
+        mNewGoalView.updateTime(false, mEnd == 0 ? "(Not Set)" : timeString(mEnd));
         mNewGoalView.updateWager((long) (mWagerIncrement * WAGER_INCREMENT * 0.01 * UserHelper.getInstance().getOwnerProfile().reputation),
                 UserHelper.getInstance().getOwnerProfile().reputation, mWagerIncrement * WAGER_INCREMENT);
+        mNewGoalView.updateReferee(mCurrentSelection != 0, mCurrentSelection);
+    }
+
+    public void restore(HashMap<String, String> values) {
+        mStart = Long.parseLong(values.get("start"));
+        mEnd = Long.parseLong(values.get("end"));
+        mCurrentSelection = Integer.parseInt(values.get("currentSelection"));
+        mWagerIncrement = Integer.parseInt(values.get("wagerIncrement"));
+    }
+
+    public HashMap<String, String> save() {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("start", String.valueOf(mStart));
+        values.put("end", String.valueOf(mEnd));
+        values.put("currentSelection", String.valueOf(mCurrentSelection));
+        values.put("wagerIncrement", String.valueOf(mWagerIncrement));
+
+        return values;
     }
 
     // Validates & returns SublimePicker options
@@ -89,10 +118,19 @@ public class NewGoalPresenter implements BasePresenter {
                 epoch -= selectedDate.getEndDate().get(Calendar.MILLISECOND);
                 epoch += (hourOfDay * 60 + minute) * 60 * 1000;
 
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
-                mNewGoalView.updateTime(viewID == R.id.goal_start_btn, df.format(new Date(epoch)));
+                if (viewID == R.id.goal_start_btn)
+                    mStart = epoch;
+                else
+                    mEnd = epoch;
+
+                mNewGoalView.updateTime(viewID == R.id.goal_start_btn, timeString(epoch));
             }
         };
+    }
+
+    private String timeString(long epoch) {
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+        return df.format(new Date(epoch));
     }
 
     public View.OnClickListener onWagerClicked() {
@@ -134,6 +172,15 @@ public class NewGoalPresenter implements BasePresenter {
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mCurrentSelection == i)
+                    return;
+
+                mCurrentSelection = i;
+
+                if (mShouldIgnore) {
+                    return;
+                }
+
                 resetReferee(true);
             }
 
@@ -148,7 +195,6 @@ public class NewGoalPresenter implements BasePresenter {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                mBeforeText = charSequence.toString();
             }
 
             @Override
@@ -157,11 +203,8 @@ public class NewGoalPresenter implements BasePresenter {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                mShouldIgnore = mCurrentSelection != 0;
                 resetReferee(false);
-                // mAfterText = editable.toString();
-
-                //  if (!mBeforeText.equals(mAfterText))
-                //     resetReferee(false);
             }
         };
     }
@@ -170,6 +213,37 @@ public class NewGoalPresenter implements BasePresenter {
         mNewGoalView.resetReferee(isFromSpinner);
     }
 
-    public void setGoal() {
+    public void setGoal(Context context, String title, String encouragement, String referee) {
+        if (title.isEmpty()) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_title));
+            return;
+        }
+        if (referee.isEmpty()) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_referee));
+            return;
+        }
+        if (mEnd <= mStart) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_invalid_date));
+            return;
+        }
+
+        long wagering = (long) (mWagerIncrement * WAGER_INCREMENT * 0.01 * UserHelper.getInstance().getOwnerProfile().reputation);
+
+        mNewGoalView.updateProgress(true);
+        RESTNewGoal rest = new RESTNewGoal(UserHelper.getInstance().getOwnerProfile().username, title, mStart, mEnd, wagering, encouragement, referee);
+        rest.setListener(new RESTNewGoal.Listener() {
+            @Override
+            public void onSuccess() {
+                mNewGoalView.updateProgress(false);
+                mNewGoalView.onSetGoal(true, "");
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                mNewGoalView.updateProgress(false);
+                mNewGoalView.onSetGoal(false, errMsg);
+            }
+        });
+        rest.execute();
     }
 }

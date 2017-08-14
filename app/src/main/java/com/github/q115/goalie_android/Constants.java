@@ -21,14 +21,16 @@ public class Constants {
     public static final int ASYNC_CONNECTION_NORMAL_TIMEOUT = 9 * 1000; // 9 seconds
     public static final int ASYNC_CONNECTION_EXTENDED_TIMEOUT = 16 * 1000; // 16 seconds
 
-    public static final int RESULT_PROFILE_IMAGE_SELECTED = 11;
-    public static final int RESULT_PROFILE_IMAGE_TAKEN = 12;
-    public static final int RESULT_PROFILE_UPDATE = 13;
-    public static final int RESULT_FRIENDS_ADD = 15;
+    public static final int RESULT_PROFILE_IMAGE_SELECTED = 10;
+    public static final int RESULT_PROFILE_IMAGE_TAKEN = 11;
+    public static final int RESULT_PROFILE_UPDATE = 12;
+    public static final int RESULT_FRIENDS_ADD = 20;
+    public static final int RESULT_GOAL_SET = 30;
+    public static final int RESULT_MY_GOAL_DIALOG = 40;
 
-    public static final int REQUEST_PERMISSIONS_STORAGE = 22;
-    public static final int REQUEST_PERMISSIONS_CAMERA = 23;
-    public static final int REQUEST_PERMISSIONS_CONTACT = 24;
+    public static final int REQUEST_PERMISSIONS_STORAGE = 100;
+    public static final int REQUEST_PERMISSIONS_CAMERA = 101;
+    public static final int REQUEST_PERMISSIONS_CONTACT = 102;
 
     // notification
     public static final int ID_NOTIFICATION_BROADCAST = 607;

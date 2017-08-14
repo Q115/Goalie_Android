@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.my_goals;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTSync;
@@ -67,6 +68,10 @@ public class MyGoalsPresenter implements BasePresenter {
             }
         });
         sm.execute();
+    }
+
+    public void showDialog(String title, String end, String start, String reputation, String encouragement, String referee, Bitmap profileImage) {
+        mMyGoalsView.showDialog(title, end, start, reputation, encouragement, referee, profileImage);
     }
 
     public void reload() {

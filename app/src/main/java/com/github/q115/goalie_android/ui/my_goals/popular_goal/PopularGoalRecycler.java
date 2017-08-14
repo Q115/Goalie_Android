@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalActivity;
 
+import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
+
 /**
  * Created by Qi on 8/12/2017.
  */
@@ -48,8 +50,8 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 Intent intent = NewGoalActivity.newIntent(mContext);
-                intent.putExtra("title", popularGoalArray[(int)itemView.getTag()]);
-                mContext.startActivity(intent);
+                intent.putExtra("title", popularGoalArray[(int) itemView.getTag()] + ": ");
+                mContext.startActivityForResult(intent, RESULT_GOAL_SET);
             }
         });
         return new PopularGoalHolder(itemView);

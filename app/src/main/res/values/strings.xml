@@ -12,11 +12,30 @@
     <string name="tab_requests">Requests</string>
     <string name="tab_feeds">Feeds</string>
 
+    <!-- Feed -->
+    <string name="feed_title" formatted="false">%s a goal worth %d reputation</string>
+    <string name="goodluck">Good Luck!</string>
+    <string name="congrats">Congrats!</string>
+    <string name="completed">Completed</string>
+    <string name="created">Created</string>
+
     <!-- My Goals -->
     <string name="access_profile">Image of Referee</string>
     <string name="friend_profile">Image of Friend</string>
     <string name="fab_new">New Goal</string>
     <string name="fab_popular">Popular Goals</string>
+    <string name="start_">start: %s</string>
+    <string name="end_">end: %s</string>
+    <string name="reputation_">reputation: %d</string>
+
+    <!-- Requests -->
+    <string name="options">Options</string>
+
+    <!-- Detail Dialog -->
+    <string name="accept">Accept</string>
+    <string name="delete">Delete</string>
+    <string name="complete">Completed</string>
+    <string name="failed">Failed</string>
 
     <!-- Friends -->
     <string name="friends">Friends</string>
@@ -52,9 +71,6 @@
     <string name="cancel">Cancel</string>
     <string name="update_title">Update Information</string>
 
-    <!-- Feed -->
-    <string name="feed_title">Completed a goal worth %d reputation</string>
-
     <!-- New Goal -->
     <string name="title">Title</string>
     <string name="title_hint">What would you like to accomplish?</string>
@@ -70,6 +86,12 @@
     <string name="or">or</string>
     <string name="new_referee_hint">Username of Referee</string>
     <string name="set_goal">Set Goal</string>
+    <string name="ok_goal">New Goal Created</string>
+    <string name="error_goal">Failed to Create Goal</string>
+    <string name="error_goal_no_title">No title set for this goal.</string>
+    <string name="error_goal_invalid_date">Invalid start and end date for this goal</string>
+    <string name="error_goal_no_referee">No referee set for this goal</string>
+
 
     <!-- Popular Goal -->
     <string-array name="popular_goals">

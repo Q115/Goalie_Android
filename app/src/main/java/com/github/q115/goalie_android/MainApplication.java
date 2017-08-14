@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.services.InstanceIDService;
 import com.github.q115.goalie_android.utils.ImageHelper;
@@ -50,10 +51,23 @@ public class MainApplication extends Application {
 
     private void ReadDatabase() {
         try {
-            List<User> users = SQLite.select().from(User.class).queryList();
             //populate contacts
+            List<User> users = SQLite.select().from(User.class).queryList();
             for (User user : users) {
                 UserHelper.getInstance().getAllContacts().put(user.username, user);
+            }
+
+            //populate goals
+            List<Goal> goals = SQLite.select().from(Goal.class).queryList();
+            for (Goal goal : goals) {
+               // if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+                    UserHelper.getInstance().getRequests().add(goal);
+               // } else {
+                    if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
+                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addActivitGoal(goal);
+                    else
+                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addCompleteGoal(goal);
+               // }
             }
         } catch (OutOfMemoryError outOfMemoryException) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.MainApplication, "Too many entries: " + outOfMemoryException.toString());

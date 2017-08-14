@@ -11,7 +11,11 @@ public interface NewGoalView extends BaseView<NewGoalPresenter> {
 
     void updateWager(long wagering, long total, int percent);
 
-    // void onSetGoal(boolean isSuccessful, String errMsg);
+    void updateReferee(boolean isFromSpinner, int position);
 
     void resetReferee(boolean isFromSpinner);
+
+    void onSetGoal(boolean isSuccessful, String errMsg);
+
+    void updateProgress(boolean shouldShow);
 }

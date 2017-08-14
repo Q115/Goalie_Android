@@ -12,55 +12,36 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @Table(database = MainDB.class)
 public class GoalFeed extends BaseModel {
-    public enum GoalFeedCompleteResult {
-        None, Success, Failed
-    }
-
     @PrimaryKey
     @Column
     public String guid;
 
     @Column
-    public String title;
-
-    @Column
-    public long endDate; //millisecond epoch since 1970
-
-    @Column
     public long wager;
 
     @Column
-    public String encouragement;
+    public Goal.GoalCompleteResult goalCompleteResult;
 
     @Column
-    public GoalFeedCompleteResult goalCompleteResult;
-
-    @Column
-    public String fromUsername;
+    public String createdUsername;
 
     @Column
     public long upvoteCount;
 
     public GoalFeed() {
         guid = "";
-        title = "";
-        endDate = 0;
         wager = 0;
-        encouragement = "";
-        goalCompleteResult = GoalFeedCompleteResult.None;
-        fromUsername = "";
+        goalCompleteResult = Goal.GoalCompleteResult.None;
+        createdUsername = "";
         upvoteCount = 0;
     }
 
-    public GoalFeed(String guid, String title, long endDate, long wager, String encouragement, long upvoteCount, GoalFeedCompleteResult goalCompleteResult, String referee) {
+    public GoalFeed(String guid, long wager, String createdUsername, long upvoteCount, Goal.GoalCompleteResult goalCompleteResult) {
         this();
         this.guid = guid;
-        this.title = title;
-        this.endDate = endDate;
         this.wager = wager;
-        this.encouragement = encouragement;
+        this.createdUsername = createdUsername;
         this.upvoteCount = upvoteCount;
         this.goalCompleteResult = goalCompleteResult;
-        this.fromUsername = referee;
     }
 }

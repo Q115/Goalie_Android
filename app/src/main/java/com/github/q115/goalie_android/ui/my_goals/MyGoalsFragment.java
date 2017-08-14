@@ -1,7 +1,10 @@
 package com.github.q115.goalie_android.ui.my_goals;
 
 import android.animation.Animator;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,10 +17,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.ui.GoalsDetailedDialog;
 import com.github.q115.goalie_android.ui.MainActivity;
 import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalActivity;
 import com.github.q115.goalie_android.ui.my_goals.popular_goal.PopularGoalActivity;
+
+import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
 
 public class MyGoalsFragment extends Fragment implements View.OnTouchListener, MyGoalsView {
     private FloatingActionButton mFAB;
@@ -35,6 +42,12 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
 
     public static MyGoalsFragment newInstance() {
         return new MyGoalsFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -56,7 +69,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         mGoalList = rootView.findViewById(R.id.goal_list);
         mGoalList.setOnTouchListener(this);
         mGoalList.setLayoutManager(new LinearLayoutManager(getContext()));
-        mGoalList.setAdapter(new MyGoalsRecycler(getActivity()));
+        mGoalList.setAdapter(new MyGoalsRecycler(getActivity(), mMyGoalsPresenter));
         mGoalList.setHasFixedSize(true);
 
         mFABMenu1 = rootView.findViewById(R.id.fab_menu1);
@@ -64,7 +77,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
             @Override
             public void onClick(View view) {
                 mMyGoalsPresenter.toggleFAB();
-                startActivity(NewGoalActivity.newIntent(getActivity()));
+                startActivityForResult(NewGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
             }
         });
         mFABMenu1.setVisibility(View.GONE);
@@ -74,7 +87,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
             @Override
             public void onClick(View view) {
                 mMyGoalsPresenter.toggleFAB();
-                startActivity(PopularGoalActivity.newIntent(getActivity()));
+                startActivityForResult(PopularGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
             }
         });
         mFABMenu2.setVisibility(View.GONE);
@@ -94,6 +107,14 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
     @Override
     public void setPresenter(MyGoalsPresenter presenter) {
         mMyGoalsPresenter = presenter;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_GOAL_SET) {
+            reload();
+        }
     }
 
     private View.OnClickListener toggleFABClickListener() {
@@ -180,6 +201,22 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         return false;
     }
 
+    public void showDialog(String title, String end, String start, String reputation, String encouragment, String referee, Bitmap profileImage) {
+        GoalsDetailedDialog detailedDialog = new GoalsDetailedDialog();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isMyGoal", true);
+        bundle.putString("title", title);
+        bundle.putString("end", end);
+        bundle.putString("start", start);
+        bundle.putString("reputation", reputation);
+        bundle.putString("referee", referee);
+        bundle.putString("encouragment", encouragment);
+        bundle.putParcelable("profile", profileImage); //TODO memory issues?
+        detailedDialog.setArguments(bundle);
+        detailedDialog.setTargetFragment(this, Constants.RESULT_MY_GOAL_DIALOG);
+        detailedDialog.show(getActivity().getSupportFragmentManager(), "GoalsDetailedDialog");
+    }
+
     @Override
     public void showRefresher(boolean shouldShow) {
         mSwipeRefreshLayout.setRefreshing(shouldShow);
@@ -199,6 +236,6 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
 
     @Override
     public void reload() {
-        //TODO
+        ((MyGoalsRecycler) mGoalList.getAdapter()).notifyDataSetHasChanged();
     }
 }

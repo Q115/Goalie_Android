@@ -11,12 +11,12 @@ public class Diagnostic {
     }
 
     public static void logError(DiagnosticFlag diagnosticFlag, String message) {
-        SimpleDateFormat time_formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.getDefault());
-        Log.e(diagnosticFlag.toString(), String.format("(%s): %s", time_formatter.format(System.currentTimeMillis()), message));
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.getDefault());
+        Log.e(diagnosticFlag.toString(), String.format("(%s): %s", timeFormatter.format(System.currentTimeMillis()), message));
     }
 
     public static void logDebug(DiagnosticFlag diagnosticFlag, String message) {
-        SimpleDateFormat time_formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.getDefault());
-        Log.d(diagnosticFlag.toString(), String.format("(%s): %s", time_formatter.format(System.currentTimeMillis()), message));
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.getDefault());
+        Log.d(diagnosticFlag.toString(), String.format("(%s): %s", timeFormatter.format(System.currentTimeMillis()), message));
     }
 }

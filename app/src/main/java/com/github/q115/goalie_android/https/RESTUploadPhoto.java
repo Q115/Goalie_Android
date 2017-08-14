@@ -110,7 +110,6 @@ public class RESTUploadPhoto {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);
-
     }
 
     private byte[] getStringImage(Bitmap bmp) {

@@ -77,7 +77,7 @@ public class RESTGetUserInfo {
                         long wager = jsonObj.getLong("wager");
                         String encouragement = jsonObj.getString("encouragement");
                         String referee = jsonObj.getString("referee");
-                        finishedGoalsList.add(new Goal(guid, title, start, end, wager, encouragement, Goal.GoalCompleteResult.Success, referee));
+                        finishedGoalsList.add(new Goal(guid, mUsername, title, start, end, wager, encouragement, Goal.GoalCompleteResult.Success, referee));
                     }
 
                     Collections.sort(finishedGoalsList, new Comparator<Goal>() {

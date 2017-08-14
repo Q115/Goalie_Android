@@ -31,13 +31,6 @@
             android:textSize="18sp"
             tool:text="Completed a goal for 5 reputation" />
 
-        <TextView
-            android:id="@+id/goal_quote"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            tool:text="I feel great!" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,13 +43,14 @@
                 android:layout_height="match_parent"
                 android:textSize="12sp"
                 android:gravity="center"
+                android:drawablePadding="6dp"
                 tool:text="5" />
 
             <Button
                 android:id="@+id/goal_feed_action"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="18dp"
                 android:textAllCaps="false"
                 tool:text="Congrats" />
         </LinearLayout>

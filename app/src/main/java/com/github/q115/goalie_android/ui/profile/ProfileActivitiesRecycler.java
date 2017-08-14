@@ -8,8 +8,11 @@ import android.view.ViewGroup;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BaseGoalRecyler;
+import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -18,6 +21,19 @@ import java.util.ArrayList;
 public class ProfileActivitiesRecycler extends BaseGoalRecyler {
     public ProfileActivitiesRecycler(FragmentActivity context) {
         super(context);
+        setupDataSet();
+    }
+
+    private void setupDataSet() {
+        this.mGoalList = UserHelper.getInstance().getOwnerProfile().finishedGoals;
+        if (this.mGoalList == null)
+            this.mGoalList = new ArrayList<>();
+        Collections.sort(mGoalList, new Comparator<Goal>() {
+            @Override
+            public int compare(Goal a1, Goal a2) {
+                return (int) (a2.endDate - a1.endDate);
+            }
+        });
     }
 
     //Must override, this inflates our Layout and instantiates and assigns

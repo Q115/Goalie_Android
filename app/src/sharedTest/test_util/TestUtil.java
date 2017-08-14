@@ -12,6 +12,7 @@ public class TestUtil {
     public static boolean isGoalEqual(Goal goalA, Goal goalB) {
         boolean isEqual;
         isEqual = goalA.guid.equals(goalB.guid);
+        isEqual &= goalA.createdByUsername.equals(goalB.createdByUsername);
         isEqual &= goalA.title.equals(goalB.title);
         isEqual &= goalA.startDate == goalB.startDate;
         isEqual &= goalA.endDate == goalB.endDate;

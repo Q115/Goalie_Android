@@ -10,6 +10,8 @@ import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
 
+import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
+
 /**
  * TODO not used at this time.
  */
@@ -53,5 +55,14 @@ public class PopularGoalActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_GOAL_SET) {
+            setResult(RESULT_GOAL_SET);
+            finish();
+        }
     }
 }

@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
             @Override
             public void onPageSelected(int position) {
-                mMyGoalsPresenter.closeFABMenu();
+                if (mMyGoalsPresenter != null)
+                    mMyGoalsPresenter.closeFABMenu();
                 AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
                 appBarLayout.setExpanded(true, true);
 

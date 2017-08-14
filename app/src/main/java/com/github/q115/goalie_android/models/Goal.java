@@ -9,7 +9,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 @Table(database = MainDB.class)
 public class Goal extends BaseModel {
     public enum GoalCompleteResult {
-        None, Ongoing, Success, Failed, Cancelled
+        None, Pending, Ongoing, Success, Failed, Cancelled
     }
 
     @PrimaryKey
@@ -37,6 +37,9 @@ public class Goal extends BaseModel {
     @Column
     public String referee;
 
+    @Column
+    public String createdByUsername;
+
     public Goal() {
         guid = "";
         title = "";
@@ -46,11 +49,14 @@ public class Goal extends BaseModel {
         encouragement = "";
         goalCompleteResult = GoalCompleteResult.None;
         referee = "";
+        createdByUsername = "";
     }
 
-    public Goal(String guid, String title, long startDate, long endDate, long wager, String encouragement, GoalCompleteResult goalCompleteResult, String referee) {
+    public Goal(String guid, String createdByUsername, String title, long startDate, long endDate,
+                long wager, String encouragement, GoalCompleteResult goalCompleteResult, String referee) {
         this();
         this.guid = guid;
+        this.createdByUsername = createdByUsername;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
