@@ -179,6 +179,7 @@
                 android:layout_gravity="center"
                 android:hint="@string/new_referee_hint"
                 android:maxLength="@integer/username_length"
+                android:imeOptions="flagNoExtractUi"
                 android:textAlignment="center" />
 
             <Button

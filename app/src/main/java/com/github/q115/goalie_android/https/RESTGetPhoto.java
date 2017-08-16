@@ -7,6 +7,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -56,7 +57,10 @@ public class RESTGetPhoto {
                     public void onResponse(Bitmap photo) {
                         if (photo != null) {
                             ImageHelper.getInstance().saveImageToPrivateSorageSync(mUsername, photo, ImageHelper.ImageType.PNG);
-                            UserHelper.getInstance().getAllContacts().get(mUsername).profileBitmapImage = photo;
+
+                            User user = UserHelper.getInstance().getAllContacts().get(mUsername);
+                            if (user != null)
+                                user.profileBitmapImage = photo;
                         }
 
                         if (mList != null)

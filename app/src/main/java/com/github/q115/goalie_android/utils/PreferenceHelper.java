@@ -9,7 +9,7 @@ import com.github.q115.goalie_android.Diagnostic.DiagnosticFlag;
 
 public class PreferenceHelper {
     private enum PreferenceValue {
-        PushID, AccountUsername
+        PushID, AccountUsername, LastSyncedTimeEpoch
     }
 
     private String mPushID;
@@ -32,6 +32,16 @@ public class PreferenceHelper {
         commitStringPreference(PreferenceValue.AccountUsername, accountUsername);
     }
 
+    private long mLastSyncedTimeEpoch;
+
+    public long getLastSyncedTimeEpoch() {
+        return mLastSyncedTimeEpoch;
+    }
+
+    public void setLastSyncedTimeEpoch(long mLastSyncedTimeEpoch) {
+        commitLongPreference(PreferenceValue.LastSyncedTimeEpoch, mLastSyncedTimeEpoch);
+    }
+
     private static PreferenceHelper mInstance;
     private SharedPreferences mSharedPreferences;
 
@@ -52,6 +62,7 @@ public class PreferenceHelper {
         mSharedPreferences = context.getSharedPreferences(Constants.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         mPushID = mSharedPreferences.getString(PreferenceValue.PushID.toString(), "");
         mAccountUsername = mSharedPreferences.getString(PreferenceValue.AccountUsername.toString(), "");
+        mLastSyncedTimeEpoch = mSharedPreferences.getLong(PreferenceValue.LastSyncedTimeEpoch.toString(), 0);
         UserHelper.getInstance().getOwnerProfile().username = mAccountUsername;
     }
 
@@ -73,5 +84,22 @@ public class PreferenceHelper {
         prefEditor.putString(key.toString(), value);
         if (!prefEditor.commit())
             Diagnostic.logError(DiagnosticFlag.Preferences, key.toString() + " commitStringPreference FAILED");
+    }
+
+    private void commitLongPreference(PreferenceValue key, long value) {
+        if (mSharedPreferences == null)
+            return;
+        SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
+        switch (key) {
+            case LastSyncedTimeEpoch:
+                mLastSyncedTimeEpoch = value;
+                break;
+            default:
+                break;
+        }
+
+        prefEditor.putLong(key.toString(), value);
+        if (!prefEditor.commit())
+            Diagnostic.logError(DiagnosticFlag.Preferences, key.toString() + " commitLongPreference FAILED");
     }
 }

@@ -4,7 +4,7 @@
     tools:context="com.github.q115.goalie_android.ui.MainActivity">
     <item
         android:id="@+id/action_profile"
-        android:icon="@drawable/ic_action_profile"
+        android:icon="@drawable/menu_profile"
         android:orderInCategory="99"
         android:title="@string/action_profile"
         app:showAsAction="ifRoom" />

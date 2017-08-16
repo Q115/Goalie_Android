@@ -52,6 +52,12 @@ public class Goal extends BaseModel {
         createdByUsername = "";
     }
 
+    public Goal(String guid, GoalCompleteResult goalCompleteResult) {
+        this();
+        this.guid = guid;
+        this.goalCompleteResult = goalCompleteResult;
+    }
+
     public Goal(String guid, String createdByUsername, String title, long startDate, long endDate,
                 long wager, String encouragement, GoalCompleteResult goalCompleteResult, String referee) {
         this();

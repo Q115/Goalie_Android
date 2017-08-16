@@ -25,7 +25,7 @@ import java.util.TreeMap;
  * Created by Qi on 8/4/2017.
  */
 
-public class FriendsRecycler extends RecyclerView.Adapter {
+public class FriendsListRecycler extends RecyclerView.Adapter {
     public class FriendsHolder extends RecyclerView.ViewHolder {
         private ImageView mFriendImage;
         private TextView mFriendName;
@@ -42,24 +42,13 @@ public class FriendsRecycler extends RecyclerView.Adapter {
     protected FragmentActivity mContext;
     protected ArrayList<User> mUserList;
 
-    public FriendsRecycler(FragmentActivity context) {
+    public FriendsListRecycler(FragmentActivity context) {
         this.mContext = context;
 
         // remove self and display all others
         TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
         tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
         mUserList = new ArrayList<>(tempHashMap.values());
-        /*
-        HashMap<String, User> tempHashMap = new HashMap<>(UserHelper.getInstance().getAllContacts());
-        tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
-        mUserList = new ArrayList<>(tempHashMap.values());
-        Collections.sort(mUserList, new Comparator<User>() {
-            @Override
-            public int compare(User a1, User a2) {
-                return a2.username.compareTo(a1.username);
-            }
-        });
-        */
     }
 
     @Override

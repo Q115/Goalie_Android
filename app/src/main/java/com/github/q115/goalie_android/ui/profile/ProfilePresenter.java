@@ -30,6 +30,7 @@ public class ProfilePresenter implements BasePresenter {
         }
 
         User user = UserHelper.getInstance().getAllContacts().get(mUsername);
+        if(user != null)
         mProfileView.setupView(user.username, user.bio, user.reputation, user.finishedGoals);
     }
 

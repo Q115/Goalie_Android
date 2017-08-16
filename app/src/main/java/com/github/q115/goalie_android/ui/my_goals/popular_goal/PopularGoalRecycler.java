@@ -66,16 +66,16 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
         //Bind our data from our data source to our View References
         switch (position) {
             case 0:
-                viewHolder.itemView.setBackgroundResource(R.drawable.popular0);
-                break;
-            case 1:
                 viewHolder.itemView.setBackgroundResource(R.drawable.popular1);
                 break;
-            case 2:
+            case 1:
                 viewHolder.itemView.setBackgroundResource(R.drawable.popular2);
                 break;
-            case 3:
+            case 2:
                 viewHolder.itemView.setBackgroundResource(R.drawable.popular3);
+                break;
+            case 3:
+                viewHolder.itemView.setBackgroundResource(R.drawable.popular4);
                 break;
         }
         viewHolder.mGoalName.setText(popularGoalArray[position]);

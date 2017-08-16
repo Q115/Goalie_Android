@@ -2,20 +2,17 @@ package com.github.q115.goalie_android.https;
 
 import android.util.ArrayMap;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.models.GoalFeed;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
@@ -24,57 +21,36 @@ import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 /**
- * Created by Qi on 8/13/2017.
+ * Created by Qi on 8/15/2017.
  */
 
-public class RESTGetFeeds {
+public class RESTUpvote {
+    private RESTUpvote.Listener mList;
     private String mUsername;
-    private RESTGetFeeds.Listener mList;
+    private String mGuid;
 
-    public RESTGetFeeds(String username) {
-        this.mUsername = username;
+    public RESTUpvote(String username, String guid) {
+        mUsername = username;
+        this.mGuid = guid;
     }
 
     public interface Listener {
-        void onSuccess(ArrayList<GoalFeed> goalFeedList);
+        void onSuccess();
 
         void onFailure(String errMsg);
     }
 
-    public void setListener(RESTGetFeeds.Listener mList) {
+    public void setListener(RESTUpvote.Listener mList) {
         this.mList = mList;
     }
 
     public void execute() {
-        String url;
-        try {
-            url = URL + "/getfeeds?username=" + URLEncoder.encode(mUsername, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            url = URL + "/getfeeds?username=" + mUsername;
-        }
-
-        StringRequest req = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        final String url = URL + "/upvote";
+        StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                try {
-                    ArrayList<GoalFeed> goalFeedList = new ArrayList<>();
-                    JSONArray jsonObject = new JSONArray(new String(response.getBytes("ISO-8859-1"), "UTF-8"));
-                    for (int i = 0; i < jsonObject.length(); i++) {
-                        JSONObject jsonObj = jsonObject.getJSONObject(i);
-                        String guid = jsonObj.getString("guid");
-                        String createdUsername = jsonObj.getString("createdUsername");
-                        long wager = jsonObj.getLong("wager");
-                        long upvoteCount = jsonObj.getLong("upvoteCount");
-                        Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[jsonObj.getInt("goalCompleteResult")];
-
-                        GoalFeed goalFeed = new GoalFeed(guid, wager, createdUsername, upvoteCount, goalCompleteResult);
-                        goalFeedList.add(goalFeed);
-                    }
-
-                    mList.onSuccess(goalFeedList);
-                } catch (Exception e) {
-                    mList.onFailure(FAILED);
-                }
+                if (mList != null)
+                    mList.onSuccess();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -98,6 +74,14 @@ public class RESTGetFeeds {
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("username", mUsername);
                 return mHeaders;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", mUsername);
+                params.put("guid", mGuid);
+                return new JSONObject(params).toString().getBytes();
             }
         };
 

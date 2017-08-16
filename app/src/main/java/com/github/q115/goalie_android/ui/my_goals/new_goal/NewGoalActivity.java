@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 
 /**

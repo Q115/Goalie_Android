@@ -44,26 +44,24 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/delete"
-            tool:text="Accept" />
+            tool:text="Failed" />
 
         <Button
-            android:id="@+id/btn_failed"
+            android:id="@+id/btn_2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/failed"
-            tool:text="Delete" />
+            tool:text="Completed" />
 
         <Button
-            android:id="@+id/btn_accept"
+            android:id="@+id/btn_3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tool:text="Remind" />
+            tool:text="Remind Friend" />
     </LinearLayout>
 </LinearLayout>

@@ -3,8 +3,11 @@ package com.github.q115.goalie_android.utils;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.models.GoalFeed;
+import com.github.q115.goalie_android.models.Goal_Table;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper.ImageType;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -25,6 +28,16 @@ public class UserHelper {
 
     public ArrayList<Goal> getRequests() {
         return mRequests;
+    }
+
+    private ArrayList<GoalFeed> mFeeds;
+
+    public ArrayList<GoalFeed> getFeeds() {
+        return mFeeds;
+    }
+
+    public void setFeeds(ArrayList<GoalFeed> feeds) {
+        mFeeds = feeds;
     }
 
     /// <summary>
@@ -62,6 +75,7 @@ public class UserHelper {
         mAllContacts = new TreeMap<>();
         mOwnerProfile = new User();
         mRequests = new ArrayList<>();
+        mFeeds = new ArrayList<>();
     }
 
     /// <summary>
@@ -114,6 +128,35 @@ public class UserHelper {
                     mOwnerProfile.addCompleteGoal(goal);
             }
 
+            return true;
+        } catch (Exception ex) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
+            return false;
+        }
+    }
+
+    public boolean deleteGoal(String guid) {
+        try {
+            SQLite.delete().from(Goal.class).where(Goal_Table.guid.eq(guid)).execute();
+
+            for (int i = 0; i < mOwnerProfile.activieGoals.size(); i++) {
+                Goal goal = mOwnerProfile.activieGoals.get(i);
+                if (goal.guid.equals(guid)) {
+                    mOwnerProfile.activieGoals.remove(i);
+                    break;
+                }
+            }
+
+            return true;
+        } catch (Exception ex) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
+            return false;
+        }
+    }
+
+    public boolean modifyGoal(Goal newGoal) {
+        try {
+            newGoal.update();
             return true;
         } catch (Exception ex) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());

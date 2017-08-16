@@ -10,13 +10,7 @@ import java.util.ArrayList;
  */
 
 public interface FeedsView extends BaseView<FeedsPresenter> {
-    void showRefresher(boolean shouldShow);
-
-    void syncError(String msg);
-
-    void syncSuccess();
+    void syncComplete(boolean isSuccessful, String errMsg);
 
     void reload();
-
-    void getFeedComplete(boolean isSuccessful, String errMsg);
 }

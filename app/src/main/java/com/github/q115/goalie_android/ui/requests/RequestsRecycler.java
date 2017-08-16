@@ -60,13 +60,15 @@ public class RequestsRecycler extends BaseGoalRecyler {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
 
+        final int pos = position;
         final BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Goal goal = mGoalList.get(pos);
                 mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
                         viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
-                        viewHolder.mRefereeTxt.getText().toString(), ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap());
+                        viewHolder.mRefereeTxt.getText().toString(), ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(), goal.goalCompleteResult, goal.guid);
             }
         });
     }

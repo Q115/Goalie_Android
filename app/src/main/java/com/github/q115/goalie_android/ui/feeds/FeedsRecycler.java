@@ -6,10 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.https.RESTUpvote;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
+import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.util.ArrayList;
 
@@ -38,7 +41,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
 
     public FeedsRecycler(FragmentActivity context) {
         this.mContext = context;
-        mGoalFeedList = new ArrayList<>();
+        mGoalFeedList = UserHelper.getInstance().getFeeds();
     }
 
     @Override
@@ -46,8 +49,8 @@ public class FeedsRecycler extends RecyclerView.Adapter {
         return mGoalFeedList.size();
     }
 
-    public void notifyDataSetChanged(ArrayList<GoalFeed> goalFeedList) {
-        mGoalFeedList = goalFeedList;
+    public void notifyDataSetHasChanged() {
+        mGoalFeedList = UserHelper.getInstance().getFeeds();
         super.notifyDataSetChanged();
     }
 
@@ -65,7 +68,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FeedsHolder viewHolder = (FeedsHolder) holder;
 
-        GoalFeed feed = mGoalFeedList.get(position);
+        final GoalFeed feed = mGoalFeedList.get(position);
 
         //Bind our data from our data source to our View References
         viewHolder.mGoalPerson.setText(feed.createdUsername);
@@ -83,5 +86,25 @@ public class FeedsRecycler extends RecyclerView.Adapter {
                     mContext.getString(R.string.completed), feed.wager));
             viewHolder.mGoalFeedAction.setText(mContext.getString(R.string.congrats));
         }
+
+        viewHolder.mGoalFeedAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RESTUpvote sm = new RESTUpvote(UserHelper.getInstance().getOwnerProfile().username, feed.guid);
+                sm.setListener(new RESTUpvote.Listener() {
+                    @Override
+                    public void onSuccess() {
+                        feed.upvoteCount++;
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(String errMsg) {
+                        Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                sm.execute();
+            }
+        });
     }
 }

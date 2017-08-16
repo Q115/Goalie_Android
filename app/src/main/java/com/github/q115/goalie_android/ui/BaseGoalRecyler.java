@@ -31,6 +31,7 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         public TextView mStartDateTxt;
         public TextView mWagerTxt;
         public TextView mEncouragementTxt;
+        public TextView mStatusTxt;
         public TextView mRefereeTxt;
 
         public BaseGoalsHolder(View itemView) {
@@ -41,6 +42,7 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
             mWagerTxt = itemView.findViewById(R.id.goal_wager);
             mEncouragementTxt = itemView.findViewById(R.id.goal_encouragement);
             mRefereeTxt = itemView.findViewById(R.id.goal_referee);
+            mStatusTxt = itemView.findViewById(R.id.goal_status);
         }
     }
 
@@ -80,9 +82,29 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         viewHolder.mWagerTxt.setText(String.format(mContext.getString(R.string.reputation_), goal.wager));
         viewHolder.mEncouragementTxt.setText(goal.encouragement);
 
-        viewHolder.mRefereeTxt.setText(goal.referee);
+        switch (goal.goalCompleteResult) {
+            case Pending:
+                viewHolder.mStatusTxt.setText(R.string.status_pending);
+                break;
+            case Ongoing:
+                viewHolder.mStatusTxt.setText(R.string.status_ongoing);
+                break;
+            case Failed:
+                viewHolder.mStatusTxt.setText(R.string.status_failed);
+                break;
+            case Success:
+                viewHolder.mStatusTxt.setText(R.string.status_successful);
+                break;
+            default:
+                viewHolder.mStatusTxt.setText("");
+                break;
+        }
 
+        viewHolder.mRefereeTxt.setText(goal.referee);
         User user = UserHelper.getInstance().getAllContacts().get(goal.referee);
+        if(user == null)
+            return;
+
         if (user.profileBitmapImage == null)
             viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
         else {

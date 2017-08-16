@@ -32,7 +32,7 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
 
         RecyclerView friendsList = rootView.findViewById(R.id.friends_list);
         friendsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        friendsList.setAdapter(new FriendsRecycler(getActivity()));
+        friendsList.setAdapter(new FriendsListRecycler(getActivity()));
 
         return rootView;
     }
@@ -54,7 +54,7 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
     public void onAddContactDialog(User user) {
         if (getView() != null) {
             RecyclerView friendsList = getView().findViewById(R.id.friends_list);
-            FriendsRecycler friendsRecycler = (FriendsRecycler) friendsList.getAdapter();
+            FriendsListRecycler friendsRecycler = (FriendsListRecycler) friendsList.getAdapter();
             friendsRecycler.addUserToList(user);
         }
     }

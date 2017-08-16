@@ -60,7 +60,7 @@ public class PopularGoalActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_GOAL_SET) {
+        if (requestCode == RESULT_GOAL_SET && resultCode == RESULT_GOAL_SET) {
             setResult(RESULT_GOAL_SET);
             finish();
         }

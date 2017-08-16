@@ -4,8 +4,14 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTSync;
+import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.ui.BasePresenter;
+import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -51,27 +57,24 @@ public class MyGoalsPresenter implements BasePresenter {
     }
 
     public void onRefresherRefresh() {
-        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username);
+        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
         sm.setListener(new RESTSync.Listener() {
             @Override
             public void onSuccess() {
-                mMyGoalsView.showRefresher(false);
-
-                //TODO
-                mMyGoalsView.syncSuccess();
+                mMyGoalsView.syncComplete(true, "");
             }
 
             @Override
             public void onFailure(String errMsg) {
-                mMyGoalsView.showRefresher(false);
-                mMyGoalsView.syncError(errMsg);
+                mMyGoalsView.syncComplete(false, errMsg);
             }
         });
         sm.execute();
     }
 
-    public void showDialog(String title, String end, String start, String reputation, String encouragement, String referee, Bitmap profileImage) {
-        mMyGoalsView.showDialog(title, end, start, reputation, encouragement, referee, profileImage);
+    public void showDialog(String title, String end, String start, String reputation, String encouragement,
+                           String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
+        mMyGoalsView.showDialog(title, end, start, reputation, encouragement, referee, profileImage, goalCompleteResult, guid);
     }
 
     public void reload() {

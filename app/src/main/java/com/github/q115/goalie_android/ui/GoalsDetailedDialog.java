@@ -1,6 +1,9 @@
 package com.github.q115.goalie_android.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -11,8 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.https.RESTRemind;
+import com.github.q115.goalie_android.https.RESTUpdateGoal;
+import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.utils.UserHelper;
 
 /**
  * Created by Qi on 8/13/2017.
@@ -26,6 +34,8 @@ public class GoalsDetailedDialog extends DialogFragment {
     private String mReputation;
     private String mEncouragement;
     private String mReferee;
+    private Goal.GoalCompleteResult mGoalCompleteResult;
+    private String mGuid;
     private Bitmap mProfileImage;
 
     /// <summary>
@@ -51,6 +61,8 @@ public class GoalsDetailedDialog extends DialogFragment {
             mEncouragement = savedInstanceState.getString("encouragement", "");
             mReferee = savedInstanceState.getString("referee", "");
             mProfileImage = savedInstanceState.getParcelable("profile");
+            mGoalCompleteResult = (Goal.GoalCompleteResult) savedInstanceState.getSerializable("goalCompleteResult");
+            mGuid = savedInstanceState.getString("guid", "");
         } else {
             isMyGoal = getArguments().getBoolean("isMyGoal");
             mTitle = getArguments().getString("title");
@@ -60,6 +72,8 @@ public class GoalsDetailedDialog extends DialogFragment {
             mEncouragement = getArguments().getString("encouragement");
             mReferee = getArguments().getString("referee");
             mProfileImage = getArguments().getParcelable("profile");
+            mGoalCompleteResult = (Goal.GoalCompleteResult) getArguments().getSerializable("goalCompleteResult");
+            mGuid = getArguments().getString("guid", "");
         }
 
         builder.setView(inflater.inflate(R.layout.dialog_my_goals_detail, null));
@@ -76,6 +90,8 @@ public class GoalsDetailedDialog extends DialogFragment {
         outState.putString("encouragement", mEncouragement);
         outState.putString("referee", mReferee);
         outState.putParcelable("profile", mProfileImage);
+        outState.putSerializable("goalCompleteResult", mGoalCompleteResult);
+        outState.putString("guid", mGuid);
 
         super.onSaveInstanceState(outState);
     }
@@ -94,18 +110,68 @@ public class GoalsDetailedDialog extends DialogFragment {
         ((TextView) getDialog().findViewById(R.id.goal_encouragement)).setText(mEncouragement);
 
         if (isMyGoal) {
-            getDialog().findViewById(R.id.btn_delete).setVisibility(View.VISIBLE);
-            getDialog().findViewById(R.id.btn_failed).setVisibility(View.VISIBLE);
-            ((Button) getDialog().findViewById(R.id.btn_accept)).setText(getString(R.string.complete));
+            ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.delete));
+            getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    delete(mGuid);
+                }
+            });
+
+            getDialog().findViewById(R.id.btn_2).setVisibility(View.VISIBLE);
+            ((Button) getDialog().findViewById(R.id.btn_2)).setText(getString(R.string.remind_referee));
+            getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    remindClicked(isMyGoal);
+                }
+            });
+
+            getDialog().findViewById(R.id.btn_3).setVisibility(View.GONE);
 
             getDialog().findViewById(R.id.goal_from).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setText(mReferee);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setCompoundDrawablesWithIntrinsicBounds(
                     null, new BitmapDrawable(getActivity().getResources(), mProfileImage), null, null);
         } else {
-            getDialog().findViewById(R.id.btn_delete).setVisibility(View.GONE);
-            getDialog().findViewById(R.id.btn_failed).setVisibility(View.GONE);
-            ((Button) getDialog().findViewById(R.id.btn_accept)).setText(getString(R.string.accept));
+            if (mGoalCompleteResult != Goal.GoalCompleteResult.Pending) {
+                ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.failed));
+                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        actionPicked(Goal.GoalCompleteResult.Failed);
+                    }
+                });
+
+                getDialog().findViewById(R.id.btn_2).setVisibility(View.VISIBLE);
+                ((Button) getDialog().findViewById(R.id.btn_2)).setText(getString(R.string.completed));
+                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        actionPicked(Goal.GoalCompleteResult.Success);
+                    }
+                });
+
+                getDialog().findViewById(R.id.btn_3).setVisibility(View.VISIBLE);
+                ((Button) getDialog().findViewById(R.id.btn_3)).setText(getString(R.string.remind_friend));
+                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        remindClicked(!isMyGoal);
+                    }
+                });
+            } else {
+                ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.accept));
+                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        actionPicked(Goal.GoalCompleteResult.Ongoing);
+                    }
+                });
+
+                getDialog().findViewById(R.id.btn_2).setVisibility(View.GONE);
+                getDialog().findViewById(R.id.btn_3).setVisibility(View.GONE);
+            }
 
             getDialog().findViewById(R.id.goal_referee).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_from)).setText(mReferee);
@@ -114,19 +180,56 @@ public class GoalsDetailedDialog extends DialogFragment {
         }
     }
 
-    public void acceptClicked() {
+    public void actionPicked(Goal.GoalCompleteResult goalCompleteResult) {
+        final ProgressDialog progress = new ProgressDialog(getActivity());
+        progress.setMessage(getString(R.string.connecting));
+        progress.show();
 
+        final String goalCompleteResultInt = String.valueOf(goalCompleteResult.ordinal());
+        RESTUpdateGoal sm = new RESTUpdateGoal(UserHelper.getInstance().getOwnerProfile().username, goalCompleteResult);
+        sm.setListener(new RESTUpdateGoal.Listener() {
+            @Override
+            public void onSuccess() {
+                progress.cancel();
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(goalCompleteResultInt));
+                dismiss();
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                progress.cancel();
+                Toast.makeText(getDialog().getContext(), "failed: " + errMsg, Toast.LENGTH_LONG).show();
+            }
+        });
+        sm.execute();
     }
 
-    public void deleteClicked() {
+    public void remindClicked(boolean isToReferee) {
+        final ProgressDialog progress = new ProgressDialog(getActivity());
+        progress.setMessage(getString(R.string.connecting));
+        progress.show();
 
+        RESTRemind sm = new RESTRemind(UserHelper.getInstance().getOwnerProfile().username, mReferee, isToReferee, mGuid);
+        sm.setListener(new RESTRemind.Listener() {
+            @Override
+            public void onSuccess() {
+                progress.cancel();
+                Toast.makeText(getDialog().getContext(), "Successfully Sent a reminder to " + mReferee, Toast.LENGTH_LONG).show();
+                dismiss();
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                progress.cancel();
+                Toast.makeText(getDialog().getContext(), "failed: " + errMsg, Toast.LENGTH_LONG).show();
+            }
+        });
+        sm.execute();
     }
 
-    public void failedClicked() {
-
-    }
-
-    public void completeClicked() {
-
+    public void delete(String guid) {
+        UserHelper.getInstance().deleteGoal(guid);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent("deleted"));
+        dismiss();
     }
 }

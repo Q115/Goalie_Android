@@ -60,14 +60,14 @@ public class MainApplication extends Application {
             //populate goals
             List<Goal> goals = SQLite.select().from(Goal.class).queryList();
             for (Goal goal : goals) {
-               // if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+                if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
                     UserHelper.getInstance().getRequests().add(goal);
-               // } else {
+                } else if(UserHelper.getInstance().getAllContacts().get(goal.createdByUsername) != null){
                     if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
                         UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addActivitGoal(goal);
                     else
                         UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addCompleteGoal(goal);
-               // }
+                }
             }
         } catch (OutOfMemoryError outOfMemoryException) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.MainApplication, "Too many entries: " + outOfMemoryException.toString());

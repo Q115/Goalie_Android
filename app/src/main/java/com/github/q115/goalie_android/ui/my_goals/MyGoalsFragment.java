@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.GoalsDetailedDialog;
 import com.github.q115.goalie_android.ui.MainActivity;
 import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalActivity;
@@ -94,6 +95,9 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
 
         mFAB = rootView.findViewById(R.id.fab_new_goal);
         mFAB.setOnClickListener(toggleFABClickListener);
+
+        if (mMyGoalsPresenter != null)
+            ((MainActivity)getActivity()).attachMyGoalsPresenter(mMyGoalsPresenter);
 
         return rootView;
     }
@@ -201,7 +205,8 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         return false;
     }
 
-    public void showDialog(String title, String end, String start, String reputation, String encouragment, String referee, Bitmap profileImage) {
+    public void showDialog(String title, String end, String start, String reputation, String encouragment,
+                           String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
         GoalsDetailedDialog detailedDialog = new GoalsDetailedDialog();
         Bundle bundle = new Bundle();
         bundle.putBoolean("isMyGoal", true);
@@ -211,27 +216,22 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         bundle.putString("reputation", reputation);
         bundle.putString("referee", referee);
         bundle.putString("encouragment", encouragment);
-        bundle.putParcelable("profile", profileImage); //TODO memory issues?
+        bundle.putParcelable("profile", profileImage);
+        bundle.putSerializable("goalCompleteResult", goalCompleteResult);
+        bundle.putString("guid", guid);
         detailedDialog.setArguments(bundle);
         detailedDialog.setTargetFragment(this, Constants.RESULT_MY_GOAL_DIALOG);
         detailedDialog.show(getActivity().getSupportFragmentManager(), "GoalsDetailedDialog");
     }
 
     @Override
-    public void showRefresher(boolean shouldShow) {
-        mSwipeRefreshLayout.setRefreshing(shouldShow);
-    }
-
-    @Override
-    public void syncError(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void syncSuccess() {
-        //TODO
-
-        ((MainActivity) getActivity()).reloadAll();
+    public void syncComplete(boolean isSuccessful, String errMsg) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if (isSuccessful) {
+            ((MainActivity) getActivity()).reloadAll();
+        } else {
+            Toast.makeText(getActivity(), errMsg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

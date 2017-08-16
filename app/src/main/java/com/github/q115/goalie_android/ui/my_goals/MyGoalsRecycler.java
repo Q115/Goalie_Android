@@ -57,15 +57,17 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
         super.onBindViewHolder(holder, position);
 
         final BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
+        final int pos = position;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mMyGoalsPresenter.isFABOpen()) {
                     mMyGoalsPresenter.closeFABMenu();
                 } else {
+                    Goal goal = mGoalList.get(pos);
                     mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
                             viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
-                            viewHolder.mRefereeTxt.getText().toString(), ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap());
+                            viewHolder.mRefereeTxt.getText().toString(), ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(), goal.goalCompleteResult, goal.guid);
                 }
             }
         });

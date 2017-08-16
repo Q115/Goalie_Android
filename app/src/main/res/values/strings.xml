@@ -27,6 +27,10 @@
     <string name="start_">start: %s</string>
     <string name="end_">end: %s</string>
     <string name="reputation_">reputation: %d</string>
+    <string name="status_pending">status: pending</string>
+    <string name="status_ongoing">status: ongoing</string>
+    <string name="status_failed">status: failed</string>
+    <string name="status_successful">status: successful</string>
 
     <!-- Requests -->
     <string name="options">Options</string>
@@ -36,6 +40,8 @@
     <string name="delete">Delete</string>
     <string name="complete">Completed</string>
     <string name="failed">Failed</string>
+    <string name="remind_friend">Remind Friend</string>
+    <string name="remind_referee">Remind Referee</string>
 
     <!-- Friends -->
     <string name="friends">Friends</string>
@@ -92,6 +98,8 @@
     <string name="error_goal_invalid_date">Invalid start and end date for this goal</string>
     <string name="error_goal_no_referee">No referee set for this goal</string>
 
+    <!-- Notification -->
+    <string name="notification_title">Goalie Notification</string>
 
     <!-- Popular Goal -->
     <string-array name="popular_goals">

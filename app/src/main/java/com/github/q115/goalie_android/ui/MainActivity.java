@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
 import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
@@ -23,6 +24,8 @@ import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.ui.requests.RequestsFragment;
 import com.github.q115.goalie_android.ui.requests.RequestsPresenter;
 import com.github.q115.goalie_android.utils.UserHelper;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainActivityView {
     /**
@@ -138,6 +141,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
         if (mFeedsPresenter != null)
             mFeedsPresenter.reload();
+    }
+
+    public void attachMyGoalsPresenter(MyGoalsPresenter myGoalsPresenter) {
+        mMyGoalsPresenter = myGoalsPresenter;
+    }
+
+    public void attachRequestsPresenter(RequestsPresenter requestsPresenter) {
+        mRequestsPresenter = requestsPresenter;
+    }
+
+    public void attachFeedsPresenter(FeedsPresenter feedsPresenter) {
+        mFeedsPresenter = feedsPresenter;
     }
 
     // Create 3 fragments

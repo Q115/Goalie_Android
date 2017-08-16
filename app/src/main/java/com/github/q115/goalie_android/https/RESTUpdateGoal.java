@@ -9,7 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.utils.UserHelper;
+import com.github.q115.goalie_android.utils.PreferenceHelper;
 
 import org.json.JSONObject;
 
@@ -51,9 +51,6 @@ public class RESTUpdateGoal {
         StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-               // Goal goal = new Goal(response, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement, Goal.GoalCompleteResult.Ongoing, mReferee);
-               // UserHelper.getInstance().addGoal(goal);
-
                 if (mList != null)
                     mList.onSuccess();
             }

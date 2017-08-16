@@ -27,9 +27,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.github.q115.goalie_android.Constants;
-import com.github.q115.goalie_android.ui.MainActivity;
-import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.Diagnostic;
+import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.https.RESTSync;
+import com.github.q115.goalie_android.ui.MainActivity;
+import com.github.q115.goalie_android.utils.PreferenceHelper;
+import com.github.q115.goalie_android.utils.UserHelper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -53,20 +56,33 @@ public class MessagingService extends FirebaseMessagingService {
             try {
                 String payload = data.get("payload");
                 JSONObject payloadJson = new JSONObject(payload);
-                if (payloadJson.has("data")) {
-                    // TODO
-                } else {
-                    // TODO
+                String request = payloadJson.getString("request");
+                String message = payloadJson.getString("message");
+                String guid = payloadJson.getString("guid");
+
+                switch (request) {
+                    case "remind":
+                        showNotification(getString(R.string.notification_title), message);
+                        break;
+                    case "response":
+                    case "request":
+                        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+                        sm.setListener(null);
+                        sm.execute();
+                        showNotification(getString(R.string.notification_title), message);
+                        break;
+                    default:
+                        break;
                 }
             } catch (JSONException je) {
-                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "FAILED to parse JSON");
+                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to parse JSON");
             } catch (Exception e) {
-                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "FAILED to handle notification data");
+                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to handle notification data");
             }
         }
     }
 
-    private void handleBroadcast(String title, String description) {
+    private void showNotification(String title, String description) {
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
 

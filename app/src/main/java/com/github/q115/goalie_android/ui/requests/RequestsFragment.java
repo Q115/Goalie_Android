@@ -8,18 +8,24 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.MainActivity;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.GoalsDetailedDialog;
+import com.github.q115.goalie_android.ui.MainActivity;
+import com.github.q115.goalie_android.ui.feeds.FeedsRecycler;
+import com.github.q115.goalie_android.ui.my_goals.MyGoalsRecycler;
 
-public class RequestsFragment extends Fragment implements RequestsView {
+public class RequestsFragment extends Fragment implements View.OnTouchListener, RequestsView {
     private RequestsPresenter mRequestsPresenter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private boolean isRefresherEnabled;
+    private RecyclerView mRequestList;
 
     public RequestsFragment() {
     }
@@ -42,9 +48,21 @@ public class RequestsFragment extends Fragment implements RequestsView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_requests, container, false);
-        RecyclerView requestList = rootView.findViewById(R.id.request_list);
-        requestList.setLayoutManager(new LinearLayoutManager(getContext()));
-        requestList.setAdapter(new RequestsRecycler(getActivity(), mRequestsPresenter));
+        mRequestList = rootView.findViewById(R.id.request_list);
+        mRequestList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRequestList.setAdapter(new RequestsRecycler(getActivity(), mRequestsPresenter));
+
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mRequestsPresenter.onRefresherRefresh();
+            }
+        });
+        mSwipeRefreshLayout.setEnabled(true);
+
+        if (mRequestsPresenter != null)
+            ((MainActivity) getActivity()).attachRequestsPresenter(mRequestsPresenter);
         return rootView;
     }
 
@@ -59,7 +77,30 @@ public class RequestsFragment extends Fragment implements RequestsView {
         mRequestsPresenter = presenter;
     }
 
-    public void showDialog(String title, String end, String start, String reputation, String encouragment, String referee, Bitmap profileImage) {
+    @Override
+    public boolean onTouch(View v, MotionEvent e) {
+        if (v.getId() == mRequestList.getId()) {
+            switch (e.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    isRefresherEnabled = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (isRefresherEnabled) {
+                RecyclerView DailyPondersList = (RecyclerView) v;
+                LinearLayoutManager layoutManager = ((LinearLayoutManager) DailyPondersList.getLayoutManager());
+                int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+                int topRowVerticalPosition = (DailyPondersList.getChildCount() == 0) ? 0 : DailyPondersList.getChildAt(0).getTop();
+                mSwipeRefreshLayout.setEnabled(firstVisiblePosition == 0 && topRowVerticalPosition >= 0);
+            }
+        }
+        return false;
+    }
+
+    public void showDialog(String title, String end, String start, String reputation, String encouragment,
+                           String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
         GoalsDetailedDialog detailedDialog = new GoalsDetailedDialog();
         Bundle bundle = new Bundle();
         bundle.putBoolean("isMyGoal", false);
@@ -70,33 +111,25 @@ public class RequestsFragment extends Fragment implements RequestsView {
         bundle.putString("referee", referee);
         bundle.putString("encouragment", encouragment);
         bundle.putParcelable("profile", profileImage);
+        bundle.putSerializable("goalCompleteResult", goalCompleteResult);
+        bundle.putString("guid", guid);
         detailedDialog.setArguments(bundle);
         detailedDialog.setTargetFragment(this, Constants.RESULT_MY_GOAL_DIALOG);
         detailedDialog.show(getActivity().getSupportFragmentManager(), "GoalsDetailedDialog");
     }
 
     @Override
-    public void showRefresher(boolean shouldShow) {
-        mSwipeRefreshLayout.setEnabled(shouldShow);
-        if (getView() != null)
-            getView().findViewById(R.id.info).setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-
-    }
-
-    @Override
-    public void syncError(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void syncSuccess() {
-        //TODO
-
-        ((MainActivity) getActivity()).reloadAll();
+    public void syncComplete(boolean isSuccessful, String errMsg) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if (isSuccessful) {
+            ((MainActivity) getActivity()).reloadAll();
+        } else {
+            Toast.makeText(getActivity(), errMsg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void reload() {
-        //TODO
+        ((RequestsRecycler) mRequestList.getAdapter()).notifyDataSetHasChanged();
     }
 }

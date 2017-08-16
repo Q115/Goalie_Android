@@ -8,9 +8,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
 
@@ -24,27 +21,21 @@ import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 /**
- * Created by Qi on 8/12/2017.
+ * Created by Qi on 8/14/2017.
  */
 
-public class RESTNewGoal {
-    private RESTNewGoal.Listener mList;
-    private String mUsername;
-    private String mTitle;
-    private long mStart;
-    private long mEnd;
-    private long mWager;
-    private String mEncouragement;
-    private String mReferee;
+public class RESTRemind {
+    private RESTRemind.Listener mList;
+    private String mFromUsername;
+    private String mToUsername;
+    private String mGuid;
+    private boolean isToReferee;
 
-    public RESTNewGoal(String username, String title, long start, long end, long wager, String encouragement, String referee) {
-        mUsername = username;
-        mStart = start;
-        mEnd = end;
-        mWager = wager;
-        mEncouragement = encouragement;
-        mReferee = referee;
-        mTitle = title;
+    public RESTRemind(String fromUsername, String toUsername, boolean isToReferee, String guid) {
+        this.mFromUsername = fromUsername;
+        this.mToUsername = toUsername;
+        this.isToReferee = isToReferee;
+        this.mGuid = guid;
     }
 
     public interface Listener {
@@ -53,21 +44,15 @@ public class RESTNewGoal {
         void onFailure(String errMsg);
     }
 
-    public void setListener(RESTNewGoal.Listener mList) {
+    public void setListener(RESTRemind.Listener mList) {
         this.mList = mList;
     }
 
     public void execute() {
-        final String url = URL + "/newgoal";
+        final String url = URL + "/remind";
         StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Goal goal = new Goal(response, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement, Goal.GoalCompleteResult.Ongoing, mReferee);
-                UserHelper.getInstance().addGoal(goal);
-
-                if (UserHelper.getInstance().getAllContacts().get(mReferee) == null)
-                    UserHelper.getInstance().addUser(new User(mReferee));
-
                 if (mList != null)
                     mList.onSuccess();
             }
@@ -91,20 +76,17 @@ public class RESTNewGoal {
             public ArrayMap<String, String> getHeaders() {
                 ArrayMap<String, String> mHeaders = new ArrayMap<>();
                 mHeaders.put("Content-Type", "application/json");
-                mHeaders.put("username", mUsername);
+                mHeaders.put("username", mFromUsername);
                 return mHeaders;
             }
 
             @Override
             public byte[] getBody() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("username", mUsername);
-                params.put("start", String.valueOf(mStart));
-                params.put("end", String.valueOf(mEnd));
-                params.put("wager", String.valueOf(mWager));
-                params.put("encouragement", mEncouragement);
-                params.put("referee", mReferee);
-                params.put("title", mTitle);
+                params.put("fromUsername", mFromUsername);
+                params.put("toUsername", mToUsername);
+                params.put("isToReferee", String.valueOf(isToReferee));
+                params.put("guid", mGuid);
                 return new JSONObject(params).toString().getBytes();
             }
         };

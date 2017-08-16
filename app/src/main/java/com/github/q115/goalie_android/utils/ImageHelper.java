@@ -84,24 +84,6 @@ public class ImageHelper {
             return false;
     }
 
-    public boolean renameImageFromPrivateStorage(String oldImageName, ImageType oldImageType, String newImageName, ImageType newImageType) {
-       //saveImageToPrivateSorageSync(String imageName, Bitmap bitmapImage, ImageType imageType)
-        //deleteImageFromPrivateStorage(String imageName, ImageType imageType);
-
-        String oldFilePath = getImagePrivateStorageDirectory(oldImageName + imageTypeToExtension(oldImageType));
-        String newFilePath = getImagePrivateStorageDirectory(newImageName + imageTypeToExtension(newImageType));
-        File oldFile = new File(oldFilePath);
-        File newFile = new File(newFilePath);
-
-        if (oldFile.exists()) {
-            if (newFile.exists() && newFile.delete()) {
-                oldFile.renameTo(newFile);
-            }
-        }
-
-        return false;
-    }
-
     /// <summary>
     /// Check if given image is already on phone
     /// </summary>
