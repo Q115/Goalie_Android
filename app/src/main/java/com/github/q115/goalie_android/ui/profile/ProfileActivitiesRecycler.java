@@ -20,7 +20,7 @@ import java.util.Comparator;
 
 public class ProfileActivitiesRecycler extends BaseGoalRecyler {
     public ProfileActivitiesRecycler(FragmentActivity context) {
-        super(context);
+        super(context, false);
         setupDataSet();
     }
 

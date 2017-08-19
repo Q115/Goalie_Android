@@ -26,6 +26,7 @@ import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalActivity;
 import com.github.q115.goalie_android.ui.my_goals.popular_goal.PopularGoalActivity;
 
 import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
+import static com.github.q115.goalie_android.Constants.RESULT_MY_GOAL_DIALOG;
 
 public class MyGoalsFragment extends Fragment implements View.OnTouchListener, MyGoalsView {
     private FloatingActionButton mFAB;
@@ -97,7 +98,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         mFAB.setOnClickListener(toggleFABClickListener);
 
         if (mMyGoalsPresenter != null)
-            ((MainActivity)getActivity()).attachMyGoalsPresenter(mMyGoalsPresenter);
+            ((MainActivity) getActivity()).attachMyGoalsPresenter(mMyGoalsPresenter);
 
         return rootView;
     }
@@ -118,6 +119,12 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_GOAL_SET) {
             reload();
+        } else if (requestCode == RESULT_MY_GOAL_DIALOG) {
+            if (data.getAction().equals(Constants.DELETED)) {
+                Toast.makeText(getActivity(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+                reload();
+            } else
+                reload();
         }
     }
 
@@ -187,7 +194,6 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
                 case MotionEvent.ACTION_DOWN:
                     if (mMyGoalsPresenter.isFABOpen()) {
                         mMyGoalsPresenter.closeFABMenu();
-                        return true;
                     }
                     break;
                 default:
@@ -199,7 +205,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
                 LinearLayoutManager layoutManager = ((LinearLayoutManager) DailyPondersList.getLayoutManager());
                 int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
                 int topRowVerticalPosition = (DailyPondersList.getChildCount() == 0) ? 0 : DailyPondersList.getChildAt(0).getTop();
-                mSwipeRefreshLayout.setEnabled(firstVisiblePosition == 0 && topRowVerticalPosition >= 0);
+                mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
             }
         }
         return false;
@@ -215,7 +221,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         bundle.putString("start", start);
         bundle.putString("reputation", reputation);
         bundle.putString("referee", referee);
-        bundle.putString("encouragment", encouragment);
+        bundle.putString("encouragement", encouragment);
         bundle.putParcelable("profile", profileImage);
         bundle.putSerializable("goalCompleteResult", goalCompleteResult);
         bundle.putString("guid", guid);

@@ -3,9 +3,9 @@ package com.github.q115.goalie_android.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -16,10 +16,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTRemind;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 /**
@@ -120,7 +122,7 @@ public class GoalsDetailedDialog extends DialogFragment {
 
             getDialog().findViewById(R.id.btn_2).setVisibility(View.VISIBLE);
             ((Button) getDialog().findViewById(R.id.btn_2)).setText(getString(R.string.remind_referee));
-            getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+            getDialog().findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     remindClicked(isMyGoal);
@@ -132,7 +134,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             getDialog().findViewById(R.id.goal_from).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setText(mReferee);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setCompoundDrawablesWithIntrinsicBounds(
-                    null, new BitmapDrawable(getActivity().getResources(), mProfileImage), null, null);
+                    null, ImageHelper.getRoundedCornerBitmap(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
         } else {
             if (mGoalCompleteResult != Goal.GoalCompleteResult.Pending) {
                 ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.failed));
@@ -145,7 +147,7 @@ public class GoalsDetailedDialog extends DialogFragment {
 
                 getDialog().findViewById(R.id.btn_2).setVisibility(View.VISIBLE);
                 ((Button) getDialog().findViewById(R.id.btn_2)).setText(getString(R.string.completed));
-                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                getDialog().findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         actionPicked(Goal.GoalCompleteResult.Success);
@@ -154,7 +156,7 @@ public class GoalsDetailedDialog extends DialogFragment {
 
                 getDialog().findViewById(R.id.btn_3).setVisibility(View.VISIBLE);
                 ((Button) getDialog().findViewById(R.id.btn_3)).setText(getString(R.string.remind_friend));
-                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                getDialog().findViewById(R.id.btn_3).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         remindClicked(!isMyGoal);
@@ -176,7 +178,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             getDialog().findViewById(R.id.goal_referee).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_from)).setText(mReferee);
             ((TextView) getDialog().findViewById(R.id.goal_from)).setCompoundDrawablesWithIntrinsicBounds(
-                    null, new BitmapDrawable(getResources(), mProfileImage), null, null);
+                    null, ImageHelper.getRoundedCornerBitmap(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
         }
     }
 
@@ -186,7 +188,7 @@ public class GoalsDetailedDialog extends DialogFragment {
         progress.show();
 
         final String goalCompleteResultInt = String.valueOf(goalCompleteResult.ordinal());
-        RESTUpdateGoal sm = new RESTUpdateGoal(UserHelper.getInstance().getOwnerProfile().username, goalCompleteResult);
+        RESTUpdateGoal sm = new RESTUpdateGoal(UserHelper.getInstance().getOwnerProfile().username, mGuid, goalCompleteResult);
         sm.setListener(new RESTUpdateGoal.Listener() {
             @Override
             public void onSuccess() {
@@ -214,7 +216,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             @Override
             public void onSuccess() {
                 progress.cancel();
-                Toast.makeText(getDialog().getContext(), "Successfully Sent a reminder to " + mReferee, Toast.LENGTH_LONG).show();
+                Toast.makeText(getDialog().getContext(), "Successfully sent a reminder to " + mReferee, Toast.LENGTH_LONG).show();
                 dismiss();
             }
 
@@ -227,9 +229,19 @@ public class GoalsDetailedDialog extends DialogFragment {
         sm.execute();
     }
 
-    public void delete(String guid) {
-        UserHelper.getInstance().deleteGoal(guid);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent("deleted"));
-        dismiss();
+    public void delete(final String guid) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        alertDialog.setTitle(getString(R.string.are_you_sure));
+        alertDialog.setMessage(getString(R.string.no_refund));
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                UserHelper.getInstance().deleteGoal(guid);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(Constants.DELETED));
+                dismiss();
+            }
+        });
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), (DialogInterface.OnClickListener) null);
+        alertDialog.show();
     }
 }

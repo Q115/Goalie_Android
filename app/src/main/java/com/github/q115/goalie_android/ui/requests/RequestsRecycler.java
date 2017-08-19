@@ -23,7 +23,7 @@ public class RequestsRecycler extends BaseGoalRecyler {
     private RequestsPresenter mRequestsPresenter;
 
     public RequestsRecycler(FragmentActivity context, RequestsPresenter requestsPresenter) {
-        super(context);
+        super(context, true);
         setupDataSet();
         mRequestsPresenter = requestsPresenter;
     }
@@ -68,7 +68,9 @@ public class RequestsRecycler extends BaseGoalRecyler {
                 Goal goal = mGoalList.get(pos);
                 mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
                         viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
-                        viewHolder.mRefereeTxt.getText().toString(), ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(), goal.goalCompleteResult, goal.guid);
+                        viewHolder.mRefereeTxt.getText().toString(),
+                        mImages.containsKey(goal.createdByUsername) ? mImages.get(goal.createdByUsername) : ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(),
+                        goal.goalCompleteResult, goal.guid);
             }
         });
     }

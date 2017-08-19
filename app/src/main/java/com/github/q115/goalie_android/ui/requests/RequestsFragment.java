@@ -93,7 +93,7 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
                 LinearLayoutManager layoutManager = ((LinearLayoutManager) DailyPondersList.getLayoutManager());
                 int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
                 int topRowVerticalPosition = (DailyPondersList.getChildCount() == 0) ? 0 : DailyPondersList.getChildAt(0).getTop();
-                mSwipeRefreshLayout.setEnabled(firstVisiblePosition == 0 && topRowVerticalPosition >= 0);
+                mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
             }
         }
         return false;
@@ -109,7 +109,7 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
         bundle.putString("start", start);
         bundle.putString("reputation", reputation);
         bundle.putString("referee", referee);
-        bundle.putString("encouragment", encouragment);
+        bundle.putString("encouragement", encouragment);
         bundle.putParcelable("profile", profileImage);
         bundle.putSerializable("goalCompleteResult", goalCompleteResult);
         bundle.putString("guid", guid);

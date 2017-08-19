@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         startActivity(LoginActivity.newIntent(this));
     }
 
+    @Override
     public void reloadAll() {
         if (mMyGoalsPresenter != null)
             mMyGoalsPresenter.reload();

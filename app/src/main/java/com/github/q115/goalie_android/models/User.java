@@ -41,8 +41,8 @@ public class User extends BaseModel {
         reputation = 100;
         lastPhotoModifiedTime = 0;
         profileBitmapImage = null;
-        activieGoals = null;
-        finishedGoals = null;
+        activieGoals = new ArrayList<>();
+        finishedGoals = new ArrayList<>();
     }
 
     public User(String username) {

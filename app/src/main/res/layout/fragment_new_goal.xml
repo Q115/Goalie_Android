@@ -28,6 +28,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/title_hint"
+                android:imeOptions="flagNoExtractUi"
+                android:maxLength="@integer/title_length"
                 android:maxLines="2" />
 
 
@@ -55,10 +57,14 @@
 
                 <Button
                     android:id="@+id/goal_start_btn"
-                    android:layout_width="wrap_content"
+                    style="?android:buttonBarButtonStyle"
+                    android:layout_width="110dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="6dp"
-                    android:text="@string/pick_time" />
+                    android:text="@string/pick_time"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <TextView
@@ -85,10 +91,14 @@
 
                 <Button
                     android:id="@+id/goal_end_btn"
-                    android:layout_width="wrap_content"
+                    style="?android:buttonBarButtonStyle"
+                    android:layout_width="110dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="6dp"
-                    android:text="@string/pick_time" />
+                    android:text="@string/pick_time"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <TextView
@@ -147,6 +157,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/encouragement_hint"
+                android:imeOptions="flagNoExtractUi"
+                android:maxLength="@integer/encouragement_length"
                 android:maxLines="2" />
 
             <TextView
@@ -178,8 +190,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:hint="@string/new_referee_hint"
-                android:maxLength="@integer/username_length"
                 android:imeOptions="flagNoExtractUi"
+                android:maxLength="@integer/username_length"
                 android:textAlignment="center" />
 
             <Button
@@ -187,7 +199,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="30dp"
-                android:text="@string/set_goal" />
+                android:background="@drawable/rounded_button"
+                android:text="@string/set_goal"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
         </LinearLayout>
     </ScrollView>

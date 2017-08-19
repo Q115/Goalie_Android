@@ -5,5 +5,7 @@ package com.github.q115.goalie_android.ui;
  */
 
 public interface MainActivityView extends BaseView<MainActivityPresenter> {
-    public void showLogin();
+    void showLogin();
+
+    void reloadAll();
 }

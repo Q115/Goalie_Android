@@ -105,8 +105,8 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
         rootView.findViewById(R.id.set_goal).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString(), mGoalEncouragement.getText().toString(),
-                        mGoalRefereeSpinner.getSelectedItemPosition() == 0 ? mGoalRefereeText.getText().toString() : (String) mGoalRefereeSpinner.getSelectedItem());
+                mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString().trim(), mGoalEncouragement.getText().toString().trim(),
+                        mGoalRefereeSpinner.getSelectedItemPosition() == 0 ? mGoalRefereeText.getText().toString().trim() : (String) mGoalRefereeSpinner.getSelectedItem());
             }
         });
 

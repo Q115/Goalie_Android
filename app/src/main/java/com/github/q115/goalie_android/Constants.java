@@ -4,6 +4,7 @@ public class Constants {
     public static final String URL = BuildConfig.DEBUG ? "http://192.168.0.14:8080" : "https://google.com";
 
     public static final String PREFERENCE_FILE_NAME = "PREFERENCE_FILE_NAME";
+    public static final String DELETED = "DELETED";
 
     public static final String FAILED_TO_CONNECT = "Connection failure, please ensure internet connection is active.";
     public static final String FAILED_TO_Send = "Failed to reach server, please try again.";

@@ -17,7 +17,7 @@
     <string name="goodluck">Good Luck!</string>
     <string name="congrats">Congrats!</string>
     <string name="completed">Completed</string>
-    <string name="created">Created</string>
+    <string name="started">Started</string>
 
     <!-- My Goals -->
     <string name="access_profile">Image of Referee</string>
@@ -31,6 +31,8 @@
     <string name="status_ongoing">status: ongoing</string>
     <string name="status_failed">status: failed</string>
     <string name="status_successful">status: successful</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="no_refund">Points will be forfeited and will not be returned.</string>
 
     <!-- Requests -->
     <string name="options">Options</string>
@@ -38,6 +40,7 @@
     <!-- Detail Dialog -->
     <string name="accept">Accept</string>
     <string name="delete">Delete</string>
+    <string name="deleted">Deleted</string>
     <string name="complete">Completed</string>
     <string name="failed">Failed</string>
     <string name="remind_friend">Remind Friend</string>
@@ -52,21 +55,23 @@
     <string name="adding">Adding</string>
     <string name="already_friends">Already friends with this user.</string>
     <string name="no_self">Cannot add yourself as a friend.</string>
-    <string name="join_me">Help me reach my goals by being my Referee! Join Goalie with me at https://coverse.co/dl</string>
+    <string name="join_me">Help me reach my goals by being my Referee! Join Goalie with me at http://goalie.ga/dl</string>
+    <string name="refresh">Refresh</string>
 
     <!-- Login -->
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="username_error">Invalid Characters in Username. Must not contain \':\', \'/\', \'\\\' or space</string>
     <string name="username_hint">Username should be 4 or more characters.</string>
+    <string name="username_taken">Username has been taken, please choose another.</string>
     <string name="register">Register</string>
     <string name="welcome">Welcome!</string>
 
     <!-- Profile -->
     <string name="profile">Profile</string>
     <string name="edit">Edit</string>
-    <string name="profile_activities">Activities</string>
-    <string name="no_profile_activities">No activities yet</string>
+    <string name="profile_activities">Completed Goals</string>
+    <string name="no_profile_activities">No completed goals yet</string>
     <string name="image_selection_error">Failed to read photo, please choose another.</string>
     <string name="image_taking_error">Image failed to be fetched from Camera. Try selecting an existing one.</string>
     <string name="reputation">Reputation: %d</string>
@@ -94,9 +99,10 @@
     <string name="set_goal">Set Goal</string>
     <string name="ok_goal">New Goal Created</string>
     <string name="error_goal">Failed to Create Goal</string>
-    <string name="error_goal_no_title">No title set for this goal.</string>
-    <string name="error_goal_invalid_date">Invalid start and end date for this goal</string>
-    <string name="error_goal_no_referee">No referee set for this goal</string>
+    <string name="error_goal_no_title">No title entered for this goal.</string>
+    <string name="error_goal_invalid_date">Invalid start or end time for this goal.</string>
+    <string name="error_goal_no_referee">No referee set for this goal.</string>
+    <string name="wager_invalid">Wager amount is invalid. If you need more reputation points, you will gain 50 points when you become someone\'s referee.</string>
 
     <!-- Notification -->
     <string name="notification_title">Goalie Notification</string>

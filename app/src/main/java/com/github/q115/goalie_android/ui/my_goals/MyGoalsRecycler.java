@@ -19,7 +19,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     private MyGoalsPresenter mMyGoalsPresenter;
 
     public MyGoalsRecycler(FragmentActivity context, MyGoalsPresenter myGoalsPresenter) {
-        super(context);
+        super(context, false);
         mMyGoalsPresenter = myGoalsPresenter;
         setupDataSet();
     }
@@ -67,7 +67,9 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
                     Goal goal = mGoalList.get(pos);
                     mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
                             viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
-                            viewHolder.mRefereeTxt.getText().toString(), ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(), goal.goalCompleteResult, goal.guid);
+                            viewHolder.mRefereeTxt.getText().toString(),
+                            mImages.containsKey(goal.referee) ? mImages.get(goal.referee) : ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(),
+                            goal.goalCompleteResult, goal.guid);
                 }
             }
         });

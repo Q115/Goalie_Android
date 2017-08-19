@@ -83,6 +83,9 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void showRegisterError(String msg) {
         serverMsg.setVisibility(View.VISIBLE);
+
+        if (msg.equals("Already Registered"))
+            msg = getString(R.string.username_taken);
         serverMsg.setText(msg);
     }
 

@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
+import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -68,7 +69,7 @@ public class RESTSync {
                     JSONObject jsonObject = new JSONObject(new String(response.getBytes("ISO-8859-1"), "UTF-8"));
 
                     // feeds
-                    JSONArray jsonAll = jsonObject.getJSONArray("all");
+                    JSONArray jsonAll = jsonObject.getJSONArray("feed");
                     for (int i = 0; i < jsonAll.length(); i++) {
                         JSONObject jsonObj = jsonAll.getJSONObject(i);
                         String guid = jsonObj.getString("guid");
@@ -85,7 +86,7 @@ public class RESTSync {
                         goalFeedList.add(goalFeed);
                     }
 
-                    // check my goals
+                    // my goals
                     JSONArray jsonMy = jsonObject.getJSONArray("my");
                     for (int i = 0; i < jsonMy.length(); i++) {
                         JSONObject jsonObj = jsonMy.getJSONObject(i);
@@ -98,6 +99,33 @@ public class RESTSync {
 
                         Goal goal = new Goal(guid, goalCompleteResult);
                         goalHash.put(goal.guid, goal);
+                    }
+
+                    // requests
+                    UserHelper.getInstance().getRequests().clear();
+                    JSONArray jsonMyRequests = jsonObject.getJSONArray("referee");
+                    for (int i = 0; i < jsonMyRequests.length(); i++) {
+                        JSONObject jsonObj = jsonMyRequests.getJSONObject(i);
+                        String guid = jsonObj.getString("guid");
+                        String createdUsername = jsonObj.getString("createdUsername");
+                        String title = jsonObj.getString("title");
+                        long startDate = jsonObj.getLong("startDate");
+                        long endDate = jsonObj.getLong("endDate");
+                        long wager = jsonObj.getLong("wager");
+                        String encouragement = jsonObj.getString("encouragement");
+
+                        int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
+                        Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
+                        if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
+                            goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
+
+                        Goal goal = new Goal(guid, createdUsername, title, startDate, endDate,
+                                wager, encouragement, goalCompleteResult, mUsername);
+                        UserHelper.getInstance().getRequests().add(goal);
+
+                        if (!UserHelper.getInstance().getAllContacts().containsKey(goal.createdByUsername)) {
+                            UserHelper.getInstance().addUser(new User(goal.createdByUsername));
+                        }
                     }
 
                     // commit time
@@ -113,6 +141,11 @@ public class RESTSync {
                         if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
                             goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
                             UserHelper.getInstance().modifyGoal(goal);
+
+                            if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
+                                UserHelper.getInstance().getOwnerProfile().activieGoals.remove(goal);
+                                UserHelper.getInstance().getOwnerProfile().activieGoals.add(goal);
+                            }
                         }
                     }
                 }

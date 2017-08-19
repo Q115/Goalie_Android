@@ -46,6 +46,11 @@ public class ImageHelper {
             return;
 
         String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
+        File newFile = new File(filePath);
+        if (!newFile.exists()) {
+            newFile.getParentFile().mkdirs();
+        }
+
         try {
             FileOutputStream DestinationFile = new FileOutputStream(filePath);
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, Constants.IMAGE_JPG_QUALITY, DestinationFile);

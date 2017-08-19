@@ -43,15 +43,18 @@ public class RESTGetPhoto {
         this.mList = mList;
     }
 
-    public void execute() {
-        String url;
+    public static String getURL(String username)
+    {
         try {
-            url = URL + "/photo/" + URLEncoder.encode(mUsername, "utf-8") + ".png";
+            return URL + "/photo/" + URLEncoder.encode(username, "utf-8") + ".png";
         } catch (UnsupportedEncodingException e) {
-            url = URL + "/photo/" + mUsername + ".png";
+            return URL + "/photo/" + username + ".png";
         }
+    }
 
-        ImageRequest req = new ImageRequest(url,
+    public void execute() {
+
+        ImageRequest req = new ImageRequest(getURL(mUsername),
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap photo) {

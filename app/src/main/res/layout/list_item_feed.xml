@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/goal_person"
-        android:layout_width="100dp"
+        android:layout_width="85dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:layout_marginEnd="10dp"
@@ -41,18 +41,20 @@
                 android:id="@+id/upvote_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textSize="12sp"
-                android:gravity="center"
                 android:drawablePadding="6dp"
+                android:gravity="center"
+                android:textSize="12sp"
                 tool:text="5" />
 
             <Button
                 android:id="@+id/goal_feed_action"
-                android:layout_width="100dp"
+                style="?android:buttonBarButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
                 android:textAllCaps="false"
-                tool:text="Congrats" />
+                android:textSize="16sp"
+                tool:text="Good Luck!" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -59,7 +59,9 @@ public class RESTUploadPhoto {
                         UserHelper.getInstance().getOwnerProfile().profileBitmapImage = mProfileImage;
                         ImageHelper.getInstance().deleteImageFromPrivateStorage(mUsername + "Temp", ImageHelper.ImageType.PNG);
                         ImageHelper.getInstance().saveImageToPrivateSorageSync(mUsername, mProfileImage, ImageHelper.ImageType.PNG);
-                        mList.onSuccess();
+
+                        if (mList != null)
+                            mList.onSuccess();
                     }
                 },
                 new Response.ErrorListener() {
@@ -93,7 +95,7 @@ public class RESTUploadPhoto {
                 try {
                     byte[] image = getStringImage(mProfileImage);
                     byteArrayOutputStream.write(("\r\n" + "--" + mBoundary + "\r\n").getBytes(Charset.defaultCharset()));
-                    byteArrayOutputStream.write(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\n", mUsername, mUsername).getBytes(Charset.defaultCharset()));
+                    byteArrayOutputStream.write(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s.png\"\r\n", mUsername, mUsername).getBytes(Charset.defaultCharset()));
                     byteArrayOutputStream.write(("Content-Type: application/octet-stream\r\n\r\n").getBytes(Charset.defaultCharset()));
                     byteArrayOutputStream.write(image);
                     byteArrayOutputStream.write(("\r\n" + "--" + mBoundary + "\r\n").getBytes(Charset.defaultCharset()));

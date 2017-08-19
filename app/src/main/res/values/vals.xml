@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="bio_length">80</integer>
-    <integer name="username_length">80</integer>
+    <integer name="username_length">20</integer>
+    <integer name="title_length">80</integer>
+    <integer name="encouragement_length">80</integer>
 </resources>

@@ -49,10 +49,12 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
     protected FragmentActivity mContext;
     protected ArrayList<Goal> mGoalList;
     protected static HashMap<String, Bitmap> mImages;
-    protected DateFormat mDF;
+    private DateFormat mDF;
+    private boolean isRequest;
 
-    public BaseGoalRecyler(FragmentActivity context) {
+    public BaseGoalRecyler(FragmentActivity context, boolean isRequest) {
         this.mContext = context;
+        this.isRequest = isRequest;
         this.mGoalList = new ArrayList<>();
         mDF = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
 
@@ -100,9 +102,16 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
                 break;
         }
 
-        viewHolder.mRefereeTxt.setText(goal.referee);
-        User user = UserHelper.getInstance().getAllContacts().get(goal.referee);
-        if(user == null)
+        User user;
+        if (isRequest) {
+            viewHolder.mRefereeTxt.setText(goal.createdByUsername);
+            user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+        } else {
+            viewHolder.mRefereeTxt.setText(goal.referee);
+            user = UserHelper.getInstance().getAllContacts().get(goal.referee);
+        }
+
+        if (user == null)
             return;
 
         if (user.profileBitmapImage == null)

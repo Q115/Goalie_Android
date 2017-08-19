@@ -28,12 +28,16 @@ public class GoalFeed extends BaseModel {
     @Column
     public long upvoteCount;
 
+    @Column
+    public boolean hasVoted;
+
     public GoalFeed() {
         guid = "";
         wager = 0;
         goalCompleteResult = Goal.GoalCompleteResult.None;
         createdUsername = "";
         upvoteCount = 0;
+        hasVoted = false;
     }
 
     public GoalFeed(String guid, long wager, String createdUsername, long upvoteCount, Goal.GoalCompleteResult goalCompleteResult) {

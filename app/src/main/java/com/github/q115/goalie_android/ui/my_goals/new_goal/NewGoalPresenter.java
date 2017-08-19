@@ -13,15 +13,18 @@ import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTNewGoal;
+import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.BasePresenter;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.TreeMap;
 
 /**
  * Created by Qi on 8/11/2017.
@@ -160,12 +163,14 @@ public class NewGoalPresenter implements BasePresenter {
     }
 
     public String[] refereeArray() {
-        String[] friends = UserHelper.getInstance().getAllContacts().keySet()
+        // remove self and display all others
+        TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
+        tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
+        tempHashMap.put("", null);
+
+        String[] friends = tempHashMap.keySet()
                 .toArray(new String[UserHelper.getInstance().getAllContacts().size()]);
-        String[] friendsWithNull = new String[friends.length + 1];
-        friendsWithNull[0] = "";
-        System.arraycopy(friends, 0, friendsWithNull, 1, friends.length);
-        return friendsWithNull;
+        return friends;
     }
 
     private AdapterView.OnItemSelectedListener selectionChanged() {
@@ -218,16 +223,24 @@ public class NewGoalPresenter implements BasePresenter {
             mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_title));
             return;
         }
-        if (referee.isEmpty()) {
-            mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_referee));
-            return;
-        }
         if (mEnd <= mStart) {
             mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_invalid_date));
             return;
         }
+        if (referee.isEmpty()) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_referee));
+            return;
+        }
+        if (!UserHelper.isUsernameValid(referee)) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.username_error));
+            return;
+        }
 
         long wagering = (long) (mWagerIncrement * WAGER_INCREMENT * 0.01 * UserHelper.getInstance().getOwnerProfile().reputation);
+        if (wagering <= 0) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.wager_invalid));
+            return;
+        }
 
         mNewGoalView.updateProgress(true);
         RESTNewGoal rest = new RESTNewGoal(UserHelper.getInstance().getOwnerProfile().username, title, mStart, mEnd, wagering, encouragement, referee);

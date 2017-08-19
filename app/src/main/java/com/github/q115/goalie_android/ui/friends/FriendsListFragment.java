@@ -1,10 +1,12 @@
 package com.github.q115.goalie_android.ui.friends;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,6 +19,8 @@ import com.github.q115.goalie_android.models.User;
 
 public class FriendsListFragment extends Fragment implements FriendsListView {
     private FriendsListPresenter mPresenter;
+    private RecyclerView mFriendsList;
+    private ProgressDialog mProgressDialog;
 
     public FriendsListFragment() {
     }
@@ -30,9 +34,13 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friends_list, container, false);
 
-        RecyclerView friendsList = rootView.findViewById(R.id.friends_list);
-        friendsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        friendsList.setAdapter(new FriendsListRecycler(getActivity()));
+        mFriendsList = rootView.findViewById(R.id.friends_list);
+        mFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mFriendsList.setAdapter(new FriendsListRecycler(getActivity()));
+
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.updating));
+        mProgressDialog.setCancelable(false);
 
         return rootView;
     }
@@ -51,6 +59,25 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
     }
 
     @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        User user = ((FriendsListRecycler) mFriendsList.getAdapter()).getItem(item.getOrder());
+        if (user == null)
+            return super.onContextItemSelected(item);
+
+        switch (item.getItemId()) {
+            case R.string.refresh:
+                mProgressDialog.show();
+                mPresenter.refresh(user.username);
+                return true;
+            case R.string.delete:
+                mPresenter.delete(user.username);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
     public void onAddContactDialog(User user) {
         if (getView() != null) {
             RecyclerView friendsList = getView().findViewById(R.id.friends_list);
@@ -62,7 +89,13 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
     @Override
     public void reload(boolean shouldReloadList) {
         if (getView() != null) {
+            if(mProgressDialog.isShowing())
+                mProgressDialog.cancel();
+
             RecyclerView friendsList = getView().findViewById(R.id.friends_list);
+
+            if (shouldReloadList)
+                ((FriendsListRecycler)friendsList.getAdapter()).notifyDataSetHasChanged();
 
             if (friendsList.getAdapter().getItemCount() == 0) {
                 friendsList.setVisibility(View.GONE);
@@ -71,9 +104,6 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
                 friendsList.setVisibility(View.VISIBLE);
                 getView().findViewById(R.id.empty).setVisibility(View.GONE);
             }
-
-            if (shouldReloadList)
-                friendsList.getAdapter().notifyDataSetChanged();
         }
     }
 }

@@ -24,7 +24,7 @@
         <include
             layout="@layout/list_item_base_goal"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <TextView
@@ -44,24 +44,33 @@
         android:orientation="horizontal">
 
         <Button
+            android:textSize="16sp"
             android:id="@+id/btn_1"
+            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textAllCaps="false"
             tool:text="Failed" />
 
         <Button
+            android:textSize="16sp"
             android:id="@+id/btn_2"
+            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textAllCaps="false"
             tool:text="Completed" />
 
         <Button
+            android:textSize="16sp"
             android:id="@+id/btn_3"
+            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textAllCaps="false"
             tool:text="Remind Friend" />
     </LinearLayout>
 </LinearLayout>

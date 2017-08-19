@@ -56,11 +56,11 @@ public class MessagingService extends FirebaseMessagingService {
             try {
                 String payload = data.get("payload");
                 JSONObject payloadJson = new JSONObject(payload);
-                String request = payloadJson.getString("request");
+                String key = payloadJson.getString("key");
                 String message = payloadJson.getString("message");
                 String guid = payloadJson.getString("guid");
 
-                switch (request) {
+                switch (key) {
                     case "remind":
                         showNotification(getString(R.string.notification_title), message);
                         break;

@@ -49,5 +49,5 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:textStyle="italic"
-        tool:text="'you can do it!'" />
+        tool:text="you can do it! This is a long text that'll simulate the max length character limit" />
 </LinearLayout>

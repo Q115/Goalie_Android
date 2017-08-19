@@ -8,10 +8,10 @@
 
     <TextView
         android:id="@+id/goal_referee"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="8dp"
         android:contentDescription="@string/access_profile"
         android:drawableTop="@color/colorAccent"
         android:gravity="center_horizontal"
@@ -20,6 +20,6 @@
     <include
         layout="@layout/list_item_base_goal"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1" />
 </LinearLayout>

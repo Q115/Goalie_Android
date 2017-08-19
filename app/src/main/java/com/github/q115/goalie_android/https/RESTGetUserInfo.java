@@ -90,9 +90,12 @@ public class RESTGetUserInfo {
                     User s = new User(mUsername, bio, reputation, lastPhotoModifiedTime);
                     s.finishedGoals = finishedGoalsList;
                     UserHelper.getInstance().addUser(s);
-                    mList.onSuccess();
+
+                    if (mList != null)
+                        mList.onSuccess();
                 } catch (Exception e) {
-                    mList.onFailure(FAILED);
+                    if (mList != null)
+                        mList.onFailure(FAILED);
                 }
             }
         }, new Response.ErrorListener() {

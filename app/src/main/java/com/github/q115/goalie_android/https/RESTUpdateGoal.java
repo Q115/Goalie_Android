@@ -9,7 +9,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.utils.PreferenceHelper;
 
 import org.json.JSONObject;
 
@@ -29,10 +28,12 @@ import static com.github.q115.goalie_android.Constants.URL;
 public class RESTUpdateGoal {
     private RESTUpdateGoal.Listener mList;
     private String mUsername;
+    private String mGuid;
     private Goal.GoalCompleteResult mGoalCompleteResult;
 
-    public RESTUpdateGoal(String username, Goal.GoalCompleteResult goalCompleteResult) {
+    public RESTUpdateGoal(String username, String guid, Goal.GoalCompleteResult goalCompleteResult) {
         mUsername = username;
+        mGuid = guid;
         mGoalCompleteResult = goalCompleteResult;
     }
 
@@ -82,7 +83,8 @@ public class RESTUpdateGoal {
             public byte[] getBody() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("username", mUsername);
-                params.put("goalCompleteResult", String.valueOf(mGoalCompleteResult));
+                params.put("guid", mGuid);
+                params.put("goalCompleteResult", String.valueOf(mGoalCompleteResult.ordinal()));
                 return new JSONObject(params).toString().getBytes();
             }
         };

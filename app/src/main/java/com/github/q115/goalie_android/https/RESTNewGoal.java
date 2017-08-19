@@ -62,11 +62,14 @@ public class RESTNewGoal {
         StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Goal goal = new Goal(response, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement, Goal.GoalCompleteResult.Ongoing, mReferee);
-                UserHelper.getInstance().addGoal(goal);
-
                 if (UserHelper.getInstance().getAllContacts().get(mReferee) == null)
                     UserHelper.getInstance().addUser(new User(mReferee));
+
+                Goal goal = new Goal(response, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement, Goal.GoalCompleteResult.Pending, mReferee);
+                UserHelper.getInstance().addGoal(goal);
+
+                UserHelper.getInstance().getOwnerProfile().reputation -= mWager;
+                UserHelper.getInstance().addUser(UserHelper.getInstance().getOwnerProfile());
 
                 if (mList != null)
                     mList.onSuccess();

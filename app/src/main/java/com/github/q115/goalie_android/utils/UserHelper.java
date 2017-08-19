@@ -6,6 +6,7 @@ import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.Goal_Table;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.models.User_Table;
 import com.github.q115.goalie_android.utils.ImageHelper.ImageType;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
@@ -104,6 +105,9 @@ public class UserHelper {
                 oldUser.bio = user.bio.length() > 0 ? user.bio : oldUser.bio;
                 oldUser.profileBitmapImage = user.profileBitmapImage != null ? user.profileBitmapImage : oldUser.profileBitmapImage;
                 oldUser.lastPhotoModifiedTime = user.lastPhotoModifiedTime > 0 ? user.lastPhotoModifiedTime : oldUser.lastPhotoModifiedTime;
+                oldUser.activieGoals = user.activieGoals != null ? user.activieGoals : oldUser.activieGoals;
+                oldUser.finishedGoals = user.finishedGoals != null ? user.finishedGoals : oldUser.finishedGoals;
+
                 oldUser.save();
             } else {
                 user.save();
@@ -116,13 +120,26 @@ public class UserHelper {
         }
     }
 
+    public boolean deleteUser(String username) {
+        try {
+            SQLite.delete().from(User.class).where(User_Table.username.eq(username)).execute();
+            getAllContacts().remove(username);
+            ImageHelper.getInstance().deleteImageFromPrivateStorage(username, ImageType.PNG);
+
+            return true;
+        } catch (Exception ex) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
+            return false;
+        }
+    }
+
     public boolean addGoal(Goal goal) {
         try {
             goal.save();
             if (!goal.createdByUsername.equals(mOwnerProfile.username)) {
                 mRequests.add(goal);
             } else {
-                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing)
+                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
                     mOwnerProfile.addActivitGoal(goal);
                 else
                     mOwnerProfile.addCompleteGoal(goal);
