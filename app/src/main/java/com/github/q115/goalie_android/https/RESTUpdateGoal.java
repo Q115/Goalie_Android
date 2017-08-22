@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.https;
 
-import android.util.ArrayMap;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -9,9 +7,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +52,26 @@ public class RESTUpdateGoal {
         StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                // remove goal if completed
+                if (mGoalCompleteResult == Goal.GoalCompleteResult.Failed || mGoalCompleteResult == Goal.GoalCompleteResult.Success
+                        || mGoalCompleteResult == Goal.GoalCompleteResult.Cancelled) {
+                    ArrayList<Goal> list = UserHelper.getInstance().getRequests();
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).guid.equals(mGuid)) {
+                            list.remove(i);
+                            break;
+                        }
+                    }
+                } else {
+                    ArrayList<Goal> list = UserHelper.getInstance().getRequests();
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).guid.equals(mGuid)) {
+                            list.get(i).goalCompleteResult = mGoalCompleteResult;
+                            break;
+                        }
+                    }
+                }
+
                 if (mList != null)
                     mList.onSuccess();
             }
@@ -72,8 +92,8 @@ public class RESTUpdateGoal {
             }
         }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("username", mUsername);
                 return mHeaders;

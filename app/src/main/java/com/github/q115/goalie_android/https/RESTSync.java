@@ -85,6 +85,7 @@ public class RESTSync {
                         GoalFeed goalFeed = new GoalFeed(guid, wager, createdUsername, upvoteCount, goalCompleteResult);
                         goalFeedList.add(goalFeed);
                     }
+                    UserHelper.getInstance().setFeeds(goalFeedList);
 
                     // my goals
                     JSONArray jsonMy = jsonObject.getJSONArray("my");
@@ -135,7 +136,8 @@ public class RESTSync {
                 }
 
                 // check if activieGoals changed
-                for (Goal goal : UserHelper.getInstance().getOwnerProfile().activieGoals) {
+                for (int i = 0; i < UserHelper.getInstance().getOwnerProfile().activieGoals.size(); i++) {
+                    Goal goal = UserHelper.getInstance().getOwnerProfile().activieGoals.get(i);
                     Goal fetchedGoal = goalHash.get(goal.guid);
                     if (fetchedGoal != null) {
                         if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
@@ -143,14 +145,19 @@ public class RESTSync {
                             UserHelper.getInstance().modifyGoal(goal);
 
                             if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
-                                UserHelper.getInstance().getOwnerProfile().activieGoals.remove(goal);
-                                UserHelper.getInstance().getOwnerProfile().activieGoals.add(goal);
+                                UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
+                                i--;
+                                UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
+
+                                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Success) {
+                                    UserHelper.getInstance().getOwnerProfile().reputation += (goal.wager * 2);
+                                    UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+                                }
                             }
                         }
                     }
                 }
 
-                UserHelper.getInstance().setFeeds(goalFeedList);
                 isSyncing = false;
                 if (mList != null)
                     mList.onSuccess();
@@ -173,8 +180,8 @@ public class RESTSync {
             }
         }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("username", mUsername);
                 return mHeaders;

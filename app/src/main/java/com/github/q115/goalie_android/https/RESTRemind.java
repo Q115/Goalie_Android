@@ -29,12 +29,10 @@ public class RESTRemind {
     private String mFromUsername;
     private String mToUsername;
     private String mGuid;
-    private boolean isToReferee;
 
-    public RESTRemind(String fromUsername, String toUsername, boolean isToReferee, String guid) {
+    public RESTRemind(String fromUsername, String toUsername, String guid) {
         this.mFromUsername = fromUsername;
         this.mToUsername = toUsername;
-        this.isToReferee = isToReferee;
         this.mGuid = guid;
     }
 
@@ -73,8 +71,8 @@ public class RESTRemind {
             }
         }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("username", mFromUsername);
                 return mHeaders;
@@ -85,7 +83,6 @@ public class RESTRemind {
                 Map<String, String> params = new HashMap<>();
                 params.put("fromUsername", mFromUsername);
                 params.put("toUsername", mToUsername);
-                params.put("isToReferee", String.valueOf(isToReferee));
                 params.put("guid", mGuid);
                 return new JSONObject(params).toString().getBytes();
             }

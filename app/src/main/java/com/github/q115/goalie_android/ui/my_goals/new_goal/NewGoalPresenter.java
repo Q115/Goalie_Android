@@ -246,7 +246,7 @@ public class NewGoalPresenter implements BasePresenter {
         RESTNewGoal rest = new RESTNewGoal(UserHelper.getInstance().getOwnerProfile().username, title, mStart, mEnd, wagering, encouragement, referee);
         rest.setListener(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String guid) {
                 mNewGoalView.updateProgress(false);
                 mNewGoalView.onSetGoal(true, "");
             }

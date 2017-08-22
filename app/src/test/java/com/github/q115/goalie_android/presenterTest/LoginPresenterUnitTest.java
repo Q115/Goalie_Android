@@ -3,6 +3,7 @@ package com.github.q115.goalie_android.presenterTest;
 import android.test.mock.MockContext;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
 import com.github.q115.goalie_android.ui.login.LoginPresenter;
 import com.github.q115.goalie_android.ui.login.LoginView;
@@ -16,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.when;
  */
 
 @RunWith(RobolectricTestRunner.class)
-public class LoginPresenterUnitTest {
+public class LoginPresenterUnitTest extends BaseTest {
     private LoginPresenter mPresenter;
 
     @Mock
@@ -38,22 +41,33 @@ public class LoginPresenterUnitTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        VolleyRequestQueue.getInstance().initialize(RuntimeEnvironment.application);
-        UserHelper.getInstance().initialize();
-
         mView = mock(LoginView.class);
         mPresenter = new LoginPresenter(mView);
         verify(mView).setPresenter(mPresenter);
     }
 
     @Test
-    public void register() {
+    public void register() throws Exception {
         when(mContext.getString(R.string.username_error))
                 .thenReturn("username_error");
         when(mContext.getString(R.string.welcome))
                 .thenReturn("welcome");
 
-        mPresenter.register(mContext, "username");
+        String username = UUID.randomUUID().toString().substring(20);
+        mPresenter.register(mContext, username);
         verify(mView).updateProgress(true);
+        Thread.sleep(2000);
+        verify(mView).updateProgress(false);
+        verify(mView).registerSuccess("welcome");
+
+        // username is taken
+        mPresenter.register(mContext, username);
+        Thread.sleep(2000);
+        verify(mView).showRegisterError("Already Registered");
+
+        // bad username
+        mPresenter.register(mContext, " x ");
+        Thread.sleep(2000);
+        verify(mView).showRegisterError("username_error");
     }
 }

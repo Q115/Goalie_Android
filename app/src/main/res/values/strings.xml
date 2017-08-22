@@ -33,9 +33,11 @@
     <string name="status_successful">status: successful</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="no_refund">Points will be forfeited and will not be returned.</string>
+    <string name="no_goals">No goals created yet</string>
 
     <!-- Requests -->
     <string name="options">Options</string>
+    <string name="no_requests">Not refereeing anyone at this time</string>
 
     <!-- Detail Dialog -->
     <string name="accept">Accept</string>

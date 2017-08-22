@@ -48,7 +48,7 @@ public class RESTNewGoal {
     }
 
     public interface Listener {
-        void onSuccess();
+        void onSuccess(String guid);
 
         void onFailure(String errMsg);
     }
@@ -72,7 +72,7 @@ public class RESTNewGoal {
                 UserHelper.getInstance().addUser(UserHelper.getInstance().getOwnerProfile());
 
                 if (mList != null)
-                    mList.onSuccess();
+                    mList.onSuccess(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -91,8 +91,8 @@ public class RESTNewGoal {
             }
         }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("username", mUsername);
                 return mHeaders;

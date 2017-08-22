@@ -36,21 +36,21 @@ public class FriendsListPresenter implements BasePresenter {
         if (user != null) {
             mFriendListView.onAddContactDialog(user);
             mFriendListView.reload(false);
+
+            //fetch user image if applicable
+            RESTGetPhoto sm = new RESTGetPhoto(username);
+            sm.setListener(new RESTGetPhoto.Listener() {
+                @Override
+                public void onSuccess(Bitmap photo3) {
+                    mFriendListView.reload(true);
+                }
+
+                @Override
+                public void onFailure(String errMsg) {
+                }
+            });
+            sm.execute();
         }
-
-        //fetch user image if applicable
-        RESTGetPhoto sm = new RESTGetPhoto(username);
-        sm.setListener(new RESTGetPhoto.Listener() {
-            @Override
-            public void onSuccess(Bitmap photo3) {
-                mFriendListView.reload(true);
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-            }
-        });
-        sm.execute();
     }
 
     public void refresh(String username) {

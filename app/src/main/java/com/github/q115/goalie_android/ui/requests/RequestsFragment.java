@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.Constants;
@@ -18,14 +19,13 @@ import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.GoalsDetailedDialog;
 import com.github.q115.goalie_android.ui.MainActivity;
-import com.github.q115.goalie_android.ui.feeds.FeedsRecycler;
-import com.github.q115.goalie_android.ui.my_goals.MyGoalsRecycler;
 
 public class RequestsFragment extends Fragment implements View.OnTouchListener, RequestsView {
     private RequestsPresenter mRequestsPresenter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean isRefresherEnabled;
     private RecyclerView mRequestList;
+    private TextView mEmptyMsg;
 
     public RequestsFragment() {
     }
@@ -50,7 +50,10 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
         View rootView = inflater.inflate(R.layout.fragment_tab_requests, container, false);
         mRequestList = rootView.findViewById(R.id.request_list);
         mRequestList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRequestList.setHasFixedSize(true);
         mRequestList.setAdapter(new RequestsRecycler(getActivity(), mRequestsPresenter));
+        mEmptyMsg = rootView.findViewById(R.id.empty);
+        showEmptyWhenNecessary();
 
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -131,5 +134,18 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
     @Override
     public void reload() {
         ((RequestsRecycler) mRequestList.getAdapter()).notifyDataSetHasChanged();
+        showEmptyWhenNecessary();
+    }
+
+    private void showEmptyWhenNecessary() {
+        if (mEmptyMsg != null && mRequestList != null) {
+            if (mRequestList.getAdapter().getItemCount() == 0) {
+                mRequestList.setVisibility(View.GONE);
+                mEmptyMsg.setVisibility(View.VISIBLE);
+            } else {
+                mRequestList.setVisibility(View.VISIBLE);
+                mEmptyMsg.setVisibility(View.GONE);
+            }
+        }
     }
 }

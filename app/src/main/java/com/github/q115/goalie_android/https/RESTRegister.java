@@ -91,8 +91,8 @@ public class RESTRegister {
             }
         }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public Map<String, String> getHeaders() {
+                Map<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("username", mUsername);
                 return mHeaders;

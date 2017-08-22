@@ -29,6 +29,7 @@ import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -45,7 +46,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by Qi on 8/4/2017.
  */
 
-public class ProfileFragment extends Fragment implements ProfileView {
+public class ProfileFragment extends Fragment implements ProfileView, MessagingService.MessagingServiceListener {
     private ProfilePresenter mPresenter;
 
     private ImageView mEdit;
@@ -102,6 +103,13 @@ public class ProfileFragment extends Fragment implements ProfileView {
         super.onResume();
         mPresenter.start();
         reloadList(false);
+        MessagingService.setMessagingServiceListener("Profile", this);
+    }
+
+    @Override
+    public void onDestroy() {
+        MessagingService.setMessagingServiceListener("Profile", null);
+        super.onDestroy();
     }
 
     @Override
@@ -118,7 +126,7 @@ public class ProfileFragment extends Fragment implements ProfileView {
     }
 
     @Override
-    public void setupView(String username, String bio, long points, ArrayList<Goal> goalList) {
+    public void setupView(String username, String bio, long points) {
         if (getView() != null) {
             View view = getView();
             ((TextView) view.findViewById(R.id.profile_username)).setText(username);
@@ -128,9 +136,6 @@ public class ProfileFragment extends Fragment implements ProfileView {
             User user = UserHelper.getInstance().getAllContacts().get(username);
             if (user != null && user.profileBitmapImage != null)
                 mProfile.setImageDrawable(ImageHelper.getRoundedCornerBitmap(getResources(), user.profileBitmapImage, Constants.ROUNDED_PROFILE));
-
-            ProfileActivitiesRecycler par = (ProfileActivitiesRecycler) ((RecyclerView) view.findViewById(R.id.profile_activity_list)).getAdapter();
-            par.notifyDataSetChanged(goalList);
         }
     }
 
@@ -297,7 +302,20 @@ public class ProfileFragment extends Fragment implements ProfileView {
             }
 
             if (shouldReloadList)
-                profileList.getAdapter().notifyDataSetChanged();
+                ((ProfileActivitiesRecycler) profileList.getAdapter()).notifyDataSetHasChanged();
         }
+    }
+
+    @Override
+    public void onNotification() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (getView() != null)
+                    ((TextView) getView().findViewById(R.id.profile_points)).setText(
+                            String.format(getString(R.string.reputation), UserHelper.getInstance().getOwnerProfile().reputation));
+                reloadList(true);
+            }
+        });
     }
 }

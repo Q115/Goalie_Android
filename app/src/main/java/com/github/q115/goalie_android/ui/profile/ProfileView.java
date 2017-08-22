@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public interface ProfileView extends BaseView<ProfilePresenter> {
     void setupForOwner(boolean isOwner);
 
-    void setupView(String username, String bio, long reputation, ArrayList<Goal> goalList);
+    void setupView(String username, String bio, long reputation);
 
     void updateProgress(boolean shouldShow);
 

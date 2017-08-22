@@ -39,9 +39,23 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MessagingService extends FirebaseMessagingService {
+    private static HashMap<String, MessagingServiceListener> messagingServiceListener = new HashMap<>();
+
+    public interface MessagingServiceListener {
+        void onNotification();
+    }
+
+    public static void setMessagingServiceListener(String id, MessagingServiceListener messagingServiceListener) {
+        if (messagingServiceListener != null)
+            MessagingService.messagingServiceListener.put(id, messagingServiceListener);
+        else
+            MessagingService.messagingServiceListener.remove(id);
+    }
+
     /**
      * Called when message is received.
      *
@@ -70,6 +84,9 @@ public class MessagingService extends FirebaseMessagingService {
                         sm.setListener(null);
                         sm.execute();
                         showNotification(getString(R.string.notification_title), message);
+
+                        for (MessagingServiceListener msgServiceListener : messagingServiceListener.values())
+                            msgServiceListener.onNotification();
                         break;
                     default:
                         break;

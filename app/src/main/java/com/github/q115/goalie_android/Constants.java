@@ -4,7 +4,6 @@ public class Constants {
     public static final String URL = BuildConfig.DEBUG ? "http://192.168.0.14:8080" : "https://google.com";
 
     public static final String PREFERENCE_FILE_NAME = "PREFERENCE_FILE_NAME";
-    public static final String DELETED = "DELETED";
 
     public static final String FAILED_TO_CONNECT = "Connection failure, please ensure internet connection is active.";
     public static final String FAILED_TO_Send = "Failed to reach server, please try again.";
@@ -22,6 +21,7 @@ public class Constants {
     public static final int ASYNC_CONNECTION_NORMAL_TIMEOUT = 9 * 1000; // 9 seconds
     public static final int ASYNC_CONNECTION_EXTENDED_TIMEOUT = 16 * 1000; // 16 seconds
 
+    public static final String RESULT_DELETED = "RESULT_DELETED";
     public static final int RESULT_PROFILE_IMAGE_SELECTED = 10;
     public static final int RESULT_PROFILE_IMAGE_TAKEN = 11;
     public static final int RESULT_PROFILE_UPDATE = 12;

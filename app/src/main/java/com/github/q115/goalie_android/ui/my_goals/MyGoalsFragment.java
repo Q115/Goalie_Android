@@ -3,6 +3,7 @@ package com.github.q115.goalie_android.ui.my_goals;
 import android.animation.Animator;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.Constants;
@@ -34,6 +36,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
     private LinearLayout mFABMenu2;
     private Animator.AnimatorListener mAnimatorListener;
     private RecyclerView mGoalList;
+    private TextView mEmptyMsg;
     private MyGoalsPresenter mMyGoalsPresenter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -71,8 +74,10 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         mGoalList = rootView.findViewById(R.id.goal_list);
         mGoalList.setOnTouchListener(this);
         mGoalList.setLayoutManager(new LinearLayoutManager(getContext()));
-        mGoalList.setAdapter(new MyGoalsRecycler(getActivity(), mMyGoalsPresenter));
         mGoalList.setHasFixedSize(true);
+        mGoalList.setAdapter(new MyGoalsRecycler(getActivity(), mMyGoalsPresenter));
+        mEmptyMsg = rootView.findViewById(R.id.empty);
+        showEmptyWhenNecessary();
 
         mFABMenu1 = rootView.findViewById(R.id.fab_menu1);
         mFABMenu1.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +125,7 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         if (requestCode == RESULT_GOAL_SET) {
             reload();
         } else if (requestCode == RESULT_MY_GOAL_DIALOG) {
-            if (data.getAction().equals(Constants.DELETED)) {
+            if (data.getAction().equals(Constants.RESULT_DELETED)) {
                 Toast.makeText(getActivity(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                 reload();
             } else
@@ -145,7 +150,9 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         mFABMenu2.setVisibility(View.VISIBLE);
         mFABMenu1.animate().translationY(-getResources().getDimension(R.dimen.fab_goal1_translate));
         mFABMenu2.animate().translationY(-getResources().getDimension(R.dimen.fab_goal2_translate));
-        mFAB.animate().rotation(45f);
+
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
+            mFAB.animate().rotation(45f);
     }
 
     @Override
@@ -181,7 +188,9 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
             mGoalList.animate().alpha(1f);
         mFABMenu1.animate().translationY(0);
         mFABMenu2.animate().translationY(0).setListener(mAnimatorListener);
-        mFAB.animate().rotation(0);
+
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
+            mFAB.animate().rotation(0);
     }
 
     @Override
@@ -243,5 +252,18 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
     @Override
     public void reload() {
         ((MyGoalsRecycler) mGoalList.getAdapter()).notifyDataSetHasChanged();
+        showEmptyWhenNecessary();
+    }
+
+    private void showEmptyWhenNecessary() {
+        if (mEmptyMsg != null && mGoalList != null) {
+            if (mGoalList.getAdapter().getItemCount() == 0) {
+                mGoalList.setVisibility(View.GONE);
+                mEmptyMsg.setVisibility(View.VISIBLE);
+            } else {
+                mGoalList.setVisibility(View.VISIBLE);
+                mEmptyMsg.setVisibility(View.GONE);
+            }
+        }
     }
 }

@@ -39,21 +39,6 @@ public class FeedsPresenter implements BasePresenter {
     }
 
     public void start() {
-        /*
-        RESTGetFeeds sm = new RESTGetFeeds(UserHelper.getInstance().getOwnerProfile().username);
-        sm.setListener(new RESTGetFeeds.Listener() {
-            @Override
-            public void onSuccess(ArrayList<GoalFeed> goalFeedArrayList) {
-                mGoalFeedArrayList = goalFeedArrayList;
-                mFeedsView.getFeedComplete(true, "");
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                mFeedsView.getFeedComplete(false, errMsg);
-            }
-        });
-        sm.execute();*/
     }
 
     public void reload() {

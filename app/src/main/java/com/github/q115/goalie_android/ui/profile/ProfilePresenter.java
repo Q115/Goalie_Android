@@ -30,11 +30,14 @@ public class ProfilePresenter implements BasePresenter {
         }
 
         User user = UserHelper.getInstance().getAllContacts().get(mUsername);
-        if(user != null)
-        mProfileView.setupView(user.username, user.bio, user.reputation, user.finishedGoals);
+        if (user != null)
+            mProfileView.setupView(user.username, user.bio, user.reputation);
     }
 
     public void newProfileImageSelected(final Bitmap image) {
+        if(image == null)
+            return;
+
         mProfileView.updateProgress(true);
 
         RESTUploadPhoto sm = new RESTUploadPhoto(image, mUsername);

@@ -23,7 +23,10 @@ public class FriendsPresenter {
     public void start() {
     }
 
-    void result(Uri contactUri) {
+    public void sendSMSInvite(Uri contactUri) {
+        if(contactUri == null)
+            return;
+
         Cursor c = mContext.getContentResolver().query(contactUri, null, null, null, null);
 
         if (c != null && c.getCount() > 0) {

@@ -94,7 +94,7 @@ public class FriendsActivity extends AppCompatActivity implements FriendsView {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.REQUEST_PERMISSIONS_CONTACT && resultCode == RESULT_OK && data != null) {
-            mPresenter.result(data.getData());
+            mPresenter.sendSMSInvite(data.getData());
         } else if (requestCode == Constants.RESULT_FRIENDS_ADD && resultCode == RESULT_OK && data != null) {
             mFriendsListPresenter.onAddContactDialog(data.getAction());
         }

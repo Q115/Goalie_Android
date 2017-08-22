@@ -13,6 +13,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
@@ -87,8 +88,8 @@ public class RESTGetPhoto {
                     }
                 }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("Username", mUsername);
                 return mHeaders;

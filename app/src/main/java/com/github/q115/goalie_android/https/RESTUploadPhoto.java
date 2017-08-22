@@ -15,6 +15,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
@@ -82,8 +83,8 @@ public class RESTUploadPhoto {
                     }
                 }) {
             @Override
-            public ArrayMap<String, String> getHeaders() {
-                ArrayMap<String, String> mHeaders = new ArrayMap<>();
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("username", mUsername);
                 mHeaders.put("Content-Type", "multipart/form-data;boundary=" + mBoundary);
                 return mHeaders;

@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.modelsTest;
 
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 
 import org.junit.Test;
@@ -24,8 +25,8 @@ public class UserTest {
         assertEquals(100, user1.reputation);
         assertEquals(0, user1.lastPhotoModifiedTime);
         assertEquals(null, user1.profileBitmapImage);
-        assertEquals(null, user1.activieGoals);
-        assertEquals(null, user1.finishedGoals);
+        assertEquals(0, user1.activieGoals.size());
+        assertEquals(0, user1.finishedGoals.size());
 
         User user2 = new User("username");
         userTest = new User();
@@ -46,5 +47,19 @@ public class UserTest {
         userTest.bio = "bio";
         userTest.lastPhotoModifiedTime = 999;
         assertTrue(TestUtil.isUserEqual(user4, userTest));
+    }
+
+    @Test
+    public void addGoals() throws Exception {
+        User user1 = new User();
+        assertEquals(0, user1.activieGoals.size());
+        user1.addActivitGoal(new Goal());
+        user1.addActivitGoal(new Goal());
+        assertEquals(2, user1.activieGoals.size());
+
+        assertEquals(0, user1.finishedGoals.size());
+        user1.addCompleteGoal(new Goal());
+        user1.addCompleteGoal(new Goal());
+        assertEquals(2, user1.finishedGoals.size());
     }
 }

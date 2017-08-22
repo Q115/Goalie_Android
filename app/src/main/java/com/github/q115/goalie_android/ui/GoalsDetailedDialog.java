@@ -211,7 +211,7 @@ public class GoalsDetailedDialog extends DialogFragment {
         progress.setMessage(getString(R.string.connecting));
         progress.show();
 
-        RESTRemind sm = new RESTRemind(UserHelper.getInstance().getOwnerProfile().username, mReferee, isToReferee, mGuid);
+        RESTRemind sm = new RESTRemind(UserHelper.getInstance().getOwnerProfile().username, mReferee, mGuid);
         sm.setListener(new RESTRemind.Listener() {
             @Override
             public void onSuccess() {
@@ -237,7 +237,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 UserHelper.getInstance().deleteGoal(guid);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(Constants.DELETED));
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(Constants.RESULT_DELETED));
                 dismiss();
             }
         });

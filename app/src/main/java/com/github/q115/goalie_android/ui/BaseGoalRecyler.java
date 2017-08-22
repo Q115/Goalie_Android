@@ -2,6 +2,7 @@ package com.github.q115.goalie_android.ui;
 
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+
+import static android.R.color.tab_indicator_text;
 
 /**
  * Created by Qi on 8/4/2017.
@@ -87,15 +90,19 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         switch (goal.goalCompleteResult) {
             case Pending:
                 viewHolder.mStatusTxt.setText(R.string.status_pending);
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, tab_indicator_text));
                 break;
             case Ongoing:
                 viewHolder.mStatusTxt.setText(R.string.status_ongoing);
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, tab_indicator_text));
                 break;
             case Failed:
                 viewHolder.mStatusTxt.setText(R.string.status_failed);
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.red));
                 break;
             case Success:
                 viewHolder.mStatusTxt.setText(R.string.status_successful);
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.green));
                 break;
             default:
                 viewHolder.mStatusTxt.setText("");

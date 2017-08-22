@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import test_util.TestUtil;
 
+import static com.github.q115.goalie_android.models.Goal.GoalCompleteResult.Failed;
 import static com.github.q115.goalie_android.models.Goal.GoalCompleteResult.Success;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,5 +41,11 @@ public class GoalTest {
         goalTest.encouragement = "encouragement";
         goalTest.goalCompleteResult = Success;
         assertTrue(TestUtil.isGoalEqual(goal2, goalTest));
+
+        Goal goal3 = new Goal("newguid", Failed);
+        goalTest = new Goal();
+        goalTest.guid = "newguid";
+        goalTest.goalCompleteResult = Failed;
+        assertTrue(TestUtil.isGoalEqual(goal3, goalTest));
     }
 }

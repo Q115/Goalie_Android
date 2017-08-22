@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.GoalFeed;
+import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
 import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
@@ -27,7 +28,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MainActivityView {
+public class MainActivity extends AppCompatActivity implements MainActivityView, MessagingService.MessagingServiceListener {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -84,9 +85,21 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MessagingService.setMessagingServiceListener("Main", this);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         mPresenter.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        MessagingService.setMessagingServiceListener("Main", null);
+        super.onDestroy();
     }
 
     @Override
@@ -154,6 +167,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
     public void attachFeedsPresenter(FeedsPresenter feedsPresenter) {
         mFeedsPresenter = feedsPresenter;
+    }
+
+    @Override
+    public void onNotification() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                reloadAll();
+            }
+        });
     }
 
     // Create 3 fragments

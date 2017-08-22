@@ -25,7 +25,7 @@ public class UserHelper {
         return mAllContacts;
     }
 
-    private ArrayList<Goal> mRequests;
+    private ArrayList<Goal> mRequests; //TODO consider a hashmap for faster access
 
     public ArrayList<Goal> getRequests() {
         return mRequests;
@@ -110,8 +110,8 @@ public class UserHelper {
 
                 oldUser.save();
             } else {
-                user.save();
                 mAllContacts.put(user.username, user);
+                user.save();
             }
             return true;
         } catch (Exception ex) {
@@ -122,8 +122,8 @@ public class UserHelper {
 
     public boolean deleteUser(String username) {
         try {
-            SQLite.delete().from(User.class).where(User_Table.username.eq(username)).execute();
             getAllContacts().remove(username);
+            SQLite.delete().from(User.class).where(User_Table.username.eq(username)).execute();
             ImageHelper.getInstance().deleteImageFromPrivateStorage(username, ImageType.PNG);
 
             return true;
@@ -135,7 +135,6 @@ public class UserHelper {
 
     public boolean addGoal(Goal goal) {
         try {
-            goal.save();
             if (!goal.createdByUsername.equals(mOwnerProfile.username)) {
                 mRequests.add(goal);
             } else {
@@ -144,6 +143,7 @@ public class UserHelper {
                 else
                     mOwnerProfile.addCompleteGoal(goal);
             }
+            goal.save();
 
             return true;
         } catch (Exception ex) {
@@ -154,8 +154,6 @@ public class UserHelper {
 
     public boolean deleteGoal(String guid) {
         try {
-            SQLite.delete().from(Goal.class).where(Goal_Table.guid.eq(guid)).execute();
-
             for (int i = 0; i < mOwnerProfile.activieGoals.size(); i++) {
                 Goal goal = mOwnerProfile.activieGoals.get(i);
                 if (goal.guid.equals(guid)) {
@@ -164,6 +162,7 @@ public class UserHelper {
                 }
             }
 
+            SQLite.delete().from(Goal.class).where(Goal_Table.guid.eq(guid)).execute();
             return true;
         } catch (Exception ex) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());

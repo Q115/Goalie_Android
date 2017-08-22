@@ -47,6 +47,7 @@ public class FeedsFragment extends Fragment implements View.OnTouchListener, Fee
         View rootView = inflater.inflate(R.layout.fragment_tab_feeds, container, false);
         mFeedsList = rootView.findViewById(R.id.feed_list);
         mFeedsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mFeedsList.setHasFixedSize(true);
         mFeedsList.setAdapter(new FeedsRecycler(getActivity()));
 
         mProgressDialog = new ProgressDialog(getActivity());

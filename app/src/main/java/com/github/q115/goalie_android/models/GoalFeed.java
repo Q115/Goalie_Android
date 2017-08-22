@@ -36,7 +36,7 @@ public class GoalFeed extends BaseModel {
         wager = 0;
         goalCompleteResult = Goal.GoalCompleteResult.None;
         createdUsername = "";
-        upvoteCount = 0;
+        upvoteCount = 1;
         hasVoted = false;
     }
 

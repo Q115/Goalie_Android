@@ -2,6 +2,7 @@ package test_util;
 
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -9,6 +10,10 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.List;
 
 public class TestUtil {
+    public static String getValidUsername() {
+        return "device";
+    }
+
     public static boolean isGoalEqual(Goal goalA, Goal goalB) {
         boolean isEqual;
         isEqual = goalA.guid.equals(goalB.guid);
@@ -46,12 +51,37 @@ public class TestUtil {
         return isEqual;
     }
 
+    public static boolean isGoalFeedEqual(GoalFeed feedA, GoalFeed feedB) {
+        boolean isEqual;
+        isEqual = feedA.guid.equals(feedB.guid);
+        isEqual &= feedA.createdUsername.equals(feedB.createdUsername);
+        isEqual &= feedA.goalCompleteResult == feedB.goalCompleteResult;
+        isEqual &= feedA.wager == feedB.wager;
+        isEqual &= feedA.hasVoted == feedB.hasVoted;
+        isEqual &= feedA.upvoteCount == feedB.upvoteCount;
+
+        return isEqual;
+    }
+
     public static void ReadDatabase() {
         try {
             List<User> users = SQLite.select().from(User.class).queryList();
             //populate contacts
             for (User user : users) {
                 UserHelper.getInstance().getAllContacts().put(user.username, user);
+            }
+
+            //populate goals
+            List<Goal> goals = SQLite.select().from(Goal.class).queryList();
+            for (Goal goal : goals) {
+                if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+                    UserHelper.getInstance().getRequests().add(goal);
+                } else if (UserHelper.getInstance().getAllContacts().get(goal.createdByUsername) != null) {
+                    if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
+                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addActivitGoal(goal);
+                    else
+                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addCompleteGoal(goal);
+                }
             }
         } catch (OutOfMemoryError outOfMemoryException) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.MainApplication, "Too many entries: " + outOfMemoryException.toString());
