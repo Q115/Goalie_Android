@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +28,6 @@ import android.widget.Toast;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.utils.ImageHelper;
@@ -36,14 +36,25 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-/**
- * Created by Qi on 8/4/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public class ProfileFragment extends Fragment implements ProfileView, MessagingService.MessagingServiceListener {
@@ -165,7 +176,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
                         .setFixAspectRatio(true)
                         .start(getActivity(), this);
             } else if (resultCode != RESULT_CANCELED) {
-                Toast.makeText(getActivity(), getString(R.string.image_selection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.image_taking_error), Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -188,7 +199,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
         }
     }
 
-    public void changePhoto() {
+    private void changePhoto() {
         if (requestCameraPermission() && requestStoragePermission()) {
             AlertDialog.Builder getImageFrom = new AlertDialog.Builder(getActivity());
             getImageFrom.setTitle("Change photo:");
@@ -200,7 +211,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public DialogInterface.OnClickListener changePhotoActionSelected() {
+    private DialogInterface.OnClickListener changePhotoActionSelected() {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -258,7 +269,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.REQUEST_PERMISSIONS_STORAGE:
             case Constants.REQUEST_PERMISSIONS_CAMERA:

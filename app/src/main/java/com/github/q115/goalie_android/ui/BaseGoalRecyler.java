@@ -23,19 +23,31 @@ import java.util.Locale;
 
 import static android.R.color.tab_indicator_text;
 
-/**
- * Created by Qi on 8/4/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
     public class BaseGoalsHolder extends RecyclerView.ViewHolder {
-        public TextView mTitleTxt;
-        public TextView mEndDateTxt;
-        public TextView mStartDateTxt;
-        public TextView mWagerTxt;
-        public TextView mEncouragementTxt;
-        public TextView mStatusTxt;
-        public TextView mRefereeTxt;
+        public final TextView mTitleTxt;
+        public final TextView mEndDateTxt;
+        public final TextView mStartDateTxt;
+        public final TextView mWagerTxt;
+        public final TextView mEncouragementTxt;
+        public final TextView mStatusTxt;
+        public final TextView mRefereeTxt;
 
         public BaseGoalsHolder(View itemView) {
             super(itemView);
@@ -55,11 +67,11 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
     private DateFormat mDF;
     private boolean isRequest;
 
-    public BaseGoalRecyler(FragmentActivity context, boolean isRequest) {
+    protected BaseGoalRecyler(FragmentActivity context, boolean isRequest) {
         this.mContext = context;
         this.isRequest = isRequest;
         this.mGoalList = new ArrayList<>();
-        mDF = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
+        this.mDF = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
 
         if (mImages == null)
             mImages = new HashMap<>();

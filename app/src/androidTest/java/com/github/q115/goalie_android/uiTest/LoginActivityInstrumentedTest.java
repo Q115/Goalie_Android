@@ -1,17 +1,21 @@
 package com.github.q115.goalie_android.uiTest;
 
+import android.content.pm.ActivityInfo;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.login.LoginActivity;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.UUID;
+
+import test_util.TestUtil;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -23,8 +27,20 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.IsNot.not;
 
-/**
- * Created by Qi on 8/6/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityInstrumentedTest {
@@ -75,25 +91,28 @@ public class LoginActivityInstrumentedTest {
     }
 
     @Test
-    public void validUsername() throws Exception {
-        // pings server
-        onView(withId(R.id.username)).perform(clearText(), typeText(UUID.randomUUID().toString()));
-        onView(withId(R.id.btn_register)).perform(click());
-    }
-
-    @Test
     public void invalidServerUsername() throws Exception {
-        String username = UUID.randomUUID().toString();
-        onView(withId(R.id.username)).perform(clearText(), typeText(username));
+        onView(withId(R.id.username)).perform(clearText(), typeText(TestUtil.getValidUsername()));
         onView(withId(R.id.btn_register)).perform(click());
-
-        onView(withId(R.id.username)).perform(clearText(), typeText(username));
-        onView(withId(R.id.btn_register)).perform(click());
-        onView(withId(R.id.register_server_response)).check(matches(withText("taken")));
+        onView(withId(R.id.register_server_response)).check(matches(withText("Username has been taken, please choose another.")));
     }
 
     @Test
     public void rotate() throws Exception {
-        // Todo
+        onView(withId(R.id.username)).perform(clearText(), typeText(""));
+        onView(withId(R.id.username)).check(matches(withText("")));
+        onView(withId(R.id.username)).perform(clearText(), typeText(TestUtil.getValidUsername()));
+        mLoginActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        Thread.sleep(500);
+        onView(withId(R.id.username)).check(matches(withText(TestUtil.getValidUsername())));
+        mLoginActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Thread.sleep(500);
+    }
+
+    @AfterClass
+    public static void validUsername() throws Exception {
+        // pings server
+        onView(withId(R.id.username)).perform(clearText(), typeText(UUID.randomUUID().toString()));
+        onView(withId(R.id.btn_register)).perform(click());
     }
 }

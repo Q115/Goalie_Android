@@ -14,18 +14,30 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 public class UserHelper {
-    /// <summary>
-    /// username -> User
-    /// </summary>
+    // username -> User
     private SortedMap<String, User> mAllContacts;
 
     public SortedMap<String, User> getAllContacts() {
         return mAllContacts;
     }
 
-    private ArrayList<Goal> mRequests; //TODO consider a hashmap for faster access
+    private ArrayList<Goal> mRequests;
 
     public ArrayList<Goal> getRequests() {
         return mRequests;
@@ -41,9 +53,7 @@ public class UserHelper {
         mFeeds = feeds;
     }
 
-    /// <summary>
-    /// User information of device owner
-    /// </summary>
+    // User information of device owner
     private User mOwnerProfile;
 
     public User getOwnerProfile() {
@@ -79,9 +89,7 @@ public class UserHelper {
         mFeeds = new ArrayList<>();
     }
 
-    /// <summary>
-    /// Populate Friends and PendingFriends list from mAllContacts, and also download image if needed
-    /// </summary>
+    // Load profile image of friends from storage
     public void LoadContacts() {
         for (User value : mAllContacts.values()) {
             // TODO: load on demand vs all at once & load async
@@ -94,9 +102,7 @@ public class UserHelper {
         }
     }
 
-    /// <summary>
-    /// Insert/replace user into database
-    /// </summary>
+    // Insert/replace user into database
     public boolean addUser(User user) {
         try {
             if (mAllContacts.containsKey(user.username)) {
@@ -143,6 +149,7 @@ public class UserHelper {
                 else
                     mOwnerProfile.addCompleteGoal(goal);
             }
+            goal.activityDate = System.currentTimeMillis();
             goal.save();
 
             return true;
@@ -172,6 +179,7 @@ public class UserHelper {
 
     public boolean modifyGoal(Goal newGoal) {
         try {
+            newGoal.activityDate = System.currentTimeMillis();
             newGoal.update();
             return true;
         } catch (Exception ex) {

@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.https;
 
-import android.util.ArrayMap;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -28,8 +26,20 @@ import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
-/**
- * Created by Qi on 8/10/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public class RESTSync {
@@ -114,6 +124,7 @@ public class RESTSync {
                         long endDate = jsonObj.getLong("endDate");
                         long wager = jsonObj.getLong("wager");
                         String encouragement = jsonObj.getString("encouragement");
+                        long activityDate = jsonObj.getLong("activityDate");
 
                         int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
                         Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
@@ -121,7 +132,7 @@ public class RESTSync {
                             goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
 
                         Goal goal = new Goal(guid, createdUsername, title, startDate, endDate,
-                                wager, encouragement, goalCompleteResult, mUsername);
+                                wager, encouragement, goalCompleteResult, mUsername, activityDate);
                         UserHelper.getInstance().getRequests().add(goal);
 
                         if (!UserHelper.getInstance().getAllContacts().containsKey(goal.createdByUsername)) {
@@ -129,33 +140,33 @@ public class RESTSync {
                         }
                     }
 
-                    // commit time
-                    PreferenceHelper.getInstance().setLastSyncedTimeEpoch(jsonObject.getLong("time"));
-                } catch (Exception e) {
-                    Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to sync onResult");
-                }
+                    // check if activieGoals changed
+                    for (int i = 0; i < UserHelper.getInstance().getOwnerProfile().activieGoals.size(); i++) {
+                        Goal goal = UserHelper.getInstance().getOwnerProfile().activieGoals.get(i);
+                        Goal fetchedGoal = goalHash.get(goal.guid);
+                        if (fetchedGoal != null) {
+                            if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
+                                goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
+                                UserHelper.getInstance().modifyGoal(goal);
 
-                // check if activieGoals changed
-                for (int i = 0; i < UserHelper.getInstance().getOwnerProfile().activieGoals.size(); i++) {
-                    Goal goal = UserHelper.getInstance().getOwnerProfile().activieGoals.get(i);
-                    Goal fetchedGoal = goalHash.get(goal.guid);
-                    if (fetchedGoal != null) {
-                        if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
-                            goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
-                            UserHelper.getInstance().modifyGoal(goal);
+                                if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
+                                    UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
+                                    i--;
+                                    UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
 
-                            if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
-                                UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
-                                i--;
-                                UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
-
-                                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Success) {
-                                    UserHelper.getInstance().getOwnerProfile().reputation += (goal.wager * 2);
-                                    UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+                                    if (goal.goalCompleteResult == Goal.GoalCompleteResult.Success) {
+                                        UserHelper.getInstance().getOwnerProfile().reputation += (goal.wager * 2);
+                                        UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+                                    }
                                 }
                             }
                         }
                     }
+
+                    // commit time
+                    PreferenceHelper.getInstance().setLastSyncedTimeEpoch(jsonObject.getLong("time"));
+                } catch (Exception e) {
+                    Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to sync onResult");
                 }
 
                 isSyncing = false;

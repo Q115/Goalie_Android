@@ -1,4 +1,6 @@
-/**
+package com.github.q115.goalie_android.services;
+
+/*
  * Copyright 2016 Google Inc. All Rights Reserved.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.github.q115.goalie_android.services;
 
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.https.RESTRegister;
@@ -50,7 +50,7 @@ public class InstanceIDService extends FirebaseInstanceIdService {
     private void saveToken(String pushID) {
         if (pushID == null || pushID.equals(PreferenceHelper.getInstance().getPushID()) || pushID.isEmpty())
             return;
-        else if (pushID.length() < 24) {
+        else if (pushID.length() < 12) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "FAILED to obtain correct token");
             return;
         } else if (UserHelper.getInstance().getOwnerProfile() == null) {

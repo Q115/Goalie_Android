@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -23,10 +24,20 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static test_util.TestUtil.ReadDatabase;
 
-/**
- * Instrumentation test, which will execute on an Android device.
+/*
+ * Copyright 2017 Qi Li
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 @RunWith(AndroidJUnit4.class)
 public class UserHelperInstrumentedTest {
@@ -64,15 +75,21 @@ public class UserHelperInstrumentedTest {
     }
 
     @Test
-    public void userSavedIsPersisted() throws Exception {
+    public void add_deleteUserIsPersisted() throws Exception {
         User testUser = new User("username2", "bio2", 200, 9999);
         addUser(testUser);
         UserHelper.getInstance().getAllContacts().clear();
 
         ReadDatabase();
 
+        int size = UserHelper.getInstance().getAllContacts().size();
         assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
         assertTrue(TestUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
+
+        // delete user
+        UserHelper.getInstance().deleteUser(testUser.username);
+        assertTrue(UserHelper.getInstance().getAllContacts().size() < size);
+        assertNull(UserHelper.getInstance().getAllContacts().get(testUser.username));
     }
 
     @Test
@@ -103,5 +120,70 @@ public class UserHelperInstrumentedTest {
         UserHelper.getInstance().addUser(user);
         assertEquals(1, UserHelper.getInstance().getAllContacts().size());
         assertTrue(TestUtil.isUserEqual(user, UserHelper.getInstance().getAllContacts().get(user.username)));
+    }
+
+    @Test
+    public void goalTest() throws Exception {
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 0);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
+
+        Goal goal = new Goal("goal", Goal.GoalCompleteResult.Pending);
+        UserHelper.getInstance().addGoal(goal);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 1);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
+
+        Goal goal2 = new Goal("goal2", Goal.GoalCompleteResult.Ongoing);
+        UserHelper.getInstance().addGoal(goal2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
+
+        Goal goal3 = new Goal("goal3", Goal.GoalCompleteResult.Success);
+        UserHelper.getInstance().addGoal(goal3);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 1);
+
+        Goal goal4 = new Goal("goal4", Goal.GoalCompleteResult.Failed);
+        UserHelper.getInstance().addGoal(goal4);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 2);
+
+        Goal goal5 = new Goal("goal5", Goal.GoalCompleteResult.Cancelled);
+        UserHelper.getInstance().addGoal(goal5);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 3);
+
+        UserHelper.getInstance().getOwnerProfile().finishedGoals.clear();
+        UserHelper.getInstance().getOwnerProfile().activieGoals.clear();
+        UserHelper.getInstance().getAllContacts().put("", UserHelper.getInstance().getOwnerProfile());
+        ReadDatabase();
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 3);
+
+        deleteGoal(goal2);
+
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 1);
+        modifyGoal(goal4);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
+    }
+
+    private void deleteGoal(Goal goal) throws Exception {
+        int size = UserHelper.getInstance().getOwnerProfile().activieGoals.size()
+                + UserHelper.getInstance().getOwnerProfile().finishedGoals.size();
+
+        UserHelper.getInstance().deleteGoal(goal.guid);
+
+        int newSize = UserHelper.getInstance().getOwnerProfile().activieGoals.size()
+                + UserHelper.getInstance().getOwnerProfile().finishedGoals.size();
+        assertEquals(newSize, size - 1);
+    }
+
+    private void modifyGoal(Goal goal) throws Exception {
+        Goal newGoal = new Goal();
+        newGoal.guid = goal.guid;
+        goal.goalCompleteResult = Goal.GoalCompleteResult.Ongoing;
+
+        UserHelper.getInstance().modifyGoal(newGoal);
+        UserHelper.getInstance().getOwnerProfile().finishedGoals.clear();
+        ReadDatabase();
     }
 }

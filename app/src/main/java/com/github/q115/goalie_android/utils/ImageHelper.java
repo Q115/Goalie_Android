@@ -20,6 +20,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 public class ImageHelper {
     public enum ImageType {
         PNG
@@ -38,7 +53,8 @@ public class ImageHelper {
     }
 
     public void initialize(Context context) {
-        mImageDirectory = new File(context.getFilesDir() + "/images").getPath();
+        if (context != null)
+            mImageDirectory = new File(context.getFilesDir() + "/images").getPath();
     }
 
     public void saveImageToPrivateSorageSync(String imageName, Bitmap bitmapImage, ImageType imageType) {
@@ -59,9 +75,6 @@ public class ImageHelper {
         }
     }
 
-    /// <summary>
-    /// Load the image from storage by first checking if it's on local storage
-    /// </summary>
     public Bitmap loadImageFromPrivateSorageSync(String imageName, ImageType imageType) {
         if (!isImageOnPrivateStorage(imageName, imageType)) {
             return null;
@@ -77,9 +90,6 @@ public class ImageHelper {
         }
     }
 
-    /// <summary>
-    /// Delete the image on private local storage
-    /// </summary>
     public boolean deleteImageFromPrivateStorage(String imageName, ImageType imageType) {
         String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
         File file = new File(filePath);
@@ -89,35 +99,29 @@ public class ImageHelper {
             return false;
     }
 
-    /// <summary>
-    /// Check if given image is already on phone
-    /// </summary>
     public boolean isImageOnPrivateStorage(String imageName, ImageType imageType) {
         String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
         return new File(filePath).exists();
     }
 
-    /// <summary>
-    /// Path to local image directory
-    /// </summary>
-    /// <returns>/data/data/yourapp/files/images</returns>
+    // Path to local image directory
+    // <returns>/data/data/yourapp/files/images</returns>
     public String getImagePrivateStorageDirectory(String imageNameWithType) {
         return new File(mImageDirectory, imageNameWithType).getPath();
     }
 
-    /// <summary>
-    /// change bitmap to jpg byte array
-    /// </summary>
+    // change bitmap to jpg byte array
     public static byte[] bitmapToByte(Bitmap img) {
+        if (img == null)
+            return null;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.JPEG, Constants.IMAGE_JPG_QUALITY, stream);
         return stream.toByteArray();
     }
 
-    /// <summary>
-    /// Get rounded images
-    /// </summary>
     public static Drawable getRoundedCornerBitmap(Resources resources, Bitmap bitmap, float scale) {
+        if (resources == null || bitmap == null)
+            return null;
         RoundedBitmapDrawable round = RoundedBitmapDrawableFactory.create(resources, bitmap);
         round.setCornerRadius(round.getIntrinsicWidth() / scale);
         round.setAntiAlias(true);
@@ -126,6 +130,8 @@ public class ImageHelper {
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
+        if (drawable == null)
+            return null;
         Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(mutableBitmap);
         drawable.setBounds(0, 0, widthPixels, heightPixels);
@@ -142,28 +148,9 @@ public class ImageHelper {
         return (int) (px / resources.getDisplayMetrics().density);
     }
 
-    /// <summary>
-    /// Instead of loading the whole image, just a sample to avoid Out Of Memory error
-    ///     width & height in pixel
-    /// </summary>
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
 
-        // Calculate inSampleSize
-        options.inSampleSize = getInstance().calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    /// <summary>
-    /// Instead of loading the whole image, just a sample to avoid Out Of Memory error
-    ///     width & height in pixel
-    /// </summary>
+    // Instead of loading the whole image, just a sample to avoid Out Of Memory error
+    //     width & height in pixel
     public static Bitmap decodeSampledBitmapFromUri(ContentResolver contentResolver, android.net.Uri uri, int width, int height) {
         // First decode with inJustDecodeBounds=true to check dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -186,6 +173,9 @@ public class ImageHelper {
     }
 
     private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        if(options == null)
+            return 1;
+
         // Raw height and width of image
         int height = options.outHeight;
         int width = options.outWidth;
@@ -206,9 +196,7 @@ public class ImageHelper {
         return inSampleSize;
     }
 
-    /// <summary>
-    /// String represenation of this image file extendsion. ie: .png
-    /// </summary>
+    // String represenation of this image file extension. ie: .png
     private String imageTypeToExtension(ImageType imageType) {
         switch (imageType) {
             case PNG:

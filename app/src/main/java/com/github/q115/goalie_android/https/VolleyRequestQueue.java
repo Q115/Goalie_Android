@@ -12,7 +12,7 @@ import com.android.volley.toolbox.Volley;
 public class VolleyRequestQueue {
     // warnimg ignored because this class is only created using the application context
     private static VolleyRequestQueue mInstance;
-    public static Context mContext;
+    private static Context mContext;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
 
@@ -50,7 +50,7 @@ public class VolleyRequestQueue {
     }
 
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.

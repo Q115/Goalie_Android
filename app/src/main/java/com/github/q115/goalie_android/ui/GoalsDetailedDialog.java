@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -24,8 +25,20 @@ import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
-/**
- * Created by Qi on 8/13/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public class GoalsDetailedDialog extends DialogFragment {
@@ -40,14 +53,13 @@ public class GoalsDetailedDialog extends DialogFragment {
     private String mGuid;
     private Bitmap mProfileImage;
 
-    /// <summary>
-    /// default constructor. Needed so rotation doesn't crash
-    /// </summary>
+    // default constructor. Needed so rotation doesn't crash
     public GoalsDetailedDialog() {
         super();
     }
 
     @NonNull
+    @SuppressLint("InflateParams")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -98,9 +110,6 @@ public class GoalsDetailedDialog extends DialogFragment {
         super.onSaveInstanceState(outState);
     }
 
-    /// <summary>
-    /// Set click events and set max length of editview.
-    /// </summary>
     @Override
     public void onStart() {
         super.onStart();
@@ -125,7 +134,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             getDialog().findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    remindClicked(isMyGoal);
+                    remindClicked();
                 }
             });
 
@@ -159,7 +168,7 @@ public class GoalsDetailedDialog extends DialogFragment {
                 getDialog().findViewById(R.id.btn_3).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        remindClicked(!isMyGoal);
+                        remindClicked();
                     }
                 });
             } else {
@@ -182,7 +191,7 @@ public class GoalsDetailedDialog extends DialogFragment {
         }
     }
 
-    public void actionPicked(Goal.GoalCompleteResult goalCompleteResult) {
+    private void actionPicked(Goal.GoalCompleteResult goalCompleteResult) {
         final ProgressDialog progress = new ProgressDialog(getActivity());
         progress.setMessage(getString(R.string.connecting));
         progress.show();
@@ -193,7 +202,9 @@ public class GoalsDetailedDialog extends DialogFragment {
             @Override
             public void onSuccess() {
                 progress.cancel();
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(goalCompleteResultInt));
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultInt);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
                 dismiss();
             }
 
@@ -206,7 +217,7 @@ public class GoalsDetailedDialog extends DialogFragment {
         sm.execute();
     }
 
-    public void remindClicked(boolean isToReferee) {
+    private void remindClicked() {
         final ProgressDialog progress = new ProgressDialog(getActivity());
         progress.setMessage(getString(R.string.connecting));
         progress.show();
@@ -216,7 +227,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             @Override
             public void onSuccess() {
                 progress.cancel();
-                Toast.makeText(getDialog().getContext(), "Successfully sent a reminder to " + mReferee, Toast.LENGTH_LONG).show();
+                Toast.makeText(getDialog().getContext(), String.format(getString(R.string.remind_sent), mReferee), Toast.LENGTH_LONG).show();
                 dismiss();
             }
 
@@ -229,7 +240,7 @@ public class GoalsDetailedDialog extends DialogFragment {
         sm.execute();
     }
 
-    public void delete(final String guid) {
+    private void delete(final String guid) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle(getString(R.string.are_you_sure));
         alertDialog.setMessage(getString(R.string.no_refund));
@@ -237,7 +248,9 @@ public class GoalsDetailedDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 UserHelper.getInstance().deleteGoal(guid);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(Constants.RESULT_DELETED));
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("goalCompleteResultInt", String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal()));
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
                 dismiss();
             }
         });

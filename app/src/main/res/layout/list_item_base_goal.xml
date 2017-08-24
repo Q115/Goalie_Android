@@ -27,8 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         tool:text="start: August 11, 2017" />
-
-
+    
     <TextView
         android:id="@+id/goal_wager"
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.requests;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,23 @@ import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.GoalsDetailedDialog;
 import com.github.q115.goalie_android.ui.MainActivity;
 
+import static android.app.Activity.RESULT_OK;
+
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 public class RequestsFragment extends Fragment implements View.OnTouchListener, RequestsView {
     private RequestsPresenter mRequestsPresenter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -119,6 +137,30 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
         detailedDialog.setArguments(bundle);
         detailedDialog.setTargetFragment(this, Constants.RESULT_MY_GOAL_DIALOG);
         detailedDialog.show(getActivity().getSupportFragmentManager(), "GoalsDetailedDialog");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constants.RESULT_MY_GOAL_DIALOG && resultCode == RESULT_OK && data != null) {
+            int goalInt = Integer.parseInt(data.getStringExtra("goalCompleteResultInt"));
+            switch (Goal.GoalCompleteResult.values()[goalInt]) {
+                case Ongoing:
+                    Toast.makeText(getActivity(), getString(R.string.accepte_toast), Toast.LENGTH_SHORT).show();
+                    break;
+                case Success:
+                    Toast.makeText(getActivity(), getString(R.string.complete_toast), Toast.LENGTH_SHORT).show();
+                    break;
+                case Failed:
+                    Toast.makeText(getActivity(), getString(R.string.failed_toast), Toast.LENGTH_SHORT).show();
+                    break;
+                case Cancelled:
+                    Toast.makeText(getActivity(), getString(R.string.delete_toast), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            reload();
+        }
     }
 
     @Override

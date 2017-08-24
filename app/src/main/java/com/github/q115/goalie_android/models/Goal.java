@@ -6,6 +6,21 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 @Table(database = MainDB.class)
 public class Goal extends BaseModel {
     public enum GoalCompleteResult {
@@ -40,6 +55,9 @@ public class Goal extends BaseModel {
     @Column
     public String createdByUsername;
 
+    @Column
+    public long activityDate;
+
     public Goal() {
         guid = "";
         title = "";
@@ -50,6 +68,7 @@ public class Goal extends BaseModel {
         goalCompleteResult = GoalCompleteResult.None;
         referee = "";
         createdByUsername = "";
+        activityDate = System.currentTimeMillis();
     }
 
     public Goal(String guid, GoalCompleteResult goalCompleteResult) {
@@ -59,7 +78,7 @@ public class Goal extends BaseModel {
     }
 
     public Goal(String guid, String createdByUsername, String title, long startDate, long endDate,
-                long wager, String encouragement, GoalCompleteResult goalCompleteResult, String referee) {
+                long wager, String encouragement, GoalCompleteResult goalCompleteResult, String referee, long activityDate) {
         this();
         this.guid = guid;
         this.createdByUsername = createdByUsername;
@@ -70,5 +89,6 @@ public class Goal extends BaseModel {
         this.encouragement = encouragement;
         this.goalCompleteResult = goalCompleteResult;
         this.referee = referee;
+        this.activityDate = activityDate;
     }
 }

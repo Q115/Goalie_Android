@@ -27,9 +27,25 @@ import com.github.q115.goalie_android.ui.MainActivity;
 import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalActivity;
 import com.github.q115.goalie_android.ui.my_goals.popular_goal.PopularGoalActivity;
 
+import static android.app.Activity.RESULT_OK;
 import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
 import static com.github.q115.goalie_android.Constants.RESULT_MY_GOAL_DIALOG;
 
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 public class MyGoalsFragment extends Fragment implements View.OnTouchListener, MyGoalsView {
     private FloatingActionButton mFAB;
     private LinearLayout mFABMenu1;
@@ -59,7 +75,6 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_my_goals, container, false);
-        View.OnClickListener toggleFABClickListener = toggleFABClickListener();
 
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -77,13 +92,19 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         mGoalList.setHasFixedSize(true);
         mGoalList.setAdapter(new MyGoalsRecycler(getActivity(), mMyGoalsPresenter));
         mEmptyMsg = rootView.findViewById(R.id.empty);
+        mEmptyMsg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMyGoalsPresenter.closeFABMenu();
+            }
+        });
         showEmptyWhenNecessary();
 
         mFABMenu1 = rootView.findViewById(R.id.fab_menu1);
         mFABMenu1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMyGoalsPresenter.toggleFAB();
+                mMyGoalsPresenter.closeFABMenu();
                 startActivityForResult(NewGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
             }
         });
@@ -93,14 +114,19 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         mFABMenu2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMyGoalsPresenter.toggleFAB();
+                mMyGoalsPresenter.closeFABMenu();
                 startActivityForResult(PopularGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
             }
         });
         mFABMenu2.setVisibility(View.GONE);
 
         mFAB = rootView.findViewById(R.id.fab_new_goal);
-        mFAB.setOnClickListener(toggleFABClickListener);
+        mFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMyGoalsPresenter.toggleFAB();
+            }
+        });
 
         if (mMyGoalsPresenter != null)
             ((MainActivity) getActivity()).attachMyGoalsPresenter(mMyGoalsPresenter);
@@ -124,22 +150,15 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_GOAL_SET) {
             reload();
-        } else if (requestCode == RESULT_MY_GOAL_DIALOG) {
-            if (data.getAction().equals(Constants.RESULT_DELETED)) {
-                Toast.makeText(getActivity(), getString(R.string.deleted), Toast.LENGTH_SHORT).show();
-                reload();
-            } else
-                reload();
-        }
-    }
-
-    private View.OnClickListener toggleFABClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMyGoalsPresenter.toggleFAB();
+        } else if (requestCode == RESULT_MY_GOAL_DIALOG && resultCode == RESULT_OK && data != null) {
+            int goalInt = Integer.parseInt(data.getStringExtra("goalCompleteResultInt"));
+            switch (Goal.GoalCompleteResult.values()[goalInt]) {
+                case Cancelled:
+                    Toast.makeText(getActivity(), getString(R.string.delete_toast), Toast.LENGTH_SHORT).show();
+                    break;
             }
-        };
+            reload();
+        }
     }
 
     @Override

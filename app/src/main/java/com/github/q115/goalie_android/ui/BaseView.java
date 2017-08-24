@@ -17,7 +17,5 @@
 package com.github.q115.goalie_android.ui;
 
 public interface BaseView<T> {
-
     void setPresenter(T presenter);
-
 }

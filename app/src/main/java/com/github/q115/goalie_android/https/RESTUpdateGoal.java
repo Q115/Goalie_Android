@@ -21,8 +21,20 @@ import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
-/**
- * Created by Qi on 8/13/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public class RESTUpdateGoal {
@@ -58,6 +70,7 @@ public class RESTUpdateGoal {
                     ArrayList<Goal> list = UserHelper.getInstance().getRequests();
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).guid.equals(mGuid)) {
+                            list.get(i).activityDate = System.currentTimeMillis();
                             list.remove(i);
                             break;
                         }
@@ -67,6 +80,7 @@ public class RESTUpdateGoal {
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).guid.equals(mGuid)) {
                             list.get(i).goalCompleteResult = mGoalCompleteResult;
+                            list.get(i).activityDate = System.currentTimeMillis();
                             break;
                         }
                     }

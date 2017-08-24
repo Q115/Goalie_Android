@@ -37,18 +37,18 @@ import java.util.TimeZone;
 public class SublimePickerDialog extends DialogFragment {
     // Date & Time formatter used for formatting
     // text on the switcher button
-    DateFormat mDateFormatter, mTimeFormatter;
+    private DateFormat mDateFormatter, mTimeFormatter;
 
     // Picker
-    SublimePicker mSublimePicker;
+    private SublimePicker mSublimePicker;
 
     // Callback to activity
-    Callback mCallback;
+    private Callback mCallback;
 
     // identify which picker
-    int viewID;
+    private int viewID;
 
-    SublimeListenerAdapter mListener = new SublimeListenerAdapter() {
+    private SublimeListenerAdapter mListener = new SublimeListenerAdapter() {
         @Override
         public void onCancelled() {
             if (mCallback != null) {

@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -25,21 +26,32 @@ import com.github.q115.goalie_android.https.RESTUpdateUserInfo;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
-/**
- * Created by Qi on 11/16/2016.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public class UpdateProfileDialog extends DialogFragment {
     private String mBio;
 
-    /// <summary>
-    /// default constructor. Needed so rotation doesn't crash
-    /// </summary>
+    // default constructor. Needed so rotation doesn't crash
     public UpdateProfileDialog() {
         super();
     }
 
     @NonNull
+    @SuppressLint("InflateParams")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -58,9 +70,7 @@ public class UpdateProfileDialog extends DialogFragment {
         return builder.create();
     }
 
-    /// <summary>
-    /// show keyboard
-    /// </summary>
+    // show keyboard
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -76,9 +86,6 @@ public class UpdateProfileDialog extends DialogFragment {
         super.onSaveInstanceState(outState);
     }
 
-    /// <summary>
-    /// Set click events and set max length of editview.
-    /// </summary>
     @Override
     public void onStart() {
         super.onStart();
@@ -126,10 +133,7 @@ public class UpdateProfileDialog extends DialogFragment {
         };
     }
 
-    /// <summary>
-    /// Call http endpoint
-    /// </summary>
-    public void update() {
+    private void update() {
         final String newBio = ((EditText) getDialog().findViewById(R.id.profile_bio)).getText().toString().trim();
 
         //check if anything changed before pinging the server

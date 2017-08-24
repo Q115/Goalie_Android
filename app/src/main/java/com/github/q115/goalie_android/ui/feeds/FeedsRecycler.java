@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.feeds;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.FragmentActivity;
@@ -27,8 +28,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-/**
- * Created by Qi on 8/4/2017.
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 public class FeedsRecycler extends RecyclerView.Adapter {
@@ -50,11 +63,15 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     private FragmentActivity mContext;
     private ArrayList<GoalFeed> mGoalFeedList;
     private static HashSet<String> mHasVoted; // doesn't persist over restart.
-    protected static HashMap<String, Bitmap> mImages;
+    private static HashMap<String, Bitmap> mImages;
+    private ProgressDialog mProgressDialog;
 
     public FeedsRecycler(FragmentActivity context) {
         this.mContext = context;
         mGoalFeedList = UserHelper.getInstance().getFeeds();
+        mProgressDialog = new ProgressDialog(this.mContext);
+        mProgressDialog.setMessage(this.mContext.getString(R.string.connecting));
+        mProgressDialog.setCancelable(false);
 
         if (mHasVoted == null)
             mHasVoted = new HashSet<>();
@@ -112,10 +129,12 @@ public class FeedsRecycler extends RecyclerView.Adapter {
             viewHolder.mGoalFeedAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mProgressDialog.show();
                     RESTUpvote sm = new RESTUpvote(UserHelper.getInstance().getOwnerProfile().username, feed.guid);
                     sm.setListener(new RESTUpvote.Listener() {
                         @Override
                         public void onSuccess() {
+                            mProgressDialog.cancel();
                             feed.upvoteCount++;
                             feed.hasVoted = true;
                             mHasVoted.add(feed.guid);
@@ -124,6 +143,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
 
                         @Override
                         public void onFailure(String errMsg) {
+                            mProgressDialog.cancel();
                             Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
                         }
                     });

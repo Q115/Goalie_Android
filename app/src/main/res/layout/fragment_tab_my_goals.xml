@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
     <TextView
         android:id="@+id/empty"
         android:layout_width="match_parent"
@@ -28,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="72dp"
         android:layout_marginEnd="10dp"
         android:clipToPadding="false"
         android:orientation="horizontal"
@@ -42,9 +43,10 @@
             android:text="@string/fab_new" />
 
         <android.support.design.widget.FloatingActionButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:scaleType="center"
+            app:fabSize="mini"
             app:srcCompat="@drawable/ic_fab_new" />
     </LinearLayout>
 
@@ -53,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="72dp"
         android:layout_marginEnd="10dp"
         android:clipToPadding="false"
         android:orientation="horizontal"
@@ -67,19 +69,21 @@
             android:text="@string/fab_popular" />
 
         <android.support.design.widget.FloatingActionButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@drawable/ic_fab_popular" />
+            android:src="@drawable/ic_fab_popular"
+            app:fabSize="mini" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_goal"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="72dp"
         android:layout_marginEnd="16dp"
         android:scaleType="center"
-        android:src="@drawable/ic_fab_add" />
+        android:src="@drawable/ic_fab_add"
+        app:fabSize="normal" />
 </FrameLayout>

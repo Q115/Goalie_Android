@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2016 Google Inc. All Rights Reserved.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessagingService extends FirebaseMessagingService {
-    private static HashMap<String, MessagingServiceListener> messagingServiceListener = new HashMap<>();
+    private static HashMap<String, MessagingServiceListener> MSGListener = new HashMap<>();
 
     public interface MessagingServiceListener {
         void onNotification();
@@ -51,9 +51,9 @@ public class MessagingService extends FirebaseMessagingService {
 
     public static void setMessagingServiceListener(String id, MessagingServiceListener messagingServiceListener) {
         if (messagingServiceListener != null)
-            MessagingService.messagingServiceListener.put(id, messagingServiceListener);
+            MSGListener.put(id, messagingServiceListener);
         else
-            MessagingService.messagingServiceListener.remove(id);
+            MSGListener.remove(id);
     }
 
     /**
@@ -73,22 +73,27 @@ public class MessagingService extends FirebaseMessagingService {
                 String key = payloadJson.getString("key");
                 String message = payloadJson.getString("message");
                 String guid = payloadJson.getString("guid");
+                long time = payloadJson.getLong("time");
+
+                // no need to publish a notification
+                if (RESTSync.isSyncing() || time < PreferenceHelper.getInstance().getLastSyncedTimeEpoch()) {
+                    return;
+                }
 
                 switch (key) {
                     case "remind":
-                        showNotification(getString(R.string.notification_title), message);
+                        showNotification(getString(R.string.notification_remind), message);
                         break;
                     case "response":
+                        sync();
+                        showNotification(getString(R.string.notification_response), message);
+                        break;
                     case "request":
-                        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
-                        sm.setListener(null);
-                        sm.execute();
-                        showNotification(getString(R.string.notification_title), message);
-
-                        for (MessagingServiceListener msgServiceListener : messagingServiceListener.values())
-                            msgServiceListener.onNotification();
+                        sync();
+                        showNotification(getString(R.string.notification_request), message);
                         break;
                     default:
+                        showNotification(getString(R.string.notification_title), message);
                         break;
                 }
             } catch (JSONException je) {
@@ -105,15 +110,13 @@ public class MessagingService extends FirebaseMessagingService {
 
         Bitmap largeNotificationImage = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.app_name))
                 .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(description)
-                .setDefaults(Notification.DEFAULT_LIGHTS)
-                .setVibrate(null)
-                .setSound(null)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setLargeIcon(largeNotificationImage)
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setSmallIcon(R.drawable.ic_logo);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
@@ -125,5 +128,22 @@ public class MessagingService extends FirebaseMessagingService {
         // Get the notification manager & publish the notification
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(Constants.ID_NOTIFICATION_BROADCAST, notification);
+    }
+
+    private void sync() {
+        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+        sm.setListener(new RESTSync.Listener() {
+            @Override
+            public void onSuccess() {
+                for (MessagingServiceListener msgServiceListener : MSGListener.values())
+                    msgServiceListener.onNotification();
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                // intentionally left blank
+            }
+        });
+        sm.execute();
     }
 }

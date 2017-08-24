@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Goalie</string>
+    <string name="cleaned">Successfully reduced space</string>
 
     <!-- Menu -->
     <string name="action_profile">Profile</string>
@@ -13,9 +14,9 @@
     <string name="tab_feeds">Feeds</string>
 
     <!-- Feed -->
-    <string name="feed_title" formatted="false">%s a goal worth %d reputation</string>
+    <string name="feed_title">%1$s a goal worth %2$d reputation</string>
     <string name="goodluck">Good Luck!</string>
-    <string name="congrats">Congrats!</string>
+    <string name="congrats">Congratulations!</string>
     <string name="completed">Completed</string>
     <string name="started">Started</string>
 
@@ -36,22 +37,24 @@
     <string name="no_goals">No goals created yet</string>
 
     <!-- Requests -->
-    <string name="options">Options</string>
     <string name="no_requests">Not refereeing anyone at this time</string>
 
     <!-- Detail Dialog -->
     <string name="accept">Accept</string>
+    <string name="accepte_toast">Goal Accepted</string>
     <string name="delete">Delete</string>
-    <string name="deleted">Deleted</string>
-    <string name="complete">Completed</string>
+    <string name="delete_toast">Goal Deleted</string>
+    <string name="complete_toast">Goal Marked as Successful</string>
     <string name="failed">Failed</string>
+    <string name="failed_toast">Goal Marked as Failed</string>
     <string name="remind_friend">Remind Friend</string>
     <string name="remind_referee">Remind Referee</string>
+    <string name="remind_sent">Successfully sent a reminder to %s</string>
 
     <!-- Friends -->
     <string name="friends">Friends</string>
     <string name="no_friends">No friends yet</string>
-    <string name="enter_username">Enter the username you wish to add as contact.</string>
+    <string name="enter_username">Enter the username of a friend you wish to add.</string>
     <string name="add_title">Add Friend</string>
     <string name="add">Add</string>
     <string name="adding">Adding</string>
@@ -63,7 +66,7 @@
     <!-- Login -->
     <string name="login">Login</string>
     <string name="username">Username</string>
-    <string name="username_error">Invalid Characters in Username. Must not contain \':\', \'/\', \'\\\' or space</string>
+    <string name="username_error">Invalid characters in Username. Must not contain \':\', \'/\', \'\\\' or space</string>
     <string name="username_hint">Username should be 4 or more characters.</string>
     <string name="username_taken">Username has been taken, please choose another.</string>
     <string name="register">Register</string>
@@ -80,6 +83,7 @@
     <string name="uploaded">Uploaded</string>
 
     <string name="bio_hint">Tell us about yourself</string>
+    <string name="bio_label">Enter a short bio about yourself.</string>
     <string name="update">Update</string>
     <string name="cancel">Cancel</string>
     <string name="update_title">Update Information</string>
@@ -91,10 +95,10 @@
     <string name="end_time">End Time</string>
     <string name="pick_time">Pick Time</string>
     <string name="wager">Wager</string>
-    <string name="wagered" formatted="false">%d of %d Reputation</string>
-    <string name="percent" formatted="false">%d%%</string>
+    <string name="wagered">%1$d of %2$d Reputation</string>
+    <string name="percent">%1$d%%</string>
     <string name="encouragement">Encouragement</string>
-    <string name="encouragement_hint">Say something to motiviate yourself</string>
+    <string name="encouragement_hint">(Optional) Say something to stay motivated</string>
     <string name="referee">Referee</string>
     <string name="or">or</string>
     <string name="new_referee_hint">Username of Referee</string>
@@ -108,6 +112,9 @@
 
     <!-- Notification -->
     <string name="notification_title">Goalie Notification</string>
+    <string name="notification_remind">Goalie Reminder</string>
+    <string name="notification_request">Goalie Request</string>
+    <string name="notification_response">Goalie Response</string>
 
     <!-- Popular Goal -->
     <string-array name="popular_goals">

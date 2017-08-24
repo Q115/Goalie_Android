@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
 import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;
@@ -26,8 +25,21 @@ import com.github.q115.goalie_android.ui.requests.RequestsFragment;
 import com.github.q115.goalie_android.ui.requests.RequestsPresenter;
 import com.github.q115.goalie_android.utils.UserHelper;
 
-import java.util.ArrayList;
-
+/*
+ * Copyright 2017 Qi Li
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 public class MainActivity extends AppCompatActivity implements MainActivityView, MessagingService.MessagingServiceListener {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -37,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private MainActivityPagerAdapter mSectionsPagerAdapter;
     private MainActivityPresenter mPresenter;
     private MyGoalsPresenter mMyGoalsPresenter;
     private RequestsPresenter mRequestsPresenter;
@@ -51,36 +62,36 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
         // Create the presenter
         mPresenter = new MainActivityPresenter(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
+        MainActivityPagerAdapter mSectionsPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                // intentionally left blank
             }
 
             @Override
             public void onPageSelected(int position) {
                 if (mMyGoalsPresenter != null)
                     mMyGoalsPresenter.closeFABMenu();
-                AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+                AppBarLayout appBarLayout = findViewById(R.id.appbar);
                 appBarLayout.setExpanded(true, true);
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                // intentionally left blank
             }
         });
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -132,11 +143,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
     @Override
     public void onBackPressed() {
-        if (!mMyGoalsPresenter.isFABOpen()) {
+        if (mMyGoalsPresenter == null || !mMyGoalsPresenter.isFABOpen()) {
             super.onBackPressed();
         } else {
             mMyGoalsPresenter.closeFABMenu();
-            reloadAll();
         }
     }
 
@@ -181,6 +191,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
     // Create 3 fragments
     private class MainActivityPagerAdapter extends FragmentPagerAdapter {
+        private final String[] mTitles = {getString(R.string.tab_feeds),
+                getString(R.string.tab_my_goal),
+                getString(R.string.tab_requests)};
+
         public MainActivityPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -206,19 +220,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
         @Override
         public int getCount() {
-            return 3;
+            return mTitles.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.tab_feeds);
-                case 1:
-                    return getString(R.string.tab_my_goal);
-                case 2:
-                    return getString(R.string.tab_requests);
-            }
+            if (position < mTitles.length)
+                return mTitles[position];
             return null;
         }
     }

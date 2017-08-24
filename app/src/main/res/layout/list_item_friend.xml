@@ -7,11 +7,11 @@
     android:padding="8dp">
 
     <ImageView
-        android:contentDescription="@string/friend_profile"
         android:id="@+id/friend_image"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/friend_profile" />
 
     <TextView
         android:id="@+id/friend_name"
@@ -23,6 +23,7 @@
         android:gravity="center_vertical"
         android:textSize="20sp"
         tool:text="Chris" />
+
     <TextView
         android:id="@+id/friend_reputation"
         android:layout_width="wrap_content"

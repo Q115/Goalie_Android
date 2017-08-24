@@ -146,20 +146,6 @@
                     android:background="@drawable/bg_plus" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/encouragement" />
-
-            <EditText
-                android:id="@+id/goal_encouragement"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/encouragement_hint"
-                android:imeOptions="flagNoExtractUi"
-                android:maxLength="@integer/encouragement_length"
-                android:maxLines="2" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -193,6 +179,21 @@
                 android:imeOptions="flagNoExtractUi"
                 android:maxLength="@integer/username_length"
                 android:textAlignment="center" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/encouragement" />
+
+            <EditText
+                android:id="@+id/goal_encouragement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/encouragement_hint"
+                android:imeOptions="flagNoExtractUi"
+                android:maxLength="@integer/encouragement_length"
+                android:maxLines="2" />
 
             <Button
                 android:id="@+id/set_goal"
