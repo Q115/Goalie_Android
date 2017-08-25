@@ -28,8 +28,8 @@ import com.github.q115.goalie_android.R;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FriendsActivity extends AppCompatActivity implements FriendsView {
-    private FriendsPresenter mPresenter;
+public class FriendsActivity extends AppCompatActivity implements FriendsActivityView {
+    private FriendsActivityPresenter mPresenter;
     private FriendsListPresenter mFriendsListPresenter;
 
     public static Intent newIntent(Context context, String username) {
@@ -53,7 +53,7 @@ public class FriendsActivity extends AppCompatActivity implements FriendsView {
         }
 
         // Create the presenters
-        mPresenter = new FriendsPresenter(this, this);
+        mPresenter = new FriendsActivityPresenter(this, this);
         mFriendsListPresenter = new FriendsListPresenter(friendsListFragment);
 
         if (getSupportActionBar() != null) {
@@ -68,7 +68,7 @@ public class FriendsActivity extends AppCompatActivity implements FriendsView {
     }
 
     @Override
-    public void setPresenter(FriendsPresenter presenter) {
+    public void setPresenter(FriendsActivityPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -107,7 +107,7 @@ public class FriendsActivity extends AppCompatActivity implements FriendsView {
         if (requestCode == Constants.REQUEST_PERMISSIONS_CONTACT && resultCode == RESULT_OK && data != null) {
             mPresenter.sendSMSInvite(data.getData());
         } else if (requestCode == Constants.RESULT_FRIENDS_ADD && resultCode == RESULT_OK && data != null) {
-            mFriendsListPresenter.onAddContactDialog(data.getAction());
+            mFriendsListPresenter.onAddContactDialogComplete(data.getStringExtra("username"));
         }
     }
 

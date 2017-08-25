@@ -22,17 +22,18 @@ import android.support.annotation.NonNull;
  * limitations under the License.
  */
 
-public class FriendsPresenter {
-    private final FriendsView mFriendsView;
+public class FriendsActivityPresenter {
+    private final FriendsActivityView mFriendsView;
     private final Context mContext;
 
-    public FriendsPresenter(Context context, @NonNull FriendsView friendsView) {
+    public FriendsActivityPresenter(Context context, @NonNull FriendsActivityView friendsView) {
         mContext = context;
         mFriendsView = friendsView;
         mFriendsView.setPresenter(this);
     }
 
     public void start() {
+        // intentionally left blank
     }
 
     public void sendSMSInvite(Uri contactUri) {

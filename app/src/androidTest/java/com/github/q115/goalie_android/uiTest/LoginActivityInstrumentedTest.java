@@ -8,7 +8,6 @@ import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.login.LoginActivity;
 
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +46,6 @@ public class LoginActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<LoginActivity> mLoginActivityRule =
             new ActivityTestRule<>(LoginActivity.class);
-
-    @BeforeClass
-    public static void init() throws Exception {
-
-    }
 
     @Test
     public void viewCorrectlyLaidout() throws Exception {

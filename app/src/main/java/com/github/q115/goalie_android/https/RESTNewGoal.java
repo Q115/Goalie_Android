@@ -79,7 +79,7 @@ public class RESTNewGoal {
                 UserHelper.getInstance().addGoal(goal);
 
                 UserHelper.getInstance().getOwnerProfile().reputation -= mWager;
-                UserHelper.getInstance().addUser(UserHelper.getInstance().getOwnerProfile());
+                UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
 
                 if (mList != null)
                     mList.onSuccess(response);

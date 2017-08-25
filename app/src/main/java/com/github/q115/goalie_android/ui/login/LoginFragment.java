@@ -33,7 +33,8 @@ import com.github.q115.goalie_android.R;
 
 public class LoginFragment extends Fragment implements LoginView {
     private LoginPresenter mPresenter;
-    private TextView serverMsg;
+    private EditText mUsername;
+    private TextView mServerMsg;
     private ProgressDialog mProgressDialog;
 
     public LoginFragment() {
@@ -46,19 +47,20 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        mUsername = rootView.findViewById(R.id.username);
+        mUsername.setOnEditorActionListener(handleEditorAction());
+        mServerMsg = rootView.findViewById(R.id.register_server_response);
+        mServerMsg.setVisibility(View.GONE);
+
         rootView.findViewById(R.id.btn_register).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                serverMsg.setVisibility(View.GONE);
-                mPresenter.register(getActivity(), ((TextView) rootView.findViewById(R.id.username)).getText().toString());
+                mServerMsg.setVisibility(View.GONE);
+                mPresenter.register(getActivity(), mUsername.getText().toString());
             }
         });
-
-        EditText username = rootView.findViewById(R.id.username);
-        username.setOnEditorActionListener(handleEditorAction());
-        serverMsg = rootView.findViewById(R.id.register_server_response);
-        serverMsg.setVisibility(View.GONE);
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setMessage(getString(R.string.connecting));
@@ -86,14 +88,13 @@ public class LoginFragment extends Fragment implements LoginView {
         mPresenter = presenter;
     }
 
-
     private EditText.OnEditorActionListener handleEditorAction() {
         return new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_DONE && getView() != null) {
-                    serverMsg.setVisibility(View.GONE);
-                    mPresenter.register(getActivity(), ((TextView) getView().findViewById(R.id.username)).getText().toString());
+                    mServerMsg.setVisibility(View.GONE);
+                    mPresenter.register(getActivity(), mUsername.getText().toString());
                     return true;
                 }
                 return false;
@@ -102,18 +103,14 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     @Override
-    public void showRegisterError(String msg) {
-        serverMsg.setVisibility(View.VISIBLE);
-
-        if (msg.equals("Already Registered"))
-            msg = getString(R.string.username_taken);
-        serverMsg.setText(msg);
-    }
-
-    @Override
-    public void registerSuccess(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-        getActivity().finish();
+    public void registerComplete(boolean isSuccessful, String msg) {
+        if (isSuccessful) {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        } else {
+            mServerMsg.setVisibility(View.VISIBLE);
+            mServerMsg.setText(msg);
+        }
     }
 
     @Override

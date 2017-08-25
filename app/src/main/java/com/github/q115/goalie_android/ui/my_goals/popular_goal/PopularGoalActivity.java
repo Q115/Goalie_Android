@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.my_goals.popular_goal;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -72,8 +73,8 @@ public class PopularGoalActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_GOAL_SET && resultCode == RESULT_GOAL_SET) {
-            setResult(RESULT_GOAL_SET);
+        if (requestCode == RESULT_GOAL_SET && resultCode == Activity.RESULT_OK) {
+            setResult(resultCode);
             finish();
         }
     }

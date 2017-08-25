@@ -7,13 +7,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.MainActivity;
+
 /*
  * Copyright 2017 Qi Li
  *
@@ -29,12 +29,11 @@ import com.github.q115.goalie_android.ui.MainActivity;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FeedsFragment extends Fragment implements View.OnTouchListener, FeedsView {
+public class FeedsFragment extends Fragment implements FeedsView {
     private FeedsPresenter mFeedsPresenter;
     private RecyclerView mFeedsList;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private boolean isRefresherEnabled;
 
     public FeedsFragment() {
     }
@@ -61,6 +60,7 @@ public class FeedsFragment extends Fragment implements View.OnTouchListener, Fee
         mFeedsList.setLayoutManager(new LinearLayoutManager(getContext()));
         mFeedsList.setHasFixedSize(true);
         mFeedsList.setAdapter(new FeedsRecycler(getActivity()));
+        mFeedsList.addOnScrollListener(onScrollListener());
 
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -88,26 +88,20 @@ public class FeedsFragment extends Fragment implements View.OnTouchListener, Fee
         mFeedsPresenter = presenter;
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent e) {
-        if (v.getId() == mFeedsList.getId()) {
-            switch (e.getAction() & MotionEvent.ACTION_MASK) {
-                case MotionEvent.ACTION_UP:
-                    isRefresherEnabled = true;
-                    break;
-                default:
-                    break;
+    private RecyclerView.OnScrollListener onScrollListener() {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                try {
+                    LinearLayoutManager layoutManager = ((LinearLayoutManager) mFeedsList.getLayoutManager());
+                    int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+                    int topRowVerticalPosition = (mFeedsList.getChildCount() == 0) ? 0 : mFeedsList.getChildAt(0).getTop();
+                    mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            if (isRefresherEnabled) {
-                RecyclerView DailyPondersList = (RecyclerView) v;
-                LinearLayoutManager layoutManager = ((LinearLayoutManager) DailyPondersList.getLayoutManager());
-                int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-                int topRowVerticalPosition = (DailyPondersList.getChildCount() == 0) ? 0 : DailyPondersList.getChildAt(0).getTop();
-                mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
-            }
-        }
-        return false;
+        };
     }
 
     @Override

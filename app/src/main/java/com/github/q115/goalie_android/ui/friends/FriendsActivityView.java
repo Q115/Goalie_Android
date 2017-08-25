@@ -18,9 +18,6 @@ import com.github.q115.goalie_android.ui.BaseView;
  * limitations under the License.
  */
 
-public interface FriendsView extends BaseView<FriendsPresenter> {
-    @Override
-    void setPresenter(FriendsPresenter presenter);
-
+public interface FriendsActivityView extends BaseView<FriendsActivityPresenter> {
     void sendSMSInvite(String phoneNum);
 }

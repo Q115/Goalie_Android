@@ -114,7 +114,7 @@ public class UserHelperInstrumentedTest {
         assertNotNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);
     }
 
-    private void addUser(User user) throws Exception {
+    private void addUser(User user)  {
         UserHelper.getInstance().initialize();
         assertEquals(0, UserHelper.getInstance().getAllContacts().size());
         UserHelper.getInstance().addUser(user);
@@ -166,7 +166,7 @@ public class UserHelperInstrumentedTest {
         assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 2);
     }
 
-    private void deleteGoal(Goal goal) throws Exception {
+    private void deleteGoal(Goal goal) {
         int size = UserHelper.getInstance().getOwnerProfile().activieGoals.size()
                 + UserHelper.getInstance().getOwnerProfile().finishedGoals.size();
 
@@ -177,7 +177,7 @@ public class UserHelperInstrumentedTest {
         assertEquals(newSize, size - 1);
     }
 
-    private void modifyGoal(Goal goal) throws Exception {
+    private void modifyGoal(Goal goal)  {
         Goal newGoal = new Goal();
         newGoal.guid = goal.guid;
         goal.goalCompleteResult = Goal.GoalCompleteResult.Ongoing;

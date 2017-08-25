@@ -1,6 +1,7 @@
 package com.github.q115.goalie_android.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +64,7 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
 
     protected FragmentActivity mContext;
     protected ArrayList<Goal> mGoalList;
-    protected static HashMap<String, Bitmap> mImages;
+    protected static HashMap<String, Drawable> mImages;
     private DateFormat mDF;
     private boolean isRequest;
 
@@ -136,15 +137,16 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         if (user.profileBitmapImage == null)
             viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
         else {
-            Bitmap profileBitmapImage = mImages.get(user.username);
+            Drawable profileDrawableImage = mImages.get(user.username);
 
-            if (profileBitmapImage == null) {
-                int size = ImageHelper.dpToPx(mContext.getResources(), 75);
-                profileBitmapImage = Bitmap.createScaledBitmap(user.profileBitmapImage, size, size, false);
-                mImages.put(user.username, profileBitmapImage);
+            if (profileDrawableImage == null) {
+                int size = ImageHelper.dpToPx(mContext.getResources(), Constants.PROFILE_ROW_SIZE);
+                Bitmap temp = Bitmap.createScaledBitmap(user.profileBitmapImage, size, size, false);
+                profileDrawableImage = ImageHelper.getRoundedCornerDrawable(mContext.getResources(),
+                        temp, Constants.CIRCLE_PROFILE);
+                mImages.put(user.username, profileDrawableImage);
             }
-            viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(null, ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
-                    profileBitmapImage, Constants.CIRCLE_PROFILE), null, null);
+            viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(null, profileDrawableImage, null, null);
         }
     }
 }

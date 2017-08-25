@@ -36,7 +36,7 @@ public class FriendsListPresenter implements BasePresenter {
     public void start() {
     }
 
-    public void onAddContactDialog(String username) {
+    public void onAddContactDialogComplete(String username) {
         final User user = UserHelper.getInstance().getAllContacts().get(username);
         if (user != null) {
             mFriendListView.onAddContactDialog(user);

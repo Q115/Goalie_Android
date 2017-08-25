@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
+import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_NORMAL_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
@@ -95,7 +95,7 @@ public class RESTUpvote {
         };
 
         req.setRetryPolicy(new DefaultRetryPolicy(
-                ASYNC_CONNECTION_EXTENDED_TIMEOUT,
+                ASYNC_CONNECTION_NORMAL_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);

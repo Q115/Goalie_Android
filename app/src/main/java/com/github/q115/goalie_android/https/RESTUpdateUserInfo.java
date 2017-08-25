@@ -64,7 +64,7 @@ public class RESTUpdateUserInfo {
             @Override
             public void onResponse(String response) {
                 UserHelper.getInstance().getOwnerProfile().bio = mBio;
-                UserHelper.getInstance().addUser(UserHelper.getInstance().getOwnerProfile());
+                UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
                 PreferenceHelper.getInstance().setPushID(mPushID);
 
                 if (mList != null)

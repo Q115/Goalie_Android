@@ -17,7 +17,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:contentDescription="@string/access_profile"
-            android:drawableTop="@color/colorAccent"
+            android:drawableTop="@drawable/ic_profile_default_small"
             android:gravity="center_horizontal"
             tool:text="Chris" />
 
@@ -33,7 +33,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:contentDescription="@string/access_profile"
-            android:drawableTop="@color/colorAccent"
+            android:drawableTop="@drawable/ic_profile_default_small"
             android:gravity="center_horizontal"
             tool:text="Chris" />
     </LinearLayout>

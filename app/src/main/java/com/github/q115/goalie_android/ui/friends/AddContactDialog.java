@@ -133,18 +133,17 @@ public class AddContactDialog extends DialogFragment {
 
     private void add() {
         final String username = ((EditText) getDialog().findViewById(R.id.add_username)).getText().toString().trim();
+        final TextView updatestatus = getDialog().findViewById(R.id.add_friend_status);
+        updatestatus.setVisibility(View.INVISIBLE);
 
         //check if username is valid before pinging server
         if (!UserHelper.isUsernameValid(username)) {
-            TextView updatestatus = getDialog().findViewById(R.id.add_friend_status);
             updatestatus.setVisibility(View.VISIBLE);
             updatestatus.setText(getString(R.string.username_error));
         } else if (UserHelper.getInstance().getAllContacts().containsKey(username)) {
-            TextView updatestatus = getDialog().findViewById(R.id.add_friend_status);
             updatestatus.setVisibility(View.VISIBLE);
             updatestatus.setText(getString(R.string.already_friends));
         } else if (username.equals(UserHelper.getInstance().getOwnerProfile().username)) {
-            TextView updatestatus = getDialog().findViewById(R.id.add_friend_status);
             updatestatus.setVisibility(View.VISIBLE);
             updatestatus.setText(getString(R.string.no_self));
         } else {
@@ -164,14 +163,15 @@ public class AddContactDialog extends DialogFragment {
                 @Override
                 public void onSuccess() {
                     progress.cancel();
-                    ((FriendsActivity) getActivity()).onActivityResult(Constants.RESULT_FRIENDS_ADD, Activity.RESULT_OK, new Intent(username));
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("username", username);
+                    ((FriendsActivity) getActivity()).onActivityResult(Constants.RESULT_FRIENDS_ADD, Activity.RESULT_OK, returnIntent);
                     dismiss();
                 }
 
                 @Override
                 public void onFailure(String errMsg) {
                     progress.cancel();
-                    TextView updatestatus = getDialog().findViewById(R.id.add_friend_status);
                     updatestatus.setVisibility(View.VISIBLE);
                     updatestatus.setText(errMsg);
                 }

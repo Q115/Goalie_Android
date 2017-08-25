@@ -37,7 +37,7 @@ import java.util.TreeMap;
  */
 
 public class FriendsListRecycler extends RecyclerView.Adapter {
-    public class FriendsHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+    private class FriendsHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         private ImageView mFriendImage;
         private TextView mFriendName;
         private TextView mFriendReputation;
@@ -129,7 +129,7 @@ public class FriendsListRecycler extends RecyclerView.Adapter {
         if (user.profileBitmapImage == null)
             viewHolder.mFriendImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_profile_default_small));
         else
-            viewHolder.mFriendImage.setImageDrawable(ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
+            viewHolder.mFriendImage.setImageDrawable(ImageHelper.getRoundedCornerDrawable(mContext.getResources(),
                     user.profileBitmapImage, Constants.CIRCLE_PROFILE));
     }
 }

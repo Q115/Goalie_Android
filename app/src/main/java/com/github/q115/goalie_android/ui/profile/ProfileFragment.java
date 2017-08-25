@@ -9,10 +9,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
 
         RecyclerView activityList = rootView.findViewById(R.id.profile_activity_list);
         activityList.setLayoutManager(new LinearLayoutManager(getContext()));
+        activityList.setHasFixedSize(true);
         activityList.setAdapter(new ProfileActivitiesRecycler(getActivity()));
 
         View.OnClickListener mEditInfo = new View.OnClickListener() {
@@ -113,7 +114,6 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     public void onResume() {
         super.onResume();
         mPresenter.start();
-        reloadList(false);
         MessagingService.setMessagingServiceListener("Profile", this);
     }
 
@@ -132,7 +132,6 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     public void setupForOwner(boolean isOwner) {
         mEdit.setEnabled(isOwner);
         mProfile.setEnabled(isOwner);
-
         mEdit.setVisibility(isOwner ? View.VISIBLE : View.INVISIBLE);
     }
 
@@ -146,7 +145,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
 
             User user = UserHelper.getInstance().getAllContacts().get(username);
             if (user != null && user.profileBitmapImage != null)
-                mProfile.setImageDrawable(ImageHelper.getRoundedCornerBitmap(getResources(), user.profileBitmapImage, Constants.ROUNDED_PROFILE));
+                mProfile.setImageDrawable(ImageHelper.getRoundedCornerDrawable(getResources(), user.profileBitmapImage, Constants.ROUNDED_PROFILE));
         }
     }
 
@@ -154,7 +153,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Constants.RESULT_PROFILE_IMAGE_SELECTED) { // image taken or selected. Crop the image
+        if (requestCode == Constants.RESULT_PROFILE_IMAGE_SELECTED) { // image selected. Crop the image
             if (resultCode == RESULT_OK && data != null && data.getData() != null) {
                 CropImage.activity(data.getData())
                         .setGuidelines(CropImageView.Guidelines.ON)
@@ -164,10 +163,10 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
             } else if (resultCode != RESULT_CANCELED) {
                 Toast.makeText(getActivity(), getString(R.string.image_selection_error), Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == Constants.RESULT_PROFILE_IMAGE_TAKEN) {
+        } else if (requestCode == Constants.RESULT_PROFILE_IMAGE_TAKEN) { // image taken. Crop the image
             if (resultCode == RESULT_OK) {
                 File newFile = new File(ImageHelper.getInstance().getImagePrivateStorageDirectory(UserHelper.getInstance().getOwnerProfile().username + "Temp.png"));
-                Uri uri = FileProvider.getUriForFile(getActivity(), "com.github.q115.goalie_android.fileprovider", newFile);
+                Uri uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider), newFile);
                 getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                 CropImage.activity(uri)
@@ -178,7 +177,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
             } else if (resultCode != RESULT_CANCELED) {
                 Toast.makeText(getActivity(), getString(R.string.image_taking_error), Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) { // image cropped
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
@@ -191,20 +190,23 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
                 Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Image failed to be selected null" + error.toString());
                 Toast.makeText(getActivity(), getString(R.string.image_selection_error), Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == Constants.RESULT_PROFILE_UPDATE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == Constants.RESULT_PROFILE_UPDATE && resultCode == Activity.RESULT_OK) { // bio updated
             if (getView() != null) {
-                ((TextView) getView().findViewById(R.id.profile_bio)).setText(data.getAction());
+                ((TextView) getView().findViewById(R.id.profile_bio)).setText(data.getStringExtra("bio"));
                 Toast.makeText(getActivity(), getString(R.string.updated), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void changePhoto() {
-        if (requestCameraPermission() && requestStoragePermission()) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE);
+        } else {
             AlertDialog.Builder getImageFrom = new AlertDialog.Builder(getActivity());
-            getImageFrom.setTitle("Change photo:");
+            getImageFrom.setTitle(getString(R.string.select_photo));
 
-            String[] opsChars = {"Capture photo using Camera", "Choose photo from Gallery"};
+            String[] opsChars = {getString(R.string.take_photo), getString(R.string.choose_photo)};
             getImageFrom.setItems(opsChars, changePhotoActionSelected());
             getImageFrom.show();
         }
@@ -222,7 +224,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
                         if (!newFile.exists()) {
                             newFile.getParentFile().mkdirs();
                         }
-                        Uri uri = FileProvider.getUriForFile(getActivity(), "com.github.q115.goalie_android.fileprovider", newFile);
+                        Uri uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider), newFile);
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 
                         List<ResolveInfo> cameraActivities = getActivity().getPackageManager()
@@ -238,44 +240,25 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
                     imageIntent.setType("image/*");
                     imageIntent.putExtra("return-data", true);
                     imageIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-                    startActivityForResult(Intent.createChooser(imageIntent, "Select photo"), Constants.RESULT_PROFILE_IMAGE_SELECTED);
+                    startActivityForResult(Intent.createChooser(imageIntent, getString(R.string.select_photo)), Constants.RESULT_PROFILE_IMAGE_SELECTED);
                 }
             }
         };
     }
 
-    private boolean requestCameraPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-            return true;
-
-        if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, Constants.REQUEST_PERMISSIONS_CAMERA);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private boolean requestStoragePermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-            return true;
-
-        if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_PERMISSIONS_STORAGE);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case Constants.REQUEST_PERMISSIONS_STORAGE:
-            case Constants.REQUEST_PERMISSIONS_CAMERA:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    changePhoto();
+            case Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE:
+                boolean isPermissionsGranted = true;
+                for (int grantResult : grantResults) {
+                    isPermissionsGranted &= grantResult == PackageManager.PERMISSION_GRANTED;
                 }
+
+                if (isPermissionsGranted)
+                    changePhoto();
+                else
+                    Toast.makeText(getActivity(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
             default:
                 break;
         }
@@ -290,13 +273,13 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
         }
     }
 
-    public void showUploadError(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-    }
-
-    public void uploadSuccess(Bitmap image) {
-        mProfile.setImageDrawable(ImageHelper.getRoundedCornerBitmap(getResources(), image, Constants.ROUNDED_PROFILE));
-        Toast.makeText(getActivity(), getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
+    public void uploadComplete(boolean isSuccessful, Bitmap image, String err) {
+        if (isSuccessful) {
+            mProfile.setImageDrawable(ImageHelper.getRoundedCornerDrawable(getResources(), image, Constants.ROUNDED_PROFILE));
+            Toast.makeText(getActivity(), getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), err, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

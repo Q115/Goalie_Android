@@ -27,9 +27,7 @@ public interface ProfileView extends BaseView<ProfilePresenter> {
 
     void updateProgress(boolean shouldShow);
 
-    void showUploadError(String msg);
-
-    void uploadSuccess(Bitmap bitmap);
+    void uploadComplete(boolean isSuccessful, Bitmap image, String err);
 
     void reloadList(boolean shouldReloadList);
 }

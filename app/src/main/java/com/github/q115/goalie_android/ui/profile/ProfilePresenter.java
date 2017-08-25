@@ -44,26 +44,27 @@ public class ProfilePresenter implements BasePresenter {
         User user = UserHelper.getInstance().getAllContacts().get(mUsername);
         if (user != null)
             mProfileView.setupView(user.username, user.bio, user.reputation);
+
+        mProfileView.reloadList(false);
     }
 
     public void newProfileImageSelected(final Bitmap image) {
-        if(image == null)
+        if (image == null)
             return;
 
         mProfileView.updateProgress(true);
-
         RESTUploadPhoto sm = new RESTUploadPhoto(image, mUsername);
         sm.setListener(new RESTUploadPhoto.Listener() {
             @Override
             public void onSuccess() {
                 mProfileView.updateProgress(false);
-                mProfileView.uploadSuccess(image);
+                mProfileView.uploadComplete(true, image, null);
             }
 
             @Override
             public void onFailure(String errMsg) {
                 mProfileView.updateProgress(false);
-                mProfileView.showUploadError(errMsg);
+                mProfileView.uploadComplete(false, null, errMsg);
             }
         });
         sm.execute();

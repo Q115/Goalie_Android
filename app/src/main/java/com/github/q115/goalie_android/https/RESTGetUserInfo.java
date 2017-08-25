@@ -5,6 +5,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -15,11 +16,9 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
-import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
+import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_NORMAL_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
@@ -92,13 +91,6 @@ public class RESTGetUserInfo {
                         finishedGoalsList.add(new Goal(guid, mUsername, title, start, end, wager, encouragement, Goal.GoalCompleteResult.Success, referee, activityDate));
                     }
 
-                    Collections.sort(finishedGoalsList, new Comparator<Goal>() {
-                        @Override
-                        public int compare(Goal a1, Goal a2) {
-                            return (int) (a2.activityDate - a1.activityDate);
-                        }
-                    });
-
                     User s = new User(mUsername, bio, reputation, lastPhotoModifiedTime);
                     s.finishedGoals = finishedGoalsList;
                     UserHelper.getInstance().addUser(s);
@@ -106,6 +98,7 @@ public class RESTGetUserInfo {
                     if (mList != null)
                         mList.onSuccess();
                 } catch (Exception e) {
+                    Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to parse userinfo");
                     if (mList != null)
                         mList.onFailure(FAILED);
                 }
@@ -136,7 +129,7 @@ public class RESTGetUserInfo {
         };
 
         req.setRetryPolicy(new DefaultRetryPolicy(
-                ASYNC_CONNECTION_EXTENDED_TIMEOUT,
+                ASYNC_CONNECTION_NORMAL_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);

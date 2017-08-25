@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.my_goals.new_goal;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
-import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 
 import java.util.HashMap;
@@ -98,7 +98,6 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
         // wager
         mGoalWager = rootView.findViewById(R.id.goal_wager);
         mGoalWagerPercentage = rootView.findViewById(R.id.goal_wager_middle);
-
         View.OnClickListener wagerClicked = mNewGoalPresenter.onWagerClicked();
         rootView.findViewById(R.id.goal_wager_minus).setOnClickListener(wagerClicked);
         rootView.findViewById(R.id.goal_wager_plus).setOnClickListener(wagerClicked);
@@ -146,9 +145,8 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        // Edittext values are saved by default, so no need to save title & others, just save timer etc.
         outState.putSerializable("presenter", mNewGoalPresenter.save());
-        // Edittext values are saved by default
-
         super.onSaveInstanceState(outState);
     }
 
@@ -209,7 +207,7 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     public void onSetGoal(boolean isSuccessful, String errMsg) {
         if (isSuccessful) {
             Toast.makeText(getActivity(), getString(R.string.ok_goal), Toast.LENGTH_SHORT).show();
-            getActivity().setResult(Constants.RESULT_GOAL_SET);
+            getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();

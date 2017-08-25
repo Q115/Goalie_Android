@@ -46,8 +46,8 @@ public class NewGoalPresenter implements BasePresenter {
     private boolean mShouldIgnore;
     private long mStart;
     private long mEnd;
-    private int mCurrentSelection = 0;
-    private int mWagerIncrement = 1;
+    private int mCurrentSelection;
+    private int mWagerIncrement;
     private static final int WAGER_INCREMENT = 5;
 
     private TextWatcher mTextChangedListener = textChanged();
@@ -66,6 +66,8 @@ public class NewGoalPresenter implements BasePresenter {
         mNewGoalView = newGoalView;
         mStart = System.currentTimeMillis();
         mNewGoalView.setPresenter(this);
+        mCurrentSelection = 0;
+        mWagerIncrement = 1;
     }
 
     public void start() {
@@ -186,11 +188,12 @@ public class NewGoalPresenter implements BasePresenter {
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                // do nothing if same selection
                 if (mCurrentSelection == i)
                     return;
 
+                // ignore if this field was changed due to a reset
                 mCurrentSelection = i;
-
                 if (mShouldIgnore) {
                     return;
                 }

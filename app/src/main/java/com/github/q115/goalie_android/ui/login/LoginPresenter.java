@@ -40,23 +40,26 @@ public class LoginPresenter implements BasePresenter {
             mLoginView.updateProgress(true);
             final String welcome = context.getString(R.string.welcome);
 
+            final String usernameTaken = context.getString(R.string.username_taken);
             RESTRegister rest = new RESTRegister(username, PreferenceHelper.getInstance().getPushID());
             rest.setListener(new RESTRegister.Listener() {
                 @Override
                 public void onSuccess() {
                     mLoginView.updateProgress(false);
-                    mLoginView.registerSuccess(welcome);
+                    mLoginView.registerComplete(true, welcome);
                 }
 
                 @Override
                 public void onFailure(String errMsg) {
+                    if (errMsg.equals("Already Registered"))
+                        errMsg = usernameTaken;
+
                     mLoginView.updateProgress(false);
-                    mLoginView.showRegisterError(errMsg);
+                    mLoginView.registerComplete(false, errMsg);
                 }
             });
             rest.execute();
-        }
-        else
-            mLoginView.showRegisterError(context.getString(R.string.username_error));
+        } else
+            mLoginView.registerComplete(false, context.getString(R.string.username_error));
     }
 }

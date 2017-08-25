@@ -1,6 +1,9 @@
 package com.github.q115.goalie_android.presenterTest;
 
+import android.graphics.drawable.Drawable;
+
 import com.github.q115.goalie_android.BaseTest;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.requests.RequestsPresenter;
 import com.github.q115.goalie_android.ui.requests.RequestsView;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -60,5 +63,21 @@ public class RequestPresenterUnitTest extends BaseTest {
     public void reload() {
         mPresenter.reload();
         verify(mView).reload();
+    }
+
+    @Test
+    public void showDialog() {
+        String title = "title";
+        String end = "end";
+        String start = "start";
+        String reputation = "reputation";
+        String encouragement = "encouragement";
+        String referee = "referee";
+        Drawable profileImage = null;
+        Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.Success;
+        String guid = "guid";
+
+        mPresenter.showDialog(title, end, start, reputation, encouragement, referee, profileImage, goalCompleteResult, guid);
+        verify(mView).showDialog(title, end, start, reputation, encouragement, referee, profileImage, goalCompleteResult, guid);
     }
 }

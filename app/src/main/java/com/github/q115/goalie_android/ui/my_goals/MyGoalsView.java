@@ -1,6 +1,6 @@
 package com.github.q115.goalie_android.ui.my_goals;
 
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BaseView;
@@ -27,7 +27,7 @@ public interface MyGoalsView extends BaseView<MyGoalsPresenter> {
     void closeFABMenu();
 
     void showDialog(String title, String end, String start, String reputation, String encouragement,
-                    String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
+                    String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
 
 
     void syncComplete(boolean isSuccessful, String errMsg);

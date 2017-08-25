@@ -74,6 +74,6 @@ public class ProfilePresenterUnitTest extends BaseTest {
         verify(mView).updateProgress(true);
         Thread.sleep(2500);
         verify(mView).updateProgress(false);
-        verify(mView).uploadSuccess(image);
+        verify(mView).uploadComplete(true, image, null);
     }
 }

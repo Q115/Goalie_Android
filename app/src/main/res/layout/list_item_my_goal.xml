@@ -19,7 +19,7 @@
         android:layout_marginStart="8dp"
         android:layout_gravity="center"
         android:contentDescription="@string/access_profile"
-        android:drawableTop="@color/colorAccent"
+        android:drawableTop="@drawable/ic_profile_default_small"
         android:gravity="center_horizontal"
         tool:text="Chris" />
 </LinearLayout>

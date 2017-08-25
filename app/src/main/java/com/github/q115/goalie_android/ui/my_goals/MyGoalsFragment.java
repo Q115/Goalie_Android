@@ -2,12 +2,14 @@ package com.github.q115.goalie_android.ui.my_goals;
 
 import android.animation.Animator;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +48,7 @@ import static com.github.q115.goalie_android.Constants.RESULT_MY_GOAL_DIALOG;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class MyGoalsFragment extends Fragment implements View.OnTouchListener, MyGoalsView {
+public class MyGoalsFragment extends Fragment implements MyGoalsView {
     private FloatingActionButton mFAB;
     private LinearLayout mFABMenu1;
     private LinearLayout mFABMenu2;
@@ -55,8 +57,6 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
     private TextView mEmptyMsg;
     private MyGoalsPresenter mMyGoalsPresenter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    private boolean isRefresherEnabled;
 
     public MyGoalsFragment() {
     }
@@ -83,14 +83,29 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
                 mMyGoalsPresenter.onRefresherRefresh();
             }
         });
-
         mSwipeRefreshLayout.setEnabled(true);
 
         mGoalList = rootView.findViewById(R.id.goal_list);
-        mGoalList.setOnTouchListener(this);
+        mGoalList.addOnScrollListener(onScrollListener());
         mGoalList.setLayoutManager(new LinearLayoutManager(getContext()));
         mGoalList.setHasFixedSize(true);
         mGoalList.setAdapter(new MyGoalsRecycler(getActivity(), mMyGoalsPresenter));
+        mGoalList.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (mMyGoalsPresenter.isFABOpen()) {
+                            mMyGoalsPresenter.closeFABMenu();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+
         mEmptyMsg = rootView.findViewById(R.id.empty);
         mEmptyMsg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,14 +163,16 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_GOAL_SET) {
+        if (requestCode == RESULT_GOAL_SET && resultCode == RESULT_OK) {
             reload();
         } else if (requestCode == RESULT_MY_GOAL_DIALOG && resultCode == RESULT_OK && data != null) {
             int goalInt = Integer.parseInt(data.getStringExtra("goalCompleteResultInt"));
-            switch (Goal.GoalCompleteResult.values()[goalInt]) {
-                case Cancelled:
-                    Toast.makeText(getActivity(), getString(R.string.delete_toast), Toast.LENGTH_SHORT).show();
-                    break;
+            if (goalInt < Goal.GoalCompleteResult.values().length) {
+                switch (Goal.GoalCompleteResult.values()[goalInt]) {
+                    case Cancelled:
+                        Toast.makeText(getActivity(), getString(R.string.delete_toast), Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
             reload();
         }
@@ -212,35 +229,24 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
             mFAB.animate().rotation(0);
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent e) {
-        if (v.getId() == mGoalList.getId()) {
-            switch (e.getAction() & MotionEvent.ACTION_MASK) {
-                case MotionEvent.ACTION_UP:
-                    isRefresherEnabled = true;
-                    break;
-                case MotionEvent.ACTION_DOWN:
-                    if (mMyGoalsPresenter.isFABOpen()) {
-                        mMyGoalsPresenter.closeFABMenu();
-                    }
-                    break;
-                default:
-                    break;
+    private RecyclerView.OnScrollListener onScrollListener() {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                try {
+                    LinearLayoutManager layoutManager = ((LinearLayoutManager) mGoalList.getLayoutManager());
+                    int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+                    int topRowVerticalPosition = (mGoalList.getChildCount() == 0) ? 0 : mGoalList.getChildAt(0).getTop();
+                    mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            if (isRefresherEnabled) {
-                RecyclerView DailyPondersList = (RecyclerView) v;
-                LinearLayoutManager layoutManager = ((LinearLayoutManager) DailyPondersList.getLayoutManager());
-                int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-                int topRowVerticalPosition = (DailyPondersList.getChildCount() == 0) ? 0 : DailyPondersList.getChildAt(0).getTop();
-                mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
-            }
-        }
-        return false;
+        };
     }
 
     public void showDialog(String title, String end, String start, String reputation, String encouragment,
-                           String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
+                           String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
         GoalsDetailedDialog detailedDialog = new GoalsDetailedDialog();
         Bundle bundle = new Bundle();
         bundle.putBoolean("isMyGoal", true);
@@ -250,7 +256,10 @@ public class MyGoalsFragment extends Fragment implements View.OnTouchListener, M
         bundle.putString("reputation", reputation);
         bundle.putString("referee", referee);
         bundle.putString("encouragement", encouragment);
-        bundle.putParcelable("profile", profileImage);
+        if (profileImage instanceof RoundedBitmapDrawable)
+            bundle.putParcelable("profile", ((RoundedBitmapDrawable) profileImage).getBitmap());
+        else if (profileImage instanceof BitmapDrawable)
+            bundle.putParcelable("profile", ((BitmapDrawable) profileImage).getBitmap());
         bundle.putSerializable("goalCompleteResult", goalCompleteResult);
         bundle.putString("guid", guid);
         detailedDialog.setArguments(bundle);

@@ -157,7 +157,9 @@ public class UpdateProfileDialog extends DialogFragment {
                 @Override
                 public void onSuccess() {
                     progress.cancel();
-                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent(newBio));
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("bio", newBio);
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
                     dismiss();
                 }
 

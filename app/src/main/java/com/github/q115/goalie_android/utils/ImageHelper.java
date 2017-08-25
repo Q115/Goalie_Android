@@ -64,6 +64,7 @@ public class ImageHelper {
         String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
         File newFile = new File(filePath);
         if (!newFile.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             newFile.getParentFile().mkdirs();
         }
 
@@ -93,10 +94,7 @@ public class ImageHelper {
     public boolean deleteImageFromPrivateStorage(String imageName, ImageType imageType) {
         String filePath = getImagePrivateStorageDirectory(imageName + imageTypeToExtension(imageType));
         File file = new File(filePath);
-        if (file.exists())
-            return file.delete();
-        else
-            return false;
+        return file.exists() && file.delete();
     }
 
     public boolean isImageOnPrivateStorage(String imageName, ImageType imageType) {
@@ -119,7 +117,7 @@ public class ImageHelper {
         return stream.toByteArray();
     }
 
-    public static Drawable getRoundedCornerBitmap(Resources resources, Bitmap bitmap, float scale) {
+    public static Drawable getRoundedCornerDrawable(Resources resources, Bitmap bitmap, float scale) {
         if (resources == null || bitmap == null)
             return null;
         RoundedBitmapDrawable round = RoundedBitmapDrawableFactory.create(resources, bitmap);

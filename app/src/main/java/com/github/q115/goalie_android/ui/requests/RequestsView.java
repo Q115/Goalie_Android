@@ -1,6 +1,6 @@
 package com.github.q115.goalie_android.ui.requests;
 
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BaseView;
@@ -26,5 +26,5 @@ public interface RequestsView extends BaseView<RequestsPresenter> {
     void reload();
 
     void showDialog(String title, String end, String start, String reputation, String encouragment,
-                    String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
+                    String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
 }

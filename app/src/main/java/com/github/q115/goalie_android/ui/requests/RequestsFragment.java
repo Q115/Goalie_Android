@@ -1,15 +1,16 @@
 package com.github.q115.goalie_android.ui.requests;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,10 +39,9 @@ import static android.app.Activity.RESULT_OK;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class RequestsFragment extends Fragment implements View.OnTouchListener, RequestsView {
+public class RequestsFragment extends Fragment implements RequestsView {
     private RequestsPresenter mRequestsPresenter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private boolean isRefresherEnabled;
     private RecyclerView mRequestList;
     private TextView mEmptyMsg;
 
@@ -70,6 +70,8 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
         mRequestList.setLayoutManager(new LinearLayoutManager(getContext()));
         mRequestList.setHasFixedSize(true);
         mRequestList.setAdapter(new RequestsRecycler(getActivity(), mRequestsPresenter));
+        mRequestList.addOnScrollListener(onScrollListener());
+
         mEmptyMsg = rootView.findViewById(R.id.empty);
         showEmptyWhenNecessary();
 
@@ -98,30 +100,24 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
         mRequestsPresenter = presenter;
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent e) {
-        if (v.getId() == mRequestList.getId()) {
-            switch (e.getAction() & MotionEvent.ACTION_MASK) {
-                case MotionEvent.ACTION_UP:
-                    isRefresherEnabled = true;
-                    break;
-                default:
-                    break;
+    private RecyclerView.OnScrollListener onScrollListener() {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                try {
+                    LinearLayoutManager layoutManager = ((LinearLayoutManager) mRequestList.getLayoutManager());
+                    int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+                    int topRowVerticalPosition = (mRequestList.getChildCount() == 0) ? 0 : mRequestList.getChildAt(0).getTop();
+                    mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            if (isRefresherEnabled) {
-                RecyclerView DailyPondersList = (RecyclerView) v;
-                LinearLayoutManager layoutManager = ((LinearLayoutManager) DailyPondersList.getLayoutManager());
-                int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-                int topRowVerticalPosition = (DailyPondersList.getChildCount() == 0) ? 0 : DailyPondersList.getChildAt(0).getTop();
-                mSwipeRefreshLayout.setEnabled(firstVisiblePosition <= 0 && topRowVerticalPosition >= 0);
-            }
-        }
-        return false;
+        };
     }
 
     public void showDialog(String title, String end, String start, String reputation, String encouragment,
-                           String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
+                           String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
         GoalsDetailedDialog detailedDialog = new GoalsDetailedDialog();
         Bundle bundle = new Bundle();
         bundle.putBoolean("isMyGoal", false);
@@ -131,7 +127,10 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
         bundle.putString("reputation", reputation);
         bundle.putString("referee", referee);
         bundle.putString("encouragement", encouragment);
-        bundle.putParcelable("profile", profileImage);
+        if (profileImage instanceof RoundedBitmapDrawable)
+            bundle.putParcelable("profile", ((RoundedBitmapDrawable) profileImage).getBitmap());
+        else if (profileImage instanceof BitmapDrawable)
+            bundle.putParcelable("profile", ((BitmapDrawable) profileImage).getBitmap());
         bundle.putSerializable("goalCompleteResult", goalCompleteResult);
         bundle.putString("guid", guid);
         detailedDialog.setArguments(bundle);
@@ -145,19 +144,21 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
 
         if (requestCode == Constants.RESULT_MY_GOAL_DIALOG && resultCode == RESULT_OK && data != null) {
             int goalInt = Integer.parseInt(data.getStringExtra("goalCompleteResultInt"));
-            switch (Goal.GoalCompleteResult.values()[goalInt]) {
-                case Ongoing:
-                    Toast.makeText(getActivity(), getString(R.string.accepte_toast), Toast.LENGTH_SHORT).show();
-                    break;
-                case Success:
-                    Toast.makeText(getActivity(), getString(R.string.complete_toast), Toast.LENGTH_SHORT).show();
-                    break;
-                case Failed:
-                    Toast.makeText(getActivity(), getString(R.string.failed_toast), Toast.LENGTH_SHORT).show();
-                    break;
-                case Cancelled:
-                    Toast.makeText(getActivity(), getString(R.string.delete_toast), Toast.LENGTH_SHORT).show();
-                    break;
+            if (goalInt < Goal.GoalCompleteResult.values().length) {
+                switch (Goal.GoalCompleteResult.values()[goalInt]) {
+                    case Ongoing:
+                        Toast.makeText(getActivity(), getString(R.string.accepte_toast), Toast.LENGTH_SHORT).show();
+                        break;
+                    case Success:
+                        Toast.makeText(getActivity(), getString(R.string.complete_toast), Toast.LENGTH_SHORT).show();
+                        break;
+                    case Failed:
+                        Toast.makeText(getActivity(), getString(R.string.failed_toast), Toast.LENGTH_SHORT).show();
+                        break;
+                    case Cancelled:
+                        Toast.makeText(getActivity(), getString(R.string.delete_toast), Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
             reload();
         }
@@ -181,7 +182,7 @@ public class RequestsFragment extends Fragment implements View.OnTouchListener, 
 
     private void showEmptyWhenNecessary() {
         if (mEmptyMsg != null && mRequestList != null) {
-            if (mRequestList.getAdapter().getItemCount() == 0) {
+            if (mRequestList.getAdapter() != null && mRequestList.getAdapter().getItemCount() == 0) {
                 mRequestList.setVisibility(View.GONE);
                 mEmptyMsg.setVisibility(View.VISIBLE);
             } else {

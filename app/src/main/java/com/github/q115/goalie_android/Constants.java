@@ -28,7 +28,8 @@ public class Constants {
 
     //profile image sizes
     public static final int IMAGE_JPG_QUALITY = 99;
-    public static final int PROFILE_IMAGE_WIDTH = 600;
+    public static final int PROFILE_ROW_SIZE = 75; // dp
+    public static final int PROFILE_IMAGE_WIDTH = 600; // px
     public static final int PROFILE_IMAGE_HEIGHT = 600;
     public static final float ROUNDED_PROFILE = 10f; // the bigger the value the more square the image
     public static final float CIRCLE_PROFILE = 2f; // 2 = circle, the bigger the value the more square the image
@@ -43,8 +44,7 @@ public class Constants {
     public static final int RESULT_GOAL_SET = 30;
     public static final int RESULT_MY_GOAL_DIALOG = 40;
 
-    public static final int REQUEST_PERMISSIONS_STORAGE = 100;
-    public static final int REQUEST_PERMISSIONS_CAMERA = 101;
+    public static final int REQUEST_PERMISSIONS_CAMERA_STORAGE = 100;
     public static final int REQUEST_PERMISSIONS_CONTACT = 102;
 
     // notification

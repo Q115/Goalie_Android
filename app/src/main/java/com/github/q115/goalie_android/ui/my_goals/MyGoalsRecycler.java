@@ -1,6 +1,5 @@
 package com.github.q115.goalie_android.ui.my_goals;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -82,7 +81,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
                     mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
                             viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
                             viewHolder.mRefereeTxt.getText().toString(),
-                            mImages.containsKey(goal.referee) ? mImages.get(goal.referee) : ((BitmapDrawable) viewHolder.mRefereeTxt.getCompoundDrawables()[1]).getBitmap(),
+                            mImages.containsKey(goal.referee) ? mImages.get(goal.referee) : viewHolder.mRefereeTxt.getCompoundDrawables()[1],
                             goal.goalCompleteResult, goal.guid);
                 }
             }

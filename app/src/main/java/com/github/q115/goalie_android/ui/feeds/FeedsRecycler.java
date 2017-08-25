@@ -2,7 +2,7 @@ package com.github.q115.goalie_android.ui.feeds;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -45,7 +45,7 @@ import java.util.HashSet;
  */
 
 public class FeedsRecycler extends RecyclerView.Adapter {
-    public class FeedsHolder extends RecyclerView.ViewHolder {
+    private class FeedsHolder extends RecyclerView.ViewHolder {
         private TextView mGoalPerson;
         private TextView mGoalResult;
         private TextView mUpvoteCount;
@@ -63,15 +63,16 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     private FragmentActivity mContext;
     private ArrayList<GoalFeed> mGoalFeedList;
     private static HashSet<String> mHasVoted; // doesn't persist over restart.
-    private static HashMap<String, Bitmap> mImages;
+    private static HashMap<String, Drawable> mImages;
     private ProgressDialog mProgressDialog;
 
     public FeedsRecycler(FragmentActivity context) {
         this.mContext = context;
-        mGoalFeedList = UserHelper.getInstance().getFeeds();
-        mProgressDialog = new ProgressDialog(this.mContext);
-        mProgressDialog.setMessage(this.mContext.getString(R.string.connecting));
-        mProgressDialog.setCancelable(false);
+        this.mGoalFeedList = UserHelper.getInstance().getFeeds();
+
+        this.mProgressDialog = new ProgressDialog(this.mContext);
+        this.mProgressDialog.setMessage(this.mContext.getString(R.string.connecting));
+        this.mProgressDialog.setCancelable(false);
 
         if (mHasVoted == null)
             mHasVoted = new HashSet<>();
@@ -124,6 +125,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
         }
 
         // set up button action if necessary
+        final int pos = position;
         viewHolder.mGoalFeedAction.setEnabled(!feed.hasVoted && !mHasVoted.contains(feed.guid));
         if (viewHolder.mGoalFeedAction.isEnabled()) {
             viewHolder.mGoalFeedAction.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +140,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
                             feed.upvoteCount++;
                             feed.hasVoted = true;
                             mHasVoted.add(feed.guid);
-                            notifyDataSetChanged();
+                            notifyItemChanged(pos);
                         }
 
                         @Override
@@ -159,44 +161,42 @@ public class FeedsRecycler extends RecyclerView.Adapter {
             if (user.profileBitmapImage == null)
                 textView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
             else {
-                Bitmap profileBitmapImage = mImages.get(user.username);
+                Drawable profileDrawableImage = mImages.get(user.username);
 
-                if (profileBitmapImage == null) {
-                    int size = ImageHelper.dpToPx(mContext.getResources(), 75);
-                    profileBitmapImage = Bitmap.createScaledBitmap(user.profileBitmapImage, size, size, false);
-                    mImages.put(user.username, profileBitmapImage);
+                if (profileDrawableImage == null) {
+                    int size = ImageHelper.dpToPx(mContext.getResources(), Constants.PROFILE_ROW_SIZE);
+                    Bitmap image = Bitmap.createScaledBitmap(user.profileBitmapImage, size, size, false);
+                    profileDrawableImage = ImageHelper.getRoundedCornerDrawable(mContext.getResources(),
+                            image, Constants.CIRCLE_PROFILE);
+                    mImages.put(user.username, profileDrawableImage);
                 }
-                textView.setCompoundDrawablesWithIntrinsicBounds(null,
-                        ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
-                                profileBitmapImage, Constants.CIRCLE_PROFILE), null, null);
+                textView.setCompoundDrawablesWithIntrinsicBounds(null, profileDrawableImage, null, null);
             }
         } else { // new user
-            Bitmap profileBitmapImage = mImages.get(feed.createdUsername);
+            Drawable profileDrawableImage = mImages.get(feed.createdUsername);
 
-            if (profileBitmapImage == null) {
+            if (profileDrawableImage == null) {
                 VolleyRequestQueue.getInstance().getImageLoader().get(RESTGetPhoto.getURL(feed.createdUsername), new ImageLoader.ImageListener() {
                     @Override
                     public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                         if (response.getBitmap() != null) {
-                            int size = ImageHelper.dpToPx(mContext.getResources(), 75);
+                            int size = ImageHelper.dpToPx(mContext.getResources(), Constants.PROFILE_ROW_SIZE);
                             Bitmap temp = Bitmap.createScaledBitmap(response.getBitmap(), size, size, false);
-                            mImages.put(feed.createdUsername, temp);
-                            textView.setCompoundDrawablesWithIntrinsicBounds(null,
-                                    ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
-                                            temp, Constants.CIRCLE_PROFILE), null, null);
+                            Drawable profileDrawableImage = ImageHelper.getRoundedCornerDrawable(mContext.getResources(),
+                                    temp, Constants.CIRCLE_PROFILE);
+                            mImages.put(feed.createdUsername, profileDrawableImage);
+                            textView.setCompoundDrawablesWithIntrinsicBounds(null, profileDrawableImage, null, null);
                         }
                     }
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         textView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
-                        mImages.put(feed.createdUsername, ((BitmapDrawable) textView.getCompoundDrawables()[1]).getBitmap());
+                        mImages.put(feed.createdUsername, textView.getCompoundDrawables()[1]);
                     }
                 });
             } else {
-                textView.setCompoundDrawablesWithIntrinsicBounds(null,
-                        ImageHelper.getRoundedCornerBitmap(mContext.getResources(),
-                                profileBitmapImage, Constants.CIRCLE_PROFILE), null, null);
+                textView.setCompoundDrawablesWithIntrinsicBounds(null, profileDrawableImage, null, null);
             }
         }
     }

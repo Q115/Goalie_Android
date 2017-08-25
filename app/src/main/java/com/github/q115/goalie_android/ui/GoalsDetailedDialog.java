@@ -143,7 +143,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             getDialog().findViewById(R.id.goal_from).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setText(mReferee);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setCompoundDrawablesWithIntrinsicBounds(
-                    null, ImageHelper.getRoundedCornerBitmap(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
+                    null, ImageHelper.getRoundedCornerDrawable(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
         } else {
             if (mGoalCompleteResult != Goal.GoalCompleteResult.Pending) {
                 ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.failed));
@@ -187,7 +187,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             getDialog().findViewById(R.id.goal_referee).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_from)).setText(mReferee);
             ((TextView) getDialog().findViewById(R.id.goal_from)).setCompoundDrawablesWithIntrinsicBounds(
-                    null, ImageHelper.getRoundedCornerBitmap(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
+                    null, ImageHelper.getRoundedCornerDrawable(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
         }
     }
 

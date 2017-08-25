@@ -19,7 +19,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:drawableTop="@color/colorAccent"
         android:gravity="center_vertical"
         android:textSize="20sp"
         tool:text="Chris" />

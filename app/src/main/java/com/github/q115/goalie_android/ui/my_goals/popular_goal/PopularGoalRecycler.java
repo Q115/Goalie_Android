@@ -29,7 +29,7 @@ import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
  */
 
 public class PopularGoalRecycler extends RecyclerView.Adapter {
-    public class PopularGoalHolder extends RecyclerView.ViewHolder {
+    private class PopularGoalHolder extends RecyclerView.ViewHolder {
         private TextView mGoalName;
 
         public PopularGoalHolder(View itemView) {
@@ -39,18 +39,16 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
     }
 
     private FragmentActivity mContext;
-    private String[] popularGoalArray;
+    private String[] mPopularGoalArray;
 
     public PopularGoalRecycler(FragmentActivity context) {
         this.mContext = context;
-
-        // remove self and display all others
-        popularGoalArray = context.getResources().getStringArray(R.array.popular_goals);
+        this.mPopularGoalArray = context.getResources().getStringArray(R.array.popular_goals);
     }
 
     @Override
     public int getItemCount() {
-        return popularGoalArray.length;
+        return mPopularGoalArray.length;
     }
 
     //Must override, this inflates our Layout and instantiates and assigns
@@ -62,7 +60,8 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 Intent intent = NewGoalActivity.newIntent(mContext);
-                intent.putExtra("title", popularGoalArray[(int) itemView.getTag()] + ": ");
+                if ((int) itemView.getTag() < mPopularGoalArray.length)
+                    intent.putExtra("title", mPopularGoalArray[(int) itemView.getTag()] + ": ");
                 mContext.startActivityForResult(intent, RESULT_GOAL_SET);
             }
         });
@@ -90,6 +89,6 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
                 viewHolder.itemView.setBackgroundResource(R.drawable.popular4);
                 break;
         }
-        viewHolder.mGoalName.setText(popularGoalArray[position]);
+        viewHolder.mGoalName.setText(mPopularGoalArray[position]);
     }
 }

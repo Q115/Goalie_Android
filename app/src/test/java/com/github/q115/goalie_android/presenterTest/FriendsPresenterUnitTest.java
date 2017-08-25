@@ -10,8 +10,8 @@ import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.friends.FriendsListPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsListView;
-import com.github.q115.goalie_android.ui.friends.FriendsPresenter;
-import com.github.q115.goalie_android.ui.friends.FriendsView;
+import com.github.q115.goalie_android.ui.friends.FriendsActivityPresenter;
+import com.github.q115.goalie_android.ui.friends.FriendsActivityView;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;
@@ -47,10 +47,10 @@ import static test_util.TestUtil.getValidUsername;
  */
 @RunWith(RobolectricTestRunner.class)
 public class FriendsPresenterUnitTest extends BaseTest {
-    private FriendsPresenter mPresenter;
+    private FriendsActivityPresenter mPresenter;
 
     @Mock
-    private FriendsView mView;
+    private FriendsActivityView mView;
 
     @Mock
     private MockContext mContext;
@@ -64,8 +64,8 @@ public class FriendsPresenterUnitTest extends BaseTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        mView = mock(FriendsView.class);
-        mPresenter = spy(new FriendsPresenter(mContext, mView));
+        mView = mock(FriendsActivityView.class);
+        mPresenter = spy(new FriendsActivityPresenter(mContext, mView));
 
         mListView = mock(FriendsListView.class);
         mListPresenter = spy(new FriendsListPresenter(mListView));
@@ -108,12 +108,12 @@ public class FriendsPresenterUnitTest extends BaseTest {
 
     @Test
     public void onAddContactDialog() throws Exception {
-        mListPresenter.onAddContactDialog(getValidUsername());
+        mListPresenter.onAddContactDialogComplete(getValidUsername());
         verify(mListView, never()).reload(false);
 
         User user = new User(getValidUsername());
         UserHelper.getInstance().addUser(user);
-        mListPresenter.onAddContactDialog(getValidUsername());
+        mListPresenter.onAddContactDialogComplete(getValidUsername());
         verify(mListView).onAddContactDialog(user);
 
         Thread.sleep(2000);

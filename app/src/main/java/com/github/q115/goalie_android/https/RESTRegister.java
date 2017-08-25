@@ -69,7 +69,6 @@ public class RESTRegister {
             public void onResponse(String response) {
                 UserHelper.getInstance().getOwnerProfile().username = mUsername;
                 UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
-                PreferenceHelper.getInstance().setAccountUsername(mUsername);
 
                 isRegistering = false;
 

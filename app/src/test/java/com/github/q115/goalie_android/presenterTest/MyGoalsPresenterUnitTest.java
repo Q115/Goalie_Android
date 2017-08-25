@@ -1,6 +1,6 @@
 package com.github.q115.goalie_android.presenterTest;
 
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.models.Goal;
@@ -88,7 +88,7 @@ public class MyGoalsPresenterUnitTest extends BaseTest {
         String reputation = "reputation";
         String encouragement = "encouragement";
         String referee = "referee";
-        Bitmap profileImage = null;
+        Drawable profileImage = null;
         Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.Success;
         String guid = "guid";
 

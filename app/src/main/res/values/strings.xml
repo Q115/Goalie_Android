@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Goalie</string>
     <string name="cleaned">Successfully reduced space</string>
+    <string name="file_provider">com.github.q115.goalie_android.fileprovider</string>
+    <string name="manage_space">Manage Space</string>
 
     <!-- Menu -->
     <string name="action_profile">Profile</string>
@@ -81,6 +83,11 @@
     <string name="image_taking_error">Image failed to be fetched from Camera. Try selecting an existing one.</string>
     <string name="reputation">Reputation: %d</string>
     <string name="uploaded">Uploaded</string>
+    <string name="select_photo">Select photo</string>
+    <string name="take_photo">Capture photo using Camera</string>
+    <string name="choose_photo">Choose photo from Gallery</string>
+    <string name="no_permission">Permission not granted to take and access Photos</string>
+
 
     <string name="bio_hint">Tell us about yourself</string>
     <string name="bio_label">Enter a short bio about yourself.</string>

@@ -30,18 +30,7 @@ import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
 import com.github.q115.goalie_android.R;
 
-import java.text.DateFormat;
-import java.util.Locale;
-import java.util.TimeZone;
-
 public class SublimePickerDialog extends DialogFragment {
-    // Date & Time formatter used for formatting
-    // text on the switcher button
-    private DateFormat mDateFormatter, mTimeFormatter;
-
-    // Picker
-    private SublimePicker mSublimePicker;
-
     // Callback to activity
     private Callback mCallback;
 
@@ -76,10 +65,6 @@ public class SublimePickerDialog extends DialogFragment {
     };
 
     public SublimePickerDialog() {
-        // Initialize formatters
-        mDateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
-        mTimeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
-        mTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
 
     // Set activity callback
@@ -90,7 +75,7 @@ public class SublimePickerDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mSublimePicker = (SublimePicker) getActivity()
+        SublimePicker mSublimePicker = (SublimePicker) getActivity()
                 .getLayoutInflater().inflate(R.layout.sublime_picker, container);
 
         // Retrieve SublimeOptions

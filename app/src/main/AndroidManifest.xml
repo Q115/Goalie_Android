@@ -40,6 +40,9 @@
         <activity
             android:name=".ui.my_goals.popular_goal.PopularGoalActivity"
             android:label="@string/fab_popular" />
+        <activity
+            android:name=".ui.ManageSpaceActivity"
+            android:label="@string/manage_space" />
         
         <!-- Crop -->
         <activity
@@ -63,7 +66,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.github.q115.goalie_android.fileprovider"
+            android:authorities="@string/file_provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

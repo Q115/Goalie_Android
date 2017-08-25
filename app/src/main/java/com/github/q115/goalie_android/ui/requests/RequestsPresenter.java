@@ -1,6 +1,6 @@
 package com.github.q115.goalie_android.ui.requests;
 
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTSync;
@@ -57,7 +57,7 @@ public class RequestsPresenter implements BasePresenter {
     }
 
     public void showDialog(String title, String end, String start, String reputation, String encouragement,
-                           String referee, Bitmap profileImage, Goal.GoalCompleteResult goalCompleteResult,String guid) {
+                           String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
         mRequestsView.showDialog(title, end, start, reputation, encouragement, referee, profileImage, goalCompleteResult, guid);
     }
 }

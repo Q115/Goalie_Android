@@ -2,8 +2,8 @@ package com.github.q115.goalie_android.presenterTest;
 
 import android.test.mock.MockContext;
 
-import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.BaseTest;
+import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.login.LoginPresenter;
 import com.github.q115.goalie_android.ui.login.LoginView;
 
@@ -61,22 +61,24 @@ public class LoginPresenterUnitTest extends BaseTest {
                 .thenReturn("username_error");
         when(mContext.getString(R.string.welcome))
                 .thenReturn("welcome");
+        when(mContext.getString(R.string.username_taken))
+                .thenReturn("registered");
 
         String username = UUID.randomUUID().toString().substring(20);
         mPresenter.register(mContext, username);
         verify(mView).updateProgress(true);
         Thread.sleep(2000);
         verify(mView).updateProgress(false);
-        verify(mView).registerSuccess("welcome");
+        verify(mView).registerComplete(true, "welcome");
 
         // username is taken
         mPresenter.register(mContext, username);
         Thread.sleep(2000);
-        verify(mView).showRegisterError("Already Registered");
+        verify(mView).registerComplete(false, "registered");
 
         // bad username
         mPresenter.register(mContext, " x ");
         Thread.sleep(2000);
-        verify(mView).showRegisterError("username_error");
+        verify(mView).registerComplete(false, "username_error");
     }
 }
