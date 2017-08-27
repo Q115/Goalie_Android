@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.services.MessagingService;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
     private MyGoalsPresenter mMyGoalsPresenter;
     private RequestsPresenter mRequestsPresenter;
     private FeedsPresenter mFeedsPresenter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +67,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         MainActivityPagerAdapter mSectionsPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        ViewPager mViewPager = findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -93,6 +97,24 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        if (getIntent() != null)
+            onNewIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null && intent.hasExtra("tab")) {
+            final int tab = intent.getIntExtra("tab", 0);
+            mViewPager.post(new Runnable() {
+                @Override
+                public void run() {
+                    mViewPager.setCurrentItem(tab);
+                }
+            });
+        }
     }
 
     @Override
@@ -167,18 +189,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
             mFeedsPresenter.reload();
     }
 
-    public void attachMyGoalsPresenter(MyGoalsPresenter myGoalsPresenter) {
-        mMyGoalsPresenter = myGoalsPresenter;
-    }
-
-    public void attachRequestsPresenter(RequestsPresenter requestsPresenter) {
-        mRequestsPresenter = requestsPresenter;
-    }
-
-    public void attachFeedsPresenter(FeedsPresenter feedsPresenter) {
-        mFeedsPresenter = feedsPresenter;
-    }
-
     @Override
     public void onNotification() {
         runOnUiThread(new Runnable() {
@@ -200,20 +210,32 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
         }
 
         @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
+            // save the appropriate reference depending on position
+            switch (position) {
+                case 0:
+                    mFeedsPresenter = new FeedsPresenter((FeedsFragment) createdFragment);
+                    break;
+                case 1:
+                    mMyGoalsPresenter = new MyGoalsPresenter((MyGoalsFragment) createdFragment);
+                    break;
+                case 2:
+                    mRequestsPresenter = new RequestsPresenter((RequestsFragment) createdFragment);
+                    break;
+            }
+            return createdFragment;
+        }
+
+        @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    FeedsFragment fm3 = FeedsFragment.newInstance();
-                    mFeedsPresenter = new FeedsPresenter(fm3);
-                    return fm3;
+                    return FeedsFragment.newInstance();
                 case 1:
-                    MyGoalsFragment fm1 = MyGoalsFragment.newInstance();
-                    mMyGoalsPresenter = new MyGoalsPresenter(fm1);
-                    return fm1;
+                    return MyGoalsFragment.newInstance();
                 case 2:
-                    RequestsFragment fm2 = RequestsFragment.newInstance();
-                    mRequestsPresenter = new RequestsPresenter(fm2);
-                    return fm2;
+                    return RequestsFragment.newInstance();
             }
             return null;
         }

@@ -13,6 +13,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
 /*
  * Copyright 2017 Qi Li
  *
@@ -40,6 +41,10 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     public void notifyDataSetHasChanged() {
         setupDataSet();
         super.notifyDataSetChanged();
+    }
+
+    public void setPresenter(MyGoalsPresenter myGoalsPresenter) {
+        this.mMyGoalsPresenter = myGoalsPresenter;
     }
 
     private void setupDataSet() {
@@ -78,11 +83,12 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
                     mMyGoalsPresenter.closeFABMenu();
                 } else {
                     Goal goal = mGoalList.get(pos);
-                    mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
-                            viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
-                            viewHolder.mRefereeTxt.getText().toString(),
-                            mImages.containsKey(goal.referee) ? mImages.get(goal.referee) : viewHolder.mRefereeTxt.getCompoundDrawables()[1],
-                            goal.goalCompleteResult, goal.guid);
+                    if (mMyGoalsPresenter != null)
+                        mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
+                                viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
+                                viewHolder.mRefereeTxt.getText().toString(),
+                                mImages.containsKey(goal.referee) ? mImages.get(goal.referee) : viewHolder.mRefereeTxt.getCompoundDrawables()[1],
+                                goal.goalCompleteResult, goal.guid);
                 }
             }
         });

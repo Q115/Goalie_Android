@@ -305,9 +305,10 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (getView() != null)
+                if (getView() != null) {
                     ((TextView) getView().findViewById(R.id.profile_points)).setText(
                             String.format(getString(R.string.reputation), UserHelper.getInstance().getOwnerProfile().reputation));
+                }
                 reloadList(true);
             }
         });

@@ -44,6 +44,10 @@ public class RequestsRecycler extends BaseGoalRecyler {
         super.notifyDataSetChanged();
     }
 
+    public void setPresenter(RequestsPresenter requestsPresenter) {
+        this.mRequestsPresenter = requestsPresenter;
+    }
+
     private void setupDataSet() {
         this.mGoalList = UserHelper.getInstance().getRequests();
 
@@ -77,11 +81,13 @@ public class RequestsRecycler extends BaseGoalRecyler {
             @Override
             public void onClick(View view) {
                 Goal goal = mGoalList.get(pos);
-                mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
-                        viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
-                        viewHolder.mRefereeTxt.getText().toString(),
-                        mImages.containsKey(goal.createdByUsername) ? mImages.get(goal.createdByUsername) : viewHolder.mRefereeTxt.getCompoundDrawables()[1],
-                        goal.goalCompleteResult, goal.guid);
+
+                if (mRequestsPresenter != null)
+                    mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
+                            viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
+                            viewHolder.mRefereeTxt.getText().toString(),
+                            mImages.containsKey(goal.createdByUsername) ? mImages.get(goal.createdByUsername) : viewHolder.mRefereeTxt.getCompoundDrawables()[1],
+                            goal.goalCompleteResult, goal.guid);
             }
         });
     }

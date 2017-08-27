@@ -6,7 +6,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -63,12 +62,6 @@ public class MyGoalsFragment extends Fragment implements MyGoalsView {
 
     public static MyGoalsFragment newInstance() {
         return new MyGoalsFragment();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
@@ -143,21 +136,23 @@ public class MyGoalsFragment extends Fragment implements MyGoalsView {
             }
         });
 
-        if (mMyGoalsPresenter != null)
-            ((MainActivity) getActivity()).attachMyGoalsPresenter(mMyGoalsPresenter);
-
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mMyGoalsPresenter.start();
+        if (mMyGoalsPresenter != null)
+            mMyGoalsPresenter.start();
     }
 
     @Override
     public void setPresenter(MyGoalsPresenter presenter) {
         mMyGoalsPresenter = presenter;
+
+        // reconnect presenter if needed.
+        if (mGoalList != null && mGoalList.getAdapter() != null)
+            ((MyGoalsRecycler) mGoalList.getAdapter()).setPresenter(mMyGoalsPresenter);
     }
 
     @Override

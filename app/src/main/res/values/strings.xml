@@ -20,6 +20,7 @@
     <string name="goodluck">Good Luck!</string>
     <string name="congrats">Congratulations!</string>
     <string name="completed">Completed</string>
+
     <string name="started">Started</string>
 
     <!-- My Goals -->
@@ -29,7 +30,7 @@
     <string name="fab_popular">Popular Goals</string>
     <string name="start_">start: %s</string>
     <string name="end_">end: %s</string>
-    <string name="reputation_">reputation: %d</string>
+    <string name="wagered_">wagered: %d</string>
     <string name="status_pending">status: pending</string>
     <string name="status_ongoing">status: ongoing</string>
     <string name="status_failed">status: failed</string>
@@ -47,7 +48,8 @@
     <string name="delete">Delete</string>
     <string name="delete_toast">Goal Deleted</string>
     <string name="complete_toast">Goal Marked as Successful</string>
-    <string name="failed">Failed</string>
+    <string name="fail">Fail</string>
+    <string name="pass">Pass</string>
     <string name="failed_toast">Goal Marked as Failed</string>
     <string name="remind_friend">Remind Friend</string>
     <string name="remind_referee">Remind Referee</string>

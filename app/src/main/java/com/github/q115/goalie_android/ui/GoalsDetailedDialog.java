@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -120,25 +121,30 @@ public class GoalsDetailedDialog extends DialogFragment {
         ((TextView) getDialog().findViewById(R.id.goal_wager)).setText(mReputation);
         ((TextView) getDialog().findViewById(R.id.goal_encouragement)).setText(mEncouragement);
 
+        Button btn1 = getDialog().findViewById(R.id.btn_1);
+        Button btn2 = getDialog().findViewById(R.id.btn_2);
+        Button btn3 = getDialog().findViewById(R.id.btn_3);
         if (isMyGoal) {
-            ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.delete));
-            getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+            btn1.setText(getString(R.string.delete));
+            btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
+            btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     delete(mGuid);
                 }
             });
 
-            getDialog().findViewById(R.id.btn_2).setVisibility(View.VISIBLE);
-            ((Button) getDialog().findViewById(R.id.btn_2)).setText(getString(R.string.remind_referee));
-            getDialog().findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
+            btn2.setVisibility(View.VISIBLE);
+            btn2.setText(getString(R.string.remind_referee));
+            btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+            btn2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    remindClicked();
+                    remindClicked(true);
                 }
             });
 
-            getDialog().findViewById(R.id.btn_3).setVisibility(View.GONE);
+            btn3.setVisibility(View.GONE);
 
             getDialog().findViewById(R.id.goal_from).setVisibility(View.GONE);
             ((TextView) getDialog().findViewById(R.id.goal_referee)).setText(mReferee);
@@ -146,42 +152,46 @@ public class GoalsDetailedDialog extends DialogFragment {
                     null, ImageHelper.getRoundedCornerDrawable(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
         } else {
             if (mGoalCompleteResult != Goal.GoalCompleteResult.Pending) {
-                ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.failed));
-                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                btn1.setText(getString(R.string.fail));
+                btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
+                btn1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         actionPicked(Goal.GoalCompleteResult.Failed);
                     }
                 });
 
-                getDialog().findViewById(R.id.btn_2).setVisibility(View.VISIBLE);
-                ((Button) getDialog().findViewById(R.id.btn_2)).setText(getString(R.string.completed));
-                getDialog().findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
+                btn2.setVisibility(View.VISIBLE);
+                btn2.setText(getString(R.string.pass));
+                btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
+                btn2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         actionPicked(Goal.GoalCompleteResult.Success);
                     }
                 });
 
-                getDialog().findViewById(R.id.btn_3).setVisibility(View.VISIBLE);
-                ((Button) getDialog().findViewById(R.id.btn_3)).setText(getString(R.string.remind_friend));
-                getDialog().findViewById(R.id.btn_3).setOnClickListener(new View.OnClickListener() {
+                btn3.setVisibility(View.VISIBLE);
+                btn3.setText(getString(R.string.remind_friend));
+                btn3.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                btn3.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        remindClicked();
+                        remindClicked(false);
                     }
                 });
             } else {
-                ((Button) getDialog().findViewById(R.id.btn_1)).setText(getString(R.string.accept));
-                getDialog().findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+                btn1.setText(getString(R.string.accept));
+                btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
+                btn1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         actionPicked(Goal.GoalCompleteResult.Ongoing);
                     }
                 });
 
-                getDialog().findViewById(R.id.btn_2).setVisibility(View.GONE);
-                getDialog().findViewById(R.id.btn_3).setVisibility(View.GONE);
+                btn2.setVisibility(View.GONE);
+                btn3.setVisibility(View.GONE);
             }
 
             getDialog().findViewById(R.id.goal_referee).setVisibility(View.GONE);
@@ -217,12 +227,12 @@ public class GoalsDetailedDialog extends DialogFragment {
         sm.execute();
     }
 
-    private void remindClicked() {
+    private void remindClicked(boolean isRemindingRef) {
         final ProgressDialog progress = new ProgressDialog(getActivity());
         progress.setMessage(getString(R.string.connecting));
         progress.show();
 
-        RESTRemind sm = new RESTRemind(UserHelper.getInstance().getOwnerProfile().username, mReferee, mGuid);
+        RESTRemind sm = new RESTRemind(UserHelper.getInstance().getOwnerProfile().username, mReferee, mGuid, isRemindingRef);
         sm.setListener(new RESTRemind.Listener() {
             @Override
             public void onSuccess() {

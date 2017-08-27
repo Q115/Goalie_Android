@@ -1,7 +1,6 @@
 package com.github.q115.goalie_android.ui.feeds;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,12 +46,6 @@ public class FeedsFragment extends Fragment implements FeedsView {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_feeds, container, false);
@@ -71,16 +64,14 @@ public class FeedsFragment extends Fragment implements FeedsView {
         });
         mSwipeRefreshLayout.setEnabled(true);
 
-        if (mFeedsPresenter != null)
-            ((MainActivity) getActivity()).attachFeedsPresenter(mFeedsPresenter);
-
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mFeedsPresenter.start();
+        if (mFeedsPresenter != null)
+            mFeedsPresenter.start();
     }
 
     @Override

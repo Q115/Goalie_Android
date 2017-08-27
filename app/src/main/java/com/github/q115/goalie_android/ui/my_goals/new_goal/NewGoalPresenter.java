@@ -176,9 +176,9 @@ public class NewGoalPresenter implements BasePresenter {
     }
 
     public String[] refereeArray() {
-        // remove self and display all others
         TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
-        tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
+        // include self currently to allow self goals. Uncomment below to remove self as a referee
+        //tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
         tempHashMap.put("", null);
 
         return tempHashMap.keySet().toArray(new String[UserHelper.getInstance().getAllContacts().size()]);

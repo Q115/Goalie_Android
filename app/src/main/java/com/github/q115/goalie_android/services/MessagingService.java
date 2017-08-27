@@ -30,7 +30,9 @@ import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTSync;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.MainActivity;
+import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -73,6 +75,7 @@ public class MessagingService extends FirebaseMessagingService {
                 String key = payloadJson.getString("key");
                 String message = payloadJson.getString("message");
                 String guid = payloadJson.getString("guid");
+                int result = payloadJson.getInt("result");
                 long time = payloadJson.getLong("time");
 
                 // no need to publish a notification
@@ -82,18 +85,33 @@ public class MessagingService extends FirebaseMessagingService {
 
                 switch (key) {
                     case "remind":
-                        showNotification(getString(R.string.notification_remind), message);
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra("tab", 1 + result); // result = isRemindingRef
+                        showNotification(getString(R.string.notification_remind), message, intent);
                         break;
                     case "response":
+                        Intent intent2;
+                        if (result < Goal.GoalCompleteResult.values().length) {
+                            Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[result];
+                            if (goalCompleteResult == Goal.GoalCompleteResult.Ongoing) {
+                                intent2 = new Intent(this, MainActivity.class);
+                                intent2.putExtra("tab", 1);
+                            } else {
+                                intent2 = ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username);
+                            }
+                        } else
+                            intent2 = new Intent(this, MainActivity.class);
                         sync();
-                        showNotification(getString(R.string.notification_response), message);
+                        showNotification(getString(R.string.notification_response), message, intent2);
                         break;
                     case "request":
                         sync();
-                        showNotification(getString(R.string.notification_request), message);
+                        Intent intent3 = new Intent(this, MainActivity.class);
+                        intent3.putExtra("tab", 2);
+                        showNotification(getString(R.string.notification_request), message, intent3);
                         break;
                     default:
-                        showNotification(getString(R.string.notification_title), message);
+                        showNotification(getString(R.string.notification_title), message, new Intent(this, MainActivity.class));
                         break;
                 }
             } catch (JSONException je) {
@@ -104,9 +122,10 @@ public class MessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showNotification(String title, String description) {
+    private void showNotification(String title, String description, Intent intent) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Bitmap largeNotificationImage = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -57,12 +56,6 @@ public class RequestsFragment extends Fragment implements RequestsView {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_requests, container, false);
@@ -84,20 +77,24 @@ public class RequestsFragment extends Fragment implements RequestsView {
         });
         mSwipeRefreshLayout.setEnabled(true);
 
-        if (mRequestsPresenter != null)
-            ((MainActivity) getActivity()).attachRequestsPresenter(mRequestsPresenter);
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mRequestsPresenter.start();
+
+        if (mRequestsPresenter != null)
+            mRequestsPresenter.start();
     }
 
     @Override
     public void setPresenter(RequestsPresenter presenter) {
         mRequestsPresenter = presenter;
+
+        // reconnect presenter if needed.
+        if (mRequestList != null && mRequestList.getAdapter() != null)
+            ((RequestsRecycler) mRequestList.getAdapter()).setPresenter(mRequestsPresenter);
     }
 
     private RecyclerView.OnScrollListener onScrollListener() {

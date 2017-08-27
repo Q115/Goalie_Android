@@ -39,11 +39,13 @@ public class RESTRemind {
     private String mFromUsername;
     private String mToUsername;
     private String mGuid;
+    private boolean isRemindingRef;
 
-    public RESTRemind(String fromUsername, String toUsername, String guid) {
+    public RESTRemind(String fromUsername, String toUsername, String guid, boolean isRemindingRef) {
         this.mFromUsername = fromUsername;
         this.mToUsername = toUsername;
         this.mGuid = guid;
+        this.isRemindingRef = isRemindingRef;
     }
 
     public interface Listener {
@@ -94,6 +96,7 @@ public class RESTRemind {
                 params.put("fromUsername", mFromUsername);
                 params.put("toUsername", mToUsername);
                 params.put("guid", mGuid);
+                params.put("isRemindingRef", String.valueOf(isRemindingRef ? 1 : 0));
                 return new JSONObject(params).toString().getBytes();
             }
         };

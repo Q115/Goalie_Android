@@ -153,15 +153,14 @@ public class RESTSync {
                                     UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
                                     i--;
                                     UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
-
-                                    if (goal.goalCompleteResult == Goal.GoalCompleteResult.Success) {
-                                        UserHelper.getInstance().getOwnerProfile().reputation += (goal.wager * 2);
-                                        UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
-                                    }
                                 }
                             }
                         }
                     }
+
+                    // self info
+                    UserHelper.getInstance().getOwnerProfile().reputation = jsonObject.getJSONObject("info").getLong("reputation");
+                    UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
 
                     // commit time
                     PreferenceHelper.getInstance().setLastSyncedTimeEpoch(jsonObject.getLong("time"));

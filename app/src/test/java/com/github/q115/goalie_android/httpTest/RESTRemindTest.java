@@ -50,7 +50,7 @@ public class RESTRemindTest extends BaseTest {
             @Override
             public void onSuccess(String guid) {
                 // remind on that goal
-                RESTRemind sm = new RESTRemind(username, friendUsername, UserHelper.getInstance().getOwnerProfile().activieGoals.get(0).guid);
+                RESTRemind sm = new RESTRemind(username, friendUsername, UserHelper.getInstance().getOwnerProfile().activieGoals.get(0).guid, true);
                 sm.setListener(new RESTRemind.Listener() {
                     @Override
                     public void onSuccess() {
