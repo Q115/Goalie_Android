@@ -1,6 +1,7 @@
 package com.github.q115.goalie_android;
 
 import android.content.Context;
+import android.content.res.Configuration;
 
 import com.android.volley.ExecutorDelivery;
 import com.android.volley.Network;
@@ -27,6 +28,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.Executors;
 
+import static org.junit.Assert.assertTrue;
+
 /*
  * Copyright 2017 Qi Li
  *
@@ -47,6 +50,8 @@ import java.util.concurrent.Executors;
 public abstract class BaseTest {
     @Before
     public void init() throws Exception {
+        assertTrue(BuildConfig.DEBUG); // unit test should only be run on debug at this time
+
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
         VolleyRequestQueue.getInstance().initialize(RuntimeEnvironment.application);
         Whitebox.setInternalState(VolleyRequestQueue.getInstance(), "mRequestQueue", newVolleyRequestQueueForTest(RuntimeEnvironment.application));

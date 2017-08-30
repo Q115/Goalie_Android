@@ -51,11 +51,11 @@ public class RequestPresenterUnitTest extends BaseTest {
     public void onRefresh() throws Exception {
         mPresenter.onRefresherRefresh();
         Thread.sleep(1000);
-        verify(mView).syncComplete(false, "Unauthorized");
+        verify(mView).syncComplete(false, "Unauthorized, Please Update App");
 
         UserHelper.getInstance().getOwnerProfile().username = getValidUsername();
         mPresenter.onRefresherRefresh();
-        Thread.sleep(1000);
+        Thread.sleep(1500);
         verify(mView).syncComplete(true, "");
     }
 

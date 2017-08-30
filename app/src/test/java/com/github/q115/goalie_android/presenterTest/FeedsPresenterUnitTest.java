@@ -48,7 +48,7 @@ public class FeedsPresenterUnitTest extends BaseTest {
     public void onRefresh() throws Exception {
         mPresenter.onRefresherRefresh();
         Thread.sleep(1000);
-        verify(mView).syncComplete(false, "Unauthorized");
+        verify(mView).syncComplete(false, "Unauthorized, Please Update App");
 
         UserHelper.getInstance().getOwnerProfile().username = getValidUsername();
         mPresenter.onRefresherRefresh();
