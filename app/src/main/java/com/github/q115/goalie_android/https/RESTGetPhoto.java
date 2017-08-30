@@ -6,6 +6,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -101,6 +102,7 @@ public class RESTGetPhoto {
                 HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
                 mHeaders.put("Username", mUsername);
+                mHeaders.put("Authorization", Constants.KEY);
                 return mHeaders;
             }
         };

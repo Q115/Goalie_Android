@@ -135,9 +135,10 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         UserHelper.getInstance().getOwnerProfile().username = "self";
 
         strings = mPresenter.refereeArray();
-        assertEquals(strings.length, 2);
+        assertEquals(strings.length, 3);
         assertEquals(strings[0], "");
-        assertEquals(strings[1], "user");
+        assertEquals(strings[1], "self");
+        assertEquals(strings[2], "user");
     }
 
     @Test

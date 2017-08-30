@@ -16,8 +16,8 @@ package com.github.q115.goalie_android;
  * limitations under the License.
  */
 public class Constants {
-    // public static final String URL = BuildConfig.DEBUG ? "http://192.168.0.14:8080" : "https://google.com";
-    public static final String URL = "http://98.192.255.182:8080";
+    public static final String URL = BuildConfig.DEBUG ? "http://192.168.0.14:8080" : "http://goalie.ga";
+    public static final String KEY = BuildConfig.DEBUG ? "xxx" : "xxxx";
     public static final String PREFERENCE_FILE_NAME = "PREFERENCE_FILE_NAME";
 
     public static final String FAILED_TO_CONNECT = "Connection failure, please ensure internet connection is active.";

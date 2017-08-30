@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.github.q115.goalie_android.Constants;
 
 import org.json.JSONObject;
 
@@ -86,7 +87,8 @@ public class RESTRemind {
             public HashMap<String, String> getHeaders() {
                 HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
-                mHeaders.put("username", mFromUsername);
+                mHeaders.put("Username", mFromUsername);
+                mHeaders.put("Authorization", Constants.KEY);
                 return mHeaders;
             }
 

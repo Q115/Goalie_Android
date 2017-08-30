@@ -191,6 +191,17 @@ public class GoalsDetailedDialog extends DialogFragment {
                 });
 
                 btn2.setVisibility(View.GONE);
+                /* No decline for now until server better implements how to deal with this
+                btn2.setVisibility(View.VISIBLE);
+                btn2.setText(getString(R.string.accept));
+                btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
+                btn2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        actionPicked(Goal.GoalCompleteResult.Ongoing);
+                    }
+                });*/
+
                 btn3.setVisibility(View.GONE);
             }
 

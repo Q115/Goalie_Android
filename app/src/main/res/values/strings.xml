@@ -46,6 +46,7 @@
     <string name="accept">Accept</string>
     <string name="accepte_toast">Goal Accepted</string>
     <string name="delete">Delete</string>
+    <string name="decline_delete">Decline &amp; Delete</string>
     <string name="delete_toast">Goal Deleted</string>
     <string name="complete_toast">Goal Marked as Successful</string>
     <string name="fail">Fail</string>
@@ -70,7 +71,7 @@
     <!-- Login -->
     <string name="login">Login</string>
     <string name="username">Username</string>
-    <string name="username_error">Invalid characters in Username. Must not contain \':\', \'/\', \'\\\' or space</string>
+    <string name="username_error">Username should be 4 or more characters and must not contain \':\', \'/\', \'\\\' or space</string>
     <string name="username_hint">Username should be 4 or more characters.</string>
     <string name="username_taken">Username has been taken, please choose another.</string>
     <string name="register">Register</string>

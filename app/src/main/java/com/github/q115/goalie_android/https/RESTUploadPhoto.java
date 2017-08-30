@@ -96,7 +96,8 @@ public class RESTUploadPhoto {
             @Override
             public HashMap<String, String> getHeaders() {
                 HashMap<String, String> mHeaders = new HashMap<>();
-                mHeaders.put("username", mUsername);
+                mHeaders.put("Username", mUsername);
+                mHeaders.put("Authorization", Constants.KEY);
                 mHeaders.put("Content-Type", "multipart/form-data;boundary=" + mBoundary);
                 return mHeaders;
             }

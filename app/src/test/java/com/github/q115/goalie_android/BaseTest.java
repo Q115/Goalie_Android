@@ -23,6 +23,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.concurrent.Executors;
 
 /*
@@ -44,7 +46,7 @@ import java.util.concurrent.Executors;
 @RunWith(RobolectricTestRunner.class)
 public abstract class BaseTest {
     @Before
-    public void init() {
+    public void init() throws Exception {
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
         VolleyRequestQueue.getInstance().initialize(RuntimeEnvironment.application);
         Whitebox.setInternalState(VolleyRequestQueue.getInstance(), "mRequestQueue", newVolleyRequestQueueForTest(RuntimeEnvironment.application));
@@ -55,12 +57,13 @@ public abstract class BaseTest {
         UserHelper.getInstance().LoadContacts();
     }
 
-    private RequestQueue newVolleyRequestQueueForTest(final Context context) {
+    private RequestQueue newVolleyRequestQueueForTest(final Context context) throws Exception {
         File cacheDir = new File(context.getCacheDir(), "cache/volley");
         Network network = new BasicNetwork(new HurlStack());
         ResponseDelivery responseDelivery = new ExecutorDelivery(Executors.newSingleThreadExecutor());
         RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network, 4, responseDelivery);
         queue.start();
+
         return queue;
     }
 }

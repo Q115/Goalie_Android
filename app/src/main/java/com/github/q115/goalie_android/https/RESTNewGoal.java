@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -78,8 +79,10 @@ public class RESTNewGoal {
                 Goal goal = new Goal(response, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement, Goal.GoalCompleteResult.Pending, mReferee, System.currentTimeMillis());
                 UserHelper.getInstance().addGoal(goal);
 
-                UserHelper.getInstance().getOwnerProfile().reputation -= mWager;
-                UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+                if (!mReferee.equals(mUsername)) {
+                    UserHelper.getInstance().getOwnerProfile().reputation -= mWager;
+                    UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+                }
 
                 if (mList != null)
                     mList.onSuccess(response);
@@ -104,7 +107,8 @@ public class RESTNewGoal {
             public HashMap<String, String> getHeaders() {
                 HashMap<String, String> mHeaders = new HashMap<>();
                 mHeaders.put("Content-Type", "application/json");
-                mHeaders.put("username", mUsername);
+                mHeaders.put("Username", mUsername);
+                mHeaders.put("Authorization", Constants.KEY);
                 return mHeaders;
             }
 
