@@ -118,7 +118,7 @@
     <string name="error_goal_no_title">No title entered for this goal.</string>
     <string name="error_goal_invalid_date">Invalid start or end time for this goal.</string>
     <string name="error_goal_no_referee">No referee set for this goal.</string>
-    <string name="wager_invalid">Wager amount is invalid. If you need more reputation points, you will gain 50 points when you become someone\'s referee.</string>
+    <string name="wager_invalid">Wager amount is invalid. If you need more reputation points, you can get them when you become someone\'s referee.</string>
 
     <!-- Notification -->
     <string name="notification_title">Goalie Notification</string>
