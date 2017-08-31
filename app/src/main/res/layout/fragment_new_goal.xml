@@ -29,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/title_hint"
                 android:imeOptions="flagNoExtractUi"
+                android:inputType="textCapSentences"
                 android:maxLength="@integer/title_length"
                 android:maxLines="2" />
 
@@ -192,6 +193,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/encouragement_hint"
                 android:imeOptions="flagNoExtractUi"
+                android:inputType="textCapSentences"
                 android:maxLength="@integer/encouragement_length"
                 android:maxLines="2" />
 

@@ -16,6 +16,14 @@ To contribute with a fix, patch, new feature, or other improvements, simply crea
 
 Follow good programming practices and please maintain as much consistency with the rest of the project. Utilize good MVP architecture for all Activities and core Fragments (Dialogs are not held to this standard at this time). 
 
+## Backend server
+
+Backend server code is not open source at this time, so unit test will fail if you have don't a local server setup (will fix this problem soon). Once you submit a pull request, I'll run the test suites against my local server to make sure things are OK. If you have a feature you like to add that requires server integration, please mock the REST calls and the results you wish to get back, I'll implement the logic on the server once you make a pull request.
+
 ## License
 
 [Apache 2.0](https://github.com/Q115/Goalie_Android/blob/master/LICENSE.md)
+
+### Terms of Service & Privacy Policy
+
+[Terms of Service](http://goalie.ga/termsofservice.htm) & [Privacy Policy](http://goalie.ga/privacypolicy.htm)

@@ -103,7 +103,7 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         switch (goal.goalCompleteResult) {
             case Pending:
                 viewHolder.mStatusTxt.setText(R.string.status_pending);
-                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, tab_indicator_text));
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
                 break;
             case Ongoing:
                 viewHolder.mStatusTxt.setText(R.string.status_ongoing);
