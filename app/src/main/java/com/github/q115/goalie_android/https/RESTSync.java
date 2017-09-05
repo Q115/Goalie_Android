@@ -3,10 +3,8 @@ package com.github.q115.goalie_android.https;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
@@ -23,8 +21,6 @@ import java.util.Map;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 /*
@@ -43,9 +39,8 @@ import static com.github.q115.goalie_android.Constants.URL;
  * limitations under the License.
  */
 
-public class RESTSync {
-    private RESTSync.Listener mList;
-    private String mUsername;
+public class RESTSync extends RESTBase<String> {
+    private RESTSync.Listener mListener;
     private long mLastSyncedTimeEpoch;
     private static boolean isSyncing;
 
@@ -54,149 +49,28 @@ public class RESTSync {
     }
 
     public RESTSync(String username, long lastSyncedTimeEpoch) {
-        mUsername = username;
+        this.mUsername = username;
         mLastSyncedTimeEpoch = lastSyncedTimeEpoch;
     }
 
-    public interface Listener {
+    public interface Listener extends RESTBaseListener {
         void onSuccess();
 
         void onFailure(String errMsg);
     }
 
     public void setListener(RESTSync.Listener mList) {
-        this.mList = mList;
+        super.setListener(mList);
+        this.mListener = mList;
     }
 
     public void execute() {
         final String url = URL + "/sync";
         isSyncing = true;
-        StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                ArrayList<GoalFeed> goalFeedList = new ArrayList<>();
-                HashMap<String, Goal> goalHash = new HashMap<>();
-                try {
-                    JSONObject jsonObject = new JSONObject(new String(response.getBytes("ISO-8859-1"), "UTF-8"));
-
-                    // feeds
-                    JSONArray jsonAll = jsonObject.getJSONArray("feed");
-                    for (int i = 0; i < jsonAll.length(); i++) {
-                        JSONObject jsonObj = jsonAll.getJSONObject(i);
-                        String guid = jsonObj.getString("guid");
-                        String createdUsername = jsonObj.getString("createdUsername");
-                        long wager = jsonObj.getLong("wager");
-                        long upvoteCount = jsonObj.getLong("upvoteCount");
-
-                        int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
-                        Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
-                        if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
-                            goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
-
-                        GoalFeed goalFeed = new GoalFeed(guid, wager, createdUsername, upvoteCount, goalCompleteResult);
-                        goalFeedList.add(goalFeed);
-                    }
-                    UserHelper.getInstance().setFeeds(goalFeedList);
-
-                    // my goals
-                    JSONArray jsonMy = jsonObject.getJSONArray("my");
-                    for (int i = 0; i < jsonMy.length(); i++) {
-                        JSONObject jsonObj = jsonMy.getJSONObject(i);
-                        String guid = jsonObj.getString("guid");
-
-                        int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
-                        Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
-                        if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
-                            goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
-
-                        Goal goal = new Goal(guid, goalCompleteResult);
-                        goalHash.put(goal.guid, goal);
-                    }
-
-                    // requests
-                    UserHelper.getInstance().getRequests().clear();
-                    JSONArray jsonMyRequests = jsonObject.getJSONArray("referee");
-                    for (int i = 0; i < jsonMyRequests.length(); i++) {
-                        JSONObject jsonObj = jsonMyRequests.getJSONObject(i);
-                        String guid = jsonObj.getString("guid");
-                        String createdUsername = jsonObj.getString("createdUsername");
-                        String title = jsonObj.getString("title");
-                        long startDate = jsonObj.getLong("startDate");
-                        long endDate = jsonObj.getLong("endDate");
-                        long wager = jsonObj.getLong("wager");
-                        String encouragement = jsonObj.getString("encouragement");
-                        long activityDate = jsonObj.getLong("activityDate");
-
-                        int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
-                        Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
-                        if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
-                            goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
-
-                        Goal goal = new Goal(guid, createdUsername, title, startDate, endDate,
-                                wager, encouragement, goalCompleteResult, mUsername, activityDate);
-                        UserHelper.getInstance().getRequests().add(goal);
-
-                        if (!UserHelper.getInstance().getAllContacts().containsKey(goal.createdByUsername)) {
-                            UserHelper.getInstance().addUser(new User(goal.createdByUsername));
-                        }
-                    }
-
-                    // check if activieGoals changed
-                    for (int i = 0; i < UserHelper.getInstance().getOwnerProfile().activieGoals.size(); i++) {
-                        Goal goal = UserHelper.getInstance().getOwnerProfile().activieGoals.get(i);
-                        Goal fetchedGoal = goalHash.get(goal.guid);
-                        if (fetchedGoal != null) {
-                            if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
-                                goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
-                                UserHelper.getInstance().modifyGoal(goal);
-
-                                if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
-                                    UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
-                                    i--;
-                                    UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
-                                }
-                            }
-                        }
-                    }
-
-                    // self info
-                    UserHelper.getInstance().getOwnerProfile().reputation = jsonObject.getJSONObject("info").getLong("reputation");
-                    UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
-
-                    // commit time
-                    PreferenceHelper.getInstance().setLastSyncedTimeEpoch(jsonObject.getLong("time"));
-                } catch (Exception e) {
-                    Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to sync onResult");
-                }
-
-                isSyncing = false;
-                if (mList != null)
-                    mList.onSuccess();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                isSyncing = false;
-                if (mList == null)
-                    return;
-                if (error == null || error.networkResponse == null) {
-                    mList.onFailure(FAILED_TO_CONNECT);
-                } else if (error.networkResponse.headers != null && error.networkResponse.headers.containsKey("response")) {
-                    String msgErr = error.networkResponse.headers.get("response") == null ? FAILED
-                            : error.networkResponse.headers.get("response");
-                    mList.onFailure(msgErr);
-                } else {
-                    mList.onFailure(FAILED_TO_Send);
-                }
-            }
-        }) {
+        StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
             @Override
             public HashMap<String, String> getHeaders() {
-                HashMap<String, String> mHeaders = new HashMap<>();
-                mHeaders.put("Content-Type", "application/json");
-                mHeaders.put("Username", mUsername);
-                mHeaders.put("Authorization", Constants.KEY);
-                return mHeaders;
+                return getDefaultHeaders();
             }
 
             @Override
@@ -213,5 +87,130 @@ public class RESTSync {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        isSyncing = false;
+        super.onErrorResponse(error);
+    }
+
+    @Override
+    public void onResponse(String response) {
+        boolean isSuccessfull;
+        try {
+            JSONObject jsonObject = new JSONObject(new String(response.getBytes("ISO-8859-1"), "UTF-8"));
+
+            setupFeeds(jsonObject.getJSONArray("feed"));
+            setupMyGoals(jsonObject.getJSONArray("my"));
+            setupRequests(jsonObject.getJSONArray("referee"));
+
+            // self info
+            UserHelper.getInstance().getOwnerProfile().reputation =
+                    jsonObject.getJSONObject("info").getLong("reputation");
+            UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+
+            // commit synced time
+            PreferenceHelper.getInstance().setLastSyncedTimeEpoch(jsonObject.getLong("time"));
+            isSuccessfull = true;
+        } catch (Exception e) {
+            isSuccessfull = false;
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to sync onResult");
+        }
+
+        isSyncing = false;
+        if (mListener != null && isSuccessfull)
+            mListener.onSuccess();
+        else if (mListener != null)
+            mListener.onFailure(FAILED);
+    }
+
+    private void setupFeeds(JSONArray jsonAll) throws Exception {
+        ArrayList<GoalFeed> goalFeedList = new ArrayList<>();
+
+        for (int i = 0; i < jsonAll.length(); i++) {
+            JSONObject jsonObj = jsonAll.getJSONObject(i);
+            String guid = jsonObj.getString("guid");
+            String createdUsername = jsonObj.getString("createdUsername");
+            long wager = jsonObj.getLong("wager");
+            long upvoteCount = jsonObj.getLong("upvoteCount");
+
+            int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
+            Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
+            if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
+                goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
+
+            GoalFeed goalFeed = new GoalFeed(guid, wager, createdUsername, upvoteCount, goalCompleteResult);
+            goalFeedList.add(goalFeed);
+        }
+
+        UserHelper.getInstance().setFeeds(goalFeedList);
+    }
+
+    private void setupMyGoals(JSONArray jsonMy) throws Exception {
+        HashMap<String, Goal> goalHash = new HashMap<>();
+
+        for (int i = 0; i < jsonMy.length(); i++) {
+            JSONObject jsonObj = jsonMy.getJSONObject(i);
+            String guid = jsonObj.getString("guid");
+
+            int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
+            Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
+            if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
+                goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
+
+            Goal goal = new Goal(guid, goalCompleteResult);
+            goalHash.put(goal.guid, goal);
+        }
+
+        // check if activieGoals changed
+        for (int i = 0; i < UserHelper.getInstance().getOwnerProfile().activieGoals.size(); i++) {
+            Goal goal = UserHelper.getInstance().getOwnerProfile().activieGoals.get(i);
+            Goal fetchedGoal = goalHash.get(goal.guid);
+            if (fetchedGoal != null) {
+                if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
+                    goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
+                    UserHelper.getInstance().modifyGoal(goal);
+
+                    if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending
+                            && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
+                        UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
+                        i--;
+                        UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setupRequests(JSONArray jsonMyRequests) throws Exception {
+        ArrayList<Goal> requests = new ArrayList<>();
+
+        for (int i = 0; i < jsonMyRequests.length(); i++) {
+            JSONObject jsonObj = jsonMyRequests.getJSONObject(i);
+            String guid = jsonObj.getString("guid");
+            String createdUsername = jsonObj.getString("createdUsername");
+            String title = jsonObj.getString("title");
+            long startDate = jsonObj.getLong("startDate");
+            long endDate = jsonObj.getLong("endDate");
+            long wager = jsonObj.getLong("wager");
+            String encouragement = jsonObj.getString("encouragement");
+            long activityDate = jsonObj.getLong("activityDate");
+
+            int goalCompleteResultInt = jsonObj.getInt("goalCompleteResult");
+            Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.None;
+            if (goalCompleteResultInt < Goal.GoalCompleteResult.values().length)
+                goalCompleteResult = Goal.GoalCompleteResult.values()[goalCompleteResultInt];
+
+            Goal goal = new Goal(guid, createdUsername, title, startDate, endDate,
+                    wager, encouragement, goalCompleteResult, mUsername, activityDate);
+            requests.add(goal);
+
+            if (!UserHelper.getInstance().getAllContacts().containsKey(goal.createdByUsername)) {
+                UserHelper.getInstance().addUser(new User(goal.createdByUsername));
+            }
+        }
+
+        UserHelper.getInstance().setRequests(requests);
     }
 }

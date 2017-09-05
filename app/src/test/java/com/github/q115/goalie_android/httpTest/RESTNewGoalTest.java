@@ -1,6 +1,5 @@
 package com.github.q115.goalie_android.httpTest;
 
-import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
@@ -8,13 +7,16 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.UUID;
+import org.robolectric.util.Pair;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static test_util.TestUtil.getValidUsername;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
+import static test_util.RESTUtil.getTestUsername;
+import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li
@@ -32,53 +34,80 @@ import static test_util.TestUtil.getValidUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTNewGoalTest extends BaseTest {
-    private int operation1;
+public class RESTNewGoalTest extends BaseREST {
 
-    @Test(timeout = 10000)
+    @Test
     public void setNewGoal() throws Exception {
-        operation1 = 1;
-        final String username = UUID.randomUUID().toString();
+        String friendUsername = getValidFriendUsername();
+        Pair<Integer, RESTNewGoal.Listener> pair = createAListener();
 
-        // register friend
-        final String friendUsername = getValidUsername();
-
-        // register self
-        RESTRegisterTest.registerUser(username, null);
-        Thread.sleep(1000);
-
-        // get userinfo on RESTNewGoal
+        int currentActivitySize = UserHelper.getInstance().getOwnerProfile().activieGoals.size();
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
-        sm.setListener(new RESTNewGoal.Listener() {
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+
+        User user = UserHelper.getInstance().getAllContacts().get(username);
+        assertNotNull(user);
+        assertEquals(user.username, username);
+        assertEquals(user.activieGoals.size(), currentActivitySize + 1);
+
+        Goal goal = user.activieGoals.get(currentActivitySize);
+        assertEquals(goal.createdByUsername, username);
+        assertEquals(goal.title, "title");
+        assertEquals(goal.startDate, 12000);
+        assertEquals(goal.endDate, 120000);
+        assertEquals(goal.wager, 55);
+        assertEquals(goal.encouragement, "encouragement");
+        assertEquals(goal.referee, friendUsername);
+        assertEquals(goal.goalCompleteResult, Goal.GoalCompleteResult.Pending);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().reputation, 45);
+    }
+
+    @Test
+    public void onResponseEmpty() throws Exception {
+        String friendUsername = getTestUsername();
+        User user = UserHelper.getInstance().getAllContacts().get(friendUsername);
+        assertNull(user);
+
+        Pair<Integer, RESTNewGoal.Listener> pair = createAListener();
+        int currentActivitySize = UserHelper.getInstance().getOwnerProfile().activieGoals.size();
+
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
+        sm.setListener(pair.second);
+        sm.onResponse("");
+
+        verify(pair.second).onSuccess();
+
+        User friendUser = UserHelper.getInstance().getAllContacts().get(friendUsername);
+        assertNotNull(friendUser);
+
+        User owner = UserHelper.getInstance().getAllContacts().get(username);
+        assertNotNull(owner);
+        assertEquals(owner.activieGoals.size(), currentActivitySize + 1);
+    }
+
+    private synchronized Pair<Integer, RESTNewGoal.Listener> createAListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
+
+        RESTNewGoal.Listener listener = Mockito.spy(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess(String guid) {
-                User user = UserHelper.getInstance().getAllContacts().get(username);
-                assertNotNull(user);
-                assertEquals(user.username, username);
-                assertEquals(user.activieGoals.size(), 1);
-
-                Goal goal = user.activieGoals.get(0);
-                assertEquals(goal.createdByUsername, username);
-                assertEquals(goal.title, "title");
-                assertEquals(goal.startDate, 12000);
-                assertEquals(goal.endDate, 120000);
-                assertEquals(goal.wager, 55);
-                assertEquals(goal.encouragement, "encouragement");
-                assertEquals(goal.referee, friendUsername);
-                assertEquals(goal.goalCompleteResult, Goal.GoalCompleteResult.Pending);
-
-                assertEquals(UserHelper.getInstance().getOwnerProfile().reputation, 45);
-                operation1--;
+            public void onSuccess() {
+                isOperationCompleteList.set(index, true);
             }
 
             @Override
             public void onFailure(String errMsg) {
-                operation1--;
+                isOperationCompleteList.set(index, true);
             }
         });
-        sm.execute();
 
-        while (operation1 != 0)
-            Thread.sleep(1000);
+        return new Pair<>(index, listener);
     }
 }

@@ -3,10 +3,7 @@ package com.github.q115.goalie_android.https;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.github.q115.goalie_android.Constants;
 
 import org.json.JSONObject;
 
@@ -14,9 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_NORMAL_TIMEOUT;
-import static com.github.q115.goalie_android.Constants.FAILED;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 /*
  * Copyright 2017 Qi Li
@@ -34,9 +28,8 @@ import static com.github.q115.goalie_android.Constants.URL;
  * limitations under the License.
  */
 
-public class RESTUpvote {
-    private RESTUpvote.Listener mList;
-    private String mUsername;
+public class RESTUpvote extends RESTBase<String> {
+    private RESTUpvote.Listener mListener;
     private String mGuid;
 
     public RESTUpvote(String username, String guid) {
@@ -44,47 +37,23 @@ public class RESTUpvote {
         this.mGuid = guid;
     }
 
-    public interface Listener {
+    public interface Listener extends RESTBaseListener {
         void onSuccess();
 
         void onFailure(String errMsg);
     }
 
     public void setListener(RESTUpvote.Listener mList) {
-        this.mList = mList;
+        super.setListener(mList);
+        this.mListener = mList;
     }
 
     public void execute() {
         final String url = URL + "/upvote";
-        StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (mList != null)
-                    mList.onSuccess();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (mList == null)
-                    return;
-                if (error == null || error.networkResponse == null) {
-                    mList.onFailure(FAILED_TO_CONNECT);
-                } else if (error.networkResponse.headers != null && error.networkResponse.headers.containsKey("response")) {
-                    String msgErr = error.networkResponse.headers.get("response") == null ? FAILED
-                            : error.networkResponse.headers.get("response");
-                    mList.onFailure(msgErr);
-                } else {
-                    mList.onFailure(FAILED_TO_Send);
-                }
-            }
-        }) {
+        StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
             @Override
             public HashMap<String, String> getHeaders() {
-                HashMap<String, String> mHeaders = new HashMap<>();
-                mHeaders.put("Content-Type", "application/json");
-                mHeaders.put("Username", mUsername);
-                mHeaders.put("Authorization", Constants.KEY);
-                return mHeaders;
+                return getDefaultHeaders();
             }
 
             @Override
@@ -101,5 +70,11 @@ public class RESTUpvote {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);
+    }
+
+    @Override
+    public void onResponse(String response) {
+        if (mListener != null)
+            mListener.onSuccess();
     }
 }

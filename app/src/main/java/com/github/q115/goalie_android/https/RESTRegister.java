@@ -3,10 +3,8 @@ package com.github.q115.goalie_android.https;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -16,9 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
-import static com.github.q115.goalie_android.Constants.FAILED;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 /*
@@ -37,9 +32,8 @@ import static com.github.q115.goalie_android.Constants.URL;
  * limitations under the License.
  */
 
-public class RESTRegister {
-    private RESTRegister.Listener mList;
-    private String mUsername;
+public class RESTRegister extends RESTBase<String> {
+    private RESTRegister.Listener mListener;
     private String mPushID;
     private static boolean isRegistering;
 
@@ -48,7 +42,7 @@ public class RESTRegister {
         mPushID = pushID;
     }
 
-    public interface Listener {
+    public interface Listener extends RESTBaseListener {
         void onSuccess();
 
         void onFailure(String errMsg);
@@ -59,54 +53,17 @@ public class RESTRegister {
     }
 
     public void setListener(RESTRegister.Listener mList) {
-        this.mList = mList;
+        super.setListener(mList);
+        this.mListener = mList;
     }
 
     public void execute() {
         final String url = URL + "/register";
         isRegistering = true;
-        StringRequest req = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                UserHelper.getInstance().getOwnerProfile().username = mUsername;
-                UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
-
-                isRegistering = false;
-
-                // update pushID if one came while you were registering
-                if ((mPushID == null || mPushID.isEmpty()) && !PreferenceHelper.getInstance().getPushID().isEmpty()) {
-                    RESTUpdateUserInfo rest = new RESTUpdateUserInfo(mUsername,
-                            UserHelper.getInstance().getOwnerProfile().bio, PreferenceHelper.getInstance().getPushID());
-                    rest.setListener(null);
-                    rest.execute();
-                }
-                if (mList != null)
-                    mList.onSuccess();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                isRegistering = false;
-                if (mList == null)
-                    return;
-                if (error == null || error.networkResponse == null) {
-                    mList.onFailure(FAILED_TO_CONNECT);
-                } else if (error.networkResponse.headers != null && error.networkResponse.headers.containsKey("response")) {
-                    String msgErr = error.networkResponse.headers.get("response") == null ? FAILED
-                            : error.networkResponse.headers.get("response");
-                    mList.onFailure(msgErr);
-                } else {
-                    mList.onFailure(FAILED_TO_Send);
-                }
-            }
-        }) {
+        StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> mHeaders = new HashMap<>();
-                mHeaders.put("Content-Type", "application/json");
-                mHeaders.put("Username", mUsername);
-                mHeaders.put("Authorization", Constants.KEY);
-                return mHeaders;
+                return getDefaultHeaders();
             }
 
             @Override
@@ -124,5 +81,30 @@ public class RESTRegister {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0));
         VolleyRequestQueue.getInstance().addToRequestQueue(req);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        isRegistering = false;
+        super.onErrorResponse(error);
+    }
+
+    @Override
+    public void onResponse(String response) {
+        UserHelper.getInstance().getOwnerProfile().username = mUsername;
+        UserHelper.getInstance().setOwnerProfile(UserHelper.getInstance().getOwnerProfile());
+
+        isRegistering = false;
+
+        // update pushID if one came while you were registering
+        if ((mPushID == null || mPushID.isEmpty()) && !PreferenceHelper.getInstance().getPushID().isEmpty()) {
+            RESTUpdateUserInfo rest = new RESTUpdateUserInfo(mUsername,
+                    UserHelper.getInstance().getOwnerProfile().bio, PreferenceHelper.getInstance().getPushID());
+            rest.setListener(null);
+            rest.execute();
+        }
+
+        if (mListener != null)
+            mListener.onSuccess();
     }
 }

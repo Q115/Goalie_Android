@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static test_util.TestUtil.getValidUsername;
+import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li
@@ -46,7 +46,7 @@ public class ProfilePresenterUnitTest extends BaseTest {
     @Before
     public void setup() {
         mView = mock(ProfileView.class);
-        mPresenter = spy(new ProfilePresenter(getValidUsername(), mView));
+        mPresenter = spy(new ProfilePresenter(getValidFriendUsername(), mView));
     }
 
     @Test
@@ -55,9 +55,9 @@ public class ProfilePresenterUnitTest extends BaseTest {
         mPresenter.start();
         verify(mView).setupForOwner(false);
 
-        User user = new User(getValidUsername(), "bio", 999, 0);
+        User user = new User(getValidFriendUsername(), "bio", 999, 0);
         UserHelper.getInstance().setOwnerProfile(user);
-        UserHelper.getInstance().getOwnerProfile().username = getValidUsername();
+        UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.start();
         verify(mView).setupForOwner(true);
         verify(mView).setupView(user.username, user.bio, user.reputation);

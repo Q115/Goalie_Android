@@ -28,7 +28,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static test_util.TestUtil.getValidUsername;
+import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li
@@ -101,19 +101,19 @@ public class FriendsPresenterUnitTest extends BaseTest {
 
     @Test
     public void onRefresh() throws Exception {
-        mListPresenter.refresh(getValidUsername());
+        mListPresenter.refresh(getValidFriendUsername());
         Thread.sleep(2000);
         verify(mListView).reload(true);
     }
 
     @Test
     public void onAddContactDialog() throws Exception {
-        mListPresenter.onAddContactDialogComplete(getValidUsername());
+        mListPresenter.onAddContactDialogComplete(getValidFriendUsername());
         verify(mListView, never()).reload(false);
 
-        User user = new User(getValidUsername());
+        User user = new User(getValidFriendUsername());
         UserHelper.getInstance().addUser(user);
-        mListPresenter.onAddContactDialogComplete(getValidUsername());
+        mListPresenter.onAddContactDialogComplete(getValidFriendUsername());
         verify(mListView).onAddContactDialog(user);
 
         Thread.sleep(2000);

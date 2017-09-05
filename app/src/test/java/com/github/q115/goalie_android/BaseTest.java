@@ -1,7 +1,6 @@
 package com.github.q115.goalie_android;
 
 import android.content.Context;
-import android.content.res.Configuration;
 
 import com.android.volley.ExecutorDelivery;
 import com.android.volley.Network;
@@ -24,8 +23,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertTrue;
@@ -54,7 +51,8 @@ public abstract class BaseTest {
 
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
         VolleyRequestQueue.getInstance().initialize(RuntimeEnvironment.application);
-        Whitebox.setInternalState(VolleyRequestQueue.getInstance(), "mRequestQueue", newVolleyRequestQueueForTest(RuntimeEnvironment.application));
+        Whitebox.setInternalState(VolleyRequestQueue.getInstance(), "mRequestQueue",
+                newVolleyRequestQueueForTest(RuntimeEnvironment.application));
 
         ImageHelper.getInstance().initialize(RuntimeEnvironment.application);
         UserHelper.getInstance().initialize();
@@ -62,7 +60,7 @@ public abstract class BaseTest {
         UserHelper.getInstance().LoadContacts();
     }
 
-    private RequestQueue newVolleyRequestQueueForTest(final Context context) throws Exception {
+    private RequestQueue newVolleyRequestQueueForTest(final Context context) {
         File cacheDir = new File(context.getCacheDir(), "cache/volley");
         Network network = new BasicNetwork(new HurlStack());
         ResponseDelivery responseDelivery = new ExecutorDelivery(Executors.newSingleThreadExecutor());

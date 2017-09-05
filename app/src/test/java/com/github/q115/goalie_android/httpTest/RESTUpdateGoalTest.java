@@ -1,19 +1,20 @@
 package com.github.q115.goalie_android.httpTest;
 
-import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.RESTNewGoal;
+import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.util.Pair;
 
-import java.util.UUID;
-
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static test_util.TestUtil.getValidUsername;
+import static org.mockito.Mockito.verify;
 
 /*
  * Copyright 2017 Qi Li
@@ -31,198 +32,138 @@ import static test_util.TestUtil.getValidUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTUpdateGoalTest extends BaseTest {
-    private final String mUsername = UUID.randomUUID().toString();
-    private final String mFriendUsername = getValidUsername();
+public class RESTUpdateGoalTest extends BaseREST {
+    private boolean isSettingUpGoal;
 
-    private int operation1;
-    private int operation2;
-    private int operation3;
-    private int operation4;
-    private int operation5;
-    private String mGuid1;
-    private String mGuid2;
-    private String mGuid3;
-    private String mGuid4;
+    @Test()
+    public void acceptGoal() throws Exception {
+        final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
 
-    @Test(timeout = 15000)
-    public void updateGoal() throws Exception {
+        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
         setupGoal();
+        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+                Goal.GoalCompleteResult.Ongoing);
+        sm.setListener(pair.second);
+        sm.execute();
 
-        acceptGoal();
-        sucessfulGoal();
-        failedGoal();
-        deletedGoal();
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertEquals(UserHelper.getInstance().getRequests().get(0).goalCompleteResult, Goal.GoalCompleteResult.Ongoing);
+    }
+
+    @Test()
+    public void passGoal() throws Exception {
+        final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
+
+        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        setupGoal();
+        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+                Goal.GoalCompleteResult.Success);
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+    }
+
+    @Test()
+    public void failGoal() throws Exception {
+        final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
+
+        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        setupGoal();
+        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+                Goal.GoalCompleteResult.Failed);
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+    }
+
+    /* Cancelled goal not updating on server side at this time
+    @Test()
+    public void deletedGoal() throws Exception {
+        final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
+
+        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        setupGoal();
+        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+                Goal.GoalCompleteResult.Cancelled);
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertEquals(UserHelper.getInstance().getRequests().get(0).goalCompleteResult, Goal.GoalCompleteResult.Cancelled);
+    } */
+
+    private synchronized Pair<Integer, RESTUpdateGoal.Listener> createAListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
+
+        RESTUpdateGoal.Listener listener = Mockito.spy(new RESTUpdateGoal.Listener() {
+            @Override
+            public void onSuccess() {
+                isOperationCompleteList.set(index, true);
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                isOperationCompleteList.set(index, true);
+            }
+        });
+
+        return new Pair<>(index, listener);
     }
 
     private void setupGoal() throws Exception {
-        operation1 = 4;
-
-        // register self
-        RESTRegisterTest.registerUser(mUsername, null);
-        Thread.sleep(1000);
-
-        // 4 incoming
-        RESTNewGoal sm = new RESTNewGoal(mFriendUsername, "title", 12000, 120000, 55, "encouragement", mUsername);
+        isSettingUpGoal = true;
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess(String guid) {
-                mGuid1 = guid;
-                operation1--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation1--;
-            }
-        });
-        sm.execute();
-
-        sm = new RESTNewGoal(mFriendUsername, "title", 12000, 120000, 55, "encouragement", mUsername);
-        sm.setListener(new RESTNewGoal.Listener() {
-            @Override
-            public void onSuccess(String guid) {
-                mGuid2 = guid;
-                operation1--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation1--;
-            }
-        });
-        sm.execute();
-
-        sm = new RESTNewGoal(mFriendUsername, "title", 12000, 120000, 55, "encouragement", mUsername);
-        sm.setListener(new RESTNewGoal.Listener() {
-            @Override
-            public void onSuccess(String guid) {
-                mGuid3 = guid;
-                operation1--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation1--;
-            }
-        });
-        sm.execute();
-
-        sm = new RESTNewGoal(mFriendUsername, "title", 12000, 120000, 55, "encouragement", mUsername);
-        sm.setListener(new RESTNewGoal.Listener() {
-            @Override
-            public void onSuccess(String guid) {
-                mGuid4 = guid;
-                operation1--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation1--;
-            }
-        });
-        sm.execute();
-
-        while (operation1 != 0)
-            Thread.sleep(1000);
-
-        // clear out others, manually add in the ones you received. (in prod, you'll automatically get it via sync or notification)
-        UserHelper.getInstance().getRequests().clear();
-        UserHelper.getInstance().getRequests().add(new Goal(mGuid1, Goal.GoalCompleteResult.Pending));
-        UserHelper.getInstance().getRequests().add(new Goal(mGuid2, Goal.GoalCompleteResult.Pending));
-        UserHelper.getInstance().getRequests().add(new Goal(mGuid3, Goal.GoalCompleteResult.Pending));
-        UserHelper.getInstance().getRequests().add(new Goal(mGuid4, Goal.GoalCompleteResult.Pending));
-    }
-
-    private void acceptGoal() throws Exception {
-        operation2 = 1;
-
-        assertEquals(UserHelper.getInstance().getRequests().size(), 4);
-        RESTUpdateGoal sm = new RESTUpdateGoal(mUsername, mGuid1, Goal.GoalCompleteResult.Ongoing);
-        sm.setListener(new RESTUpdateGoal.Listener() {
-            @Override
             public void onSuccess() {
-                assertEquals(UserHelper.getInstance().getRequests().size(), 4);
-                assertEquals(UserHelper.getInstance().getRequests().get(0).guid, mGuid1);
-                assertEquals(UserHelper.getInstance().getRequests().get(0).goalCompleteResult, Goal.GoalCompleteResult.Ongoing);
-                operation2--;
+                RESTSync sm = new RESTSync(username, 0);
+                sm.setListener(new RESTSync.Listener() {
+                    @Override
+                    public void onSuccess() {
+                        isSettingUpGoal = false;
+                    }
+
+                    @Override
+                    public void onFailure(String errMsg) {
+                        assertTrue(false);
+                    }
+                });
+                sm.execute();
             }
 
             @Override
             public void onFailure(String errMsg) {
-                operation2--;
+                assertTrue(false);
             }
         });
         sm.execute();
 
-        while (operation2 != 0)
-            Thread.sleep(1000);
-    }
-
-    private void sucessfulGoal() throws Exception {
-        operation3 = 1;
-
-        assertEquals(UserHelper.getInstance().getRequests().size(), 4);
-        RESTUpdateGoal sm = new RESTUpdateGoal(mUsername, mGuid2, Goal.GoalCompleteResult.Success);
-        sm.setListener(new RESTUpdateGoal.Listener() {
-            @Override
-            public void onSuccess() {
-                assertEquals(UserHelper.getInstance().getRequests().size(), 3);
-                operation3--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation3--;
-            }
-        });
-        sm.execute();
-
-        while (operation3 != 0)
-            Thread.sleep(1000);
-    }
-
-    private void failedGoal() throws Exception {
-        operation4 = 1;
-        assertEquals(UserHelper.getInstance().getRequests().size(), 3);
-        RESTUpdateGoal sm = new RESTUpdateGoal(mUsername, mGuid3, Goal.GoalCompleteResult.Failed);
-        sm.setListener(new RESTUpdateGoal.Listener() {
-            @Override
-            public void onSuccess() {
-                assertEquals(UserHelper.getInstance().getRequests().size(), 2);
-                operation4--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation4--;
-            }
-        });
-        sm.execute();
-
-        while (operation4 != 0)
-            Thread.sleep(1000);
-    }
-
-    private void deletedGoal() throws Exception {
-        operation5 = 1;
-        assertEquals(UserHelper.getInstance().getRequests().size(), 2);
-        RESTUpdateGoal sm = new RESTUpdateGoal(mUsername, mGuid4, Goal.GoalCompleteResult.Cancelled);
-        sm.setListener(new RESTUpdateGoal.Listener() {
-            @Override
-            public void onSuccess() {
-                assertEquals(UserHelper.getInstance().getRequests().size(), 1);
-                operation5--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation5--;
-            }
-        });
-        sm.execute();
-
-        while (operation5 != 0)
+        while (isSettingUpGoal)
             Thread.sleep(1000);
     }
 }

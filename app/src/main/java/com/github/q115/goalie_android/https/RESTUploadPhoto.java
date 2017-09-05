@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
@@ -16,9 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
-import static com.github.q115.goalie_android.Constants.FAILED;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
 import static com.github.q115.goalie_android.Constants.URL;
 
 
@@ -38,11 +33,9 @@ import static com.github.q115.goalie_android.Constants.URL;
  * limitations under the License.
  */
 
-public class RESTUploadPhoto {
-    private RESTUploadPhoto.Listener mList;
-
+public class RESTUploadPhoto extends RESTBase<String> {
+    private RESTUploadPhoto.Listener mListener;
     private Bitmap mProfileImage;
-    private String mUsername;
     private String mBoundary;
 
     public RESTUploadPhoto(Bitmap profileImage, String username) {
@@ -51,67 +44,44 @@ public class RESTUploadPhoto {
         this.mBoundary = "ANDROID_BOUNDARY_STRING";
     }
 
-    public interface Listener {
+    public interface Listener extends RESTBaseListener {
         void onSuccess();
 
         void onFailure(String errMsg);
     }
 
     public void setListener(RESTUploadPhoto.Listener mList) {
-        this.mList = mList;
+        super.setListener(mList);
+        this.mListener = mList;
     }
 
     public void execute() {
 
         final String url = URL + "/uploadphoto";
-        StringRequest req = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        UserHelper.getInstance().getOwnerProfile().profileBitmapImage = mProfileImage;
-                        ImageHelper.getInstance().deleteImageFromPrivateStorage(mUsername + "Temp", ImageHelper.ImageType.PNG);
-                        ImageHelper.getInstance().saveImageToPrivateSorageSync(mUsername, mProfileImage, ImageHelper.ImageType.PNG);
-
-                        if (mList != null)
-                            mList.onSuccess();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (mList == null)
-                            return;
-
-                        if (error == null || error.networkResponse == null) {
-                            mList.onFailure(FAILED_TO_CONNECT);
-                        } else if (error.networkResponse.headers != null && error.networkResponse.headers.containsKey("response")) {
-                            String msgErr = error.networkResponse.headers.get("response") == null ? FAILED
-                                    : error.networkResponse.headers.get("response");
-                            mList.onFailure(msgErr);
-                        } else {
-                            mList.onFailure(FAILED_TO_Send);
-                        }
-                    }
-                }) {
+        StringRequest req = new StringRequest(Request.Method.POST, url, this, this) {
             @Override
             public HashMap<String, String> getHeaders() {
-                HashMap<String, String> mHeaders = new HashMap<>();
-                mHeaders.put("Username", mUsername);
-                mHeaders.put("Authorization", Constants.KEY);
-                mHeaders.put("Content-Type", "multipart/form-data;boundary=" + mBoundary);
-                return mHeaders;
+                HashMap<String, String> headers = getDefaultHeaders();
+                headers.put("Content-Type", "multipart/form-data;boundary=" + mBoundary);
+                return headers;
             }
 
             @Override
             public byte[] getBody() {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 try {
-                    byte[] image = getStringImage(mProfileImage);
-                    byteArrayOutputStream.write(("\r\n" + "--" + mBoundary + "\r\n").getBytes(Charset.defaultCharset()));
-                    byteArrayOutputStream.write(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s.png\"\r\n", mUsername, mUsername).getBytes(Charset.defaultCharset()));
-                    byteArrayOutputStream.write(("Content-Type: application/octet-stream\r\n\r\n").getBytes(Charset.defaultCharset()));
+                    String imageDispositionString = String.format("Content-Disposition: form-data; " +
+                            "name=\"%s\"; filename=\"%s.png\"\r\n", mUsername, mUsername);
+                    byte[] imageDisposition = getBytesFromString(imageDispositionString);
+                    byte[] imageBoundary = getBytesFromString("\r\n" + "--" + mBoundary + "\r\n");
+                    byte[] imageType = getBytesFromString("Content-Type: application/octet-stream\r\n\r\n");
+                    byte[] image = getBytesFromBitmap(mProfileImage);
+
+                    byteArrayOutputStream.write(imageBoundary);
+                    byteArrayOutputStream.write(imageDisposition);
+                    byteArrayOutputStream.write(imageType);
                     byteArrayOutputStream.write(image);
-                    byteArrayOutputStream.write(("\r\n" + "--" + mBoundary + "\r\n").getBytes(Charset.defaultCharset()));
+                    byteArrayOutputStream.write(imageBoundary);
                 } catch (Exception e) {
                     Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "Failed to send body of photo");
                 }
@@ -127,9 +97,25 @@ public class RESTUploadPhoto {
         VolleyRequestQueue.getInstance().addToRequestQueue(req);
     }
 
-    private byte[] getStringImage(Bitmap bmp) {
+    private byte[] getBytesFromBitmap(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 99, baos);
         return baos.toByteArray();
+    }
+
+    private byte[] getBytesFromString(String string) {
+        return string.getBytes(Charset.defaultCharset());
+    }
+
+    @Override
+    public void onResponse(String response) {
+        UserHelper.getInstance().getOwnerProfile().profileBitmapImage = mProfileImage;
+        ImageHelper.getInstance().deleteImageFromPrivateStorage(mUsername + "Temp",
+                ImageHelper.ImageType.PNG);
+        ImageHelper.getInstance().saveImageToPrivateSorageSync(mUsername, mProfileImage,
+                ImageHelper.ImageType.PNG);
+
+        if (mListener != null)
+            mListener.onSuccess();
     }
 }

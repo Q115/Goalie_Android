@@ -30,7 +30,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static test_util.TestUtil.getValidUsername;
+import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li
@@ -156,7 +156,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     public void setGoal() throws Exception {
         String title = "title";
         String encouragement = "encouragement";
-        String referee = getValidUsername();
+        String referee = getValidFriendUsername();
 
         when(mContext.getString(R.string.error_goal_no_title))
                 .thenReturn("error_goal_no_title");
@@ -184,7 +184,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         mPresenter.setGoal(mContext, title, encouragement, "ref");
         verify(mView).onSetGoal(false, "username_error");
 
-        UserHelper.getInstance().getOwnerProfile().username = getValidUsername();
+        UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.setGoal(mContext, title, encouragement, referee);
         verify(mView).updateProgress(true);
         Thread.sleep(1000);

@@ -3,7 +3,6 @@ package com.github.q115.goalie_android.httpTest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.RESTGetPhoto;
 import com.github.q115.goalie_android.https.RESTUploadPhoto;
 import com.github.q115.goalie_android.utils.ImageHelper;
@@ -11,12 +10,12 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.util.Pair;
 
-import java.util.UUID;
-
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 /*
  * Copyright 2017 Qi Li
@@ -34,22 +33,15 @@ import static junit.framework.Assert.assertTrue;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTPhotoTest extends BaseTest {
-    private int operation1;
-    private int operation2;
+public class RESTPhotoTest extends BaseREST {
+    private Bitmap imageDownloaded;
 
-    @Test(timeout = 20000)
+    @Test
     public void downloadUploadPhoto() throws Exception {
-        String username = UUID.randomUUID().toString();
-
-        // register user
-        RESTRegisterTest.registerUser(username, null);
-        Thread.sleep(1000);
-
         // photo doesn't exist
-        assertFalse(downloadPhoto(username));
+        downloadPhotoNotFound(username);
 
-        // upload test
+        // upload
         uploadPhoto(username);
         assertTrue(ImageHelper.getInstance().isImageOnPrivateStorage(username, ImageHelper.ImageType.PNG));
         assertTrue(UserHelper.getInstance().getOwnerProfile().profileBitmapImage != null);
@@ -61,48 +53,86 @@ public class RESTPhotoTest extends BaseTest {
         assertTrue(UserHelper.getInstance().getOwnerProfile().profileBitmapImage != null);
     }
 
+    private void downloadPhotoNotFound(String username) throws Exception {
+        Pair<Integer, RESTGetPhoto.Listener> pair = createDownloadListener();
+
+        RESTGetPhoto sm = new RESTGetPhoto(username);
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onFailure("Not Found");
+    }
+
+    private boolean downloadPhoto(String username) throws Exception {
+        Pair<Integer, RESTGetPhoto.Listener> pair = createDownloadListener();
+
+        RESTGetPhoto sm = new RESTGetPhoto(username);
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess(imageDownloaded);
+        return imageDownloaded != null;
+    }
+
     private void uploadPhoto(String username) throws Exception {
-        operation1 = 1;
+        Pair<Integer, RESTUploadPhoto.Listener> pair = createUploadListener();
 
         Bitmap bitmap = BitmapFactory.decodeFile("../test.png");
         RESTUploadPhoto sm = new RESTUploadPhoto(bitmap, username);
-        sm.setListener(new RESTUploadPhoto.Listener() {
-            @Override
-            public void onSuccess() {
-                operation1--;
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operation1--;
-            }
-        });
+        sm.setListener(pair.second);
         sm.execute();
 
-        while (operation1 != 0)
+        while (!isOperationCompleteList.get(pair.first)) {
             Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
     }
 
+    private synchronized Pair<Integer, RESTGetPhoto.Listener> createDownloadListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
 
-    private boolean downloadPhoto(String username) throws Exception {
-        operation2 = 1;
-        RESTGetPhoto sm = new RESTGetPhoto(username);
-        sm.setListener(new RESTGetPhoto.Listener() {
+        RESTGetPhoto.Listener listener = Mockito.spy(new RESTGetPhoto.Listener() {
             @Override
-            public void onSuccess(Bitmap bitmap) {
-                operation2--;
+            public void onSuccess(Bitmap image) {
+                imageDownloaded = image;
+                isOperationCompleteList.set(index, true);
             }
 
             @Override
             public void onFailure(String errMsg) {
-                operation2 -= 2;
+                isOperationCompleteList.set(index, true);
             }
         });
-        sm.execute();
 
-        while (operation2 > 0)
-            Thread.sleep(1000);
+        return new Pair<>(index, listener);
+    }
 
-        return operation2 == 0;
+    private synchronized Pair<Integer, RESTUploadPhoto.Listener> createUploadListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
+
+        RESTUploadPhoto.Listener listener = Mockito.spy(new RESTUploadPhoto.Listener() {
+            @Override
+            public void onSuccess() {
+                isOperationCompleteList.set(index, true);
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                isOperationCompleteList.set(index, true);
+            }
+        });
+
+        return new Pair<>(index, listener);
     }
 }

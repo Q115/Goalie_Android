@@ -1,18 +1,18 @@
 package com.github.q115.goalie_android.httpTest;
 
-import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.RESTUpdateUserInfo;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.UUID;
+import org.robolectric.util.Pair;
 
 import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 /*
  * Copyright 2017 Qi Li
@@ -30,83 +30,77 @@ import static org.junit.Assert.assertTrue;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTUpdateUserInfoTest extends BaseTest {
-    private int operations1;
-    private int operations2;
-
+public class RESTUpdateUserInfoTest extends BaseREST {
     @Test
     public void updatePushID() throws Exception {
-        operations1 = 2;
+        Pair<Integer, RESTUpdateUserInfo.Listener> pair = createAListener();
 
-        // update with a registered username
-        String username = UUID.randomUUID().toString();
-        RESTRegisterTest.registerUser(username, null);
-
-        Thread.sleep(1000);
         final String newPushID = "pushID";
         RESTUpdateUserInfo restUpdateMeta = new RESTUpdateUserInfo(username, "", newPushID);
-        restUpdateMeta.setListener(new RESTUpdateUserInfo.Listener() {
-            @Override
-            public void onSuccess() {
-                operations1--;
-                assertTrue(newPushID.equals(PreferenceHelper.getInstance().getPushID()));
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operations1--;
-
-            }
-        });
+        restUpdateMeta.setListener(pair.second);
         restUpdateMeta.execute();
 
-        // update with invalid username
-        final String newPushID2 = "pushID2";
-        restUpdateMeta = new RESTUpdateUserInfo(UUID.randomUUID().toString(), "", newPushID2);
-        restUpdateMeta.setListener(new RESTUpdateUserInfo.Listener() {
-            @Override
-            public void onSuccess() {
-                operations1--;
-                assertFalse(newPushID2.equals(PreferenceHelper.getInstance().getPushID()));
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                operations1--;
-
-            }
-        });
-        restUpdateMeta.execute();
-
-        while (operations1 != 0)
+        while (!isOperationCompleteList.get(pair.first)) {
             Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertTrue(newPushID.equals(PreferenceHelper.getInstance().getPushID()));
     }
 
     @Test
-    public void updateUserInfo() throws Exception {
-        operations2 = 1;
+    public void updateBio() throws Exception {
+        Pair<Integer, RESTUpdateUserInfo.Listener> pair = createAListener();
 
-        String username = UUID.randomUUID().toString();
-        RESTRegisterTest.registerUser(username, null);
-
-        Thread.sleep(1000);
         final String bio = "new bio";
         RESTUpdateUserInfo restUpdateMeta = new RESTUpdateUserInfo(username, bio, "pushID");
-        restUpdateMeta.setListener(new RESTUpdateUserInfo.Listener() {
+        restUpdateMeta.setListener(pair.second);
+        restUpdateMeta.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertTrue(UserHelper.getInstance().getOwnerProfile().bio.equals(bio));
+    }
+
+    @Test
+    public void updateFailed() throws Exception {
+        Pair<Integer, RESTUpdateUserInfo.Listener> pair = createAListener();
+
+        // update with invalid username
+        String bio = "bio";
+        String pushID = "pushID";
+        RESTUpdateUserInfo restUpdateMeta = new RESTUpdateUserInfo("", bio, pushID);
+        restUpdateMeta.setListener(pair.second);
+        restUpdateMeta.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onFailure("Unauthorized, Please Update App");
+        assertFalse(UserHelper.getInstance().getOwnerProfile().bio.equals(bio));
+        assertFalse(pushID.equals(PreferenceHelper.getInstance().getPushID()));
+    }
+
+    private synchronized Pair<Integer, RESTUpdateUserInfo.Listener> createAListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
+
+        RESTUpdateUserInfo.Listener listener = Mockito.spy(new RESTUpdateUserInfo.Listener() {
             @Override
             public void onSuccess() {
-                operations2--;
-                assertTrue(UserHelper.getInstance().getOwnerProfile().bio.equals(bio));
+                isOperationCompleteList.set(index, true);
             }
 
             @Override
             public void onFailure(String errMsg) {
-                operations2--;
+                isOperationCompleteList.set(index, true);
             }
         });
-        restUpdateMeta.execute();
 
-        while (operations2 != 0)
-            Thread.sleep(1000);
+        return new Pair<>(index, listener);
     }
 }

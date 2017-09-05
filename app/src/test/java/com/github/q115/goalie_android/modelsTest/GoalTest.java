@@ -4,7 +4,7 @@ import com.github.q115.goalie_android.models.Goal;
 
 import org.junit.Test;
 
-import test_util.TestUtil;
+import test_util.ModelUtil;
 
 import static com.github.q115.goalie_android.models.Goal.GoalCompleteResult.Failed;
 import static com.github.q115.goalie_android.models.Goal.GoalCompleteResult.Success;
@@ -29,20 +29,21 @@ import static org.junit.Assert.assertTrue;
 
 public class GoalTest {
     @Test
-    public void initalization() throws Exception {
-        Goal goalTest = null;
+    public void defaultConstructor() throws Exception {
+        Goal goal = new Goal();
+        assertEquals("", goal.guid);
+        assertEquals("", goal.title);
+        assertEquals("", goal.encouragement);
+        assertEquals(0, goal.startDate);
+        assertEquals(0, goal.endDate);
+        assertEquals(0, goal.wager);
+        assertEquals(Goal.GoalCompleteResult.None, goal.goalCompleteResult);
+    }
 
-        Goal goal1 = new Goal();
-        assertEquals("", goal1.guid);
-        assertEquals("", goal1.title);
-        assertEquals("", goal1.encouragement);
-        assertEquals(0, goal1.startDate);
-        assertEquals(0, goal1.endDate);
-        assertEquals(0, goal1.wager);
-        assertEquals(Goal.GoalCompleteResult.None, goal1.goalCompleteResult);
-
-        Goal goal2 = new Goal("guid", "createdByUsername", "title", 111, 999, 100, "encouragement", Success, "referee", System.currentTimeMillis());
-        goalTest = new Goal();
+    @Test
+    public void initConstructor1() throws Exception {
+        Goal goal = new Goal("guid", "createdByUsername", "title", 111, 999, 100, "encouragement", Success, "referee", System.currentTimeMillis());
+        Goal goalTest = new Goal();
         goalTest.guid = "guid";
         goalTest.createdByUsername = "createdByUsername";
         goalTest.title = "title";
@@ -52,12 +53,15 @@ public class GoalTest {
         goalTest.referee = "referee";
         goalTest.encouragement = "encouragement";
         goalTest.goalCompleteResult = Success;
-        assertTrue(TestUtil.isGoalEqual(goal2, goalTest));
+        assertTrue(ModelUtil.isGoalEqual(goal, goalTest));
+    }
 
-        Goal goal3 = new Goal("newguid", Failed);
-        goalTest = new Goal();
+    @Test
+    public void initConstructor2() throws Exception {
+        Goal goal = new Goal("newguid", Failed);
+        Goal goalTest = new Goal();
         goalTest.guid = "newguid";
         goalTest.goalCompleteResult = Failed;
-        assertTrue(TestUtil.isGoalEqual(goal3, goalTest));
+        assertTrue(ModelUtil.isGoalEqual(goal, goalTest));
     }
 }

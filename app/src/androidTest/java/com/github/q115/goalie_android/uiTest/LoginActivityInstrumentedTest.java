@@ -14,7 +14,8 @@ import org.junit.runner.RunWith;
 
 import java.util.UUID;
 
-import test_util.TestUtil;
+import test_util.ModelUtil;
+import test_util.RESTUtil;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -86,7 +87,7 @@ public class LoginActivityInstrumentedTest {
 
     @Test
     public void invalidServerUsername() throws Exception {
-        onView(withId(R.id.username)).perform(clearText(), typeText(TestUtil.getValidUsername()));
+        onView(withId(R.id.username)).perform(clearText(), typeText(RESTUtil.getValidFriendUsername()));
         onView(withId(R.id.btn_register)).perform(click());
         onView(withId(R.id.register_server_response)).check(matches(withText("Username has been taken, please choose another.")));
     }
@@ -95,10 +96,10 @@ public class LoginActivityInstrumentedTest {
     public void rotate() throws Exception {
         onView(withId(R.id.username)).perform(clearText(), typeText(""));
         onView(withId(R.id.username)).check(matches(withText("")));
-        onView(withId(R.id.username)).perform(clearText(), typeText(TestUtil.getValidUsername()));
+        onView(withId(R.id.username)).perform(clearText(), typeText(RESTUtil.getValidFriendUsername()));
         mLoginActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         Thread.sleep(500);
-        onView(withId(R.id.username)).check(matches(withText(TestUtil.getValidUsername())));
+        onView(withId(R.id.username)).check(matches(withText(RESTUtil.getValidFriendUsername())));
         mLoginActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Thread.sleep(500);
     }

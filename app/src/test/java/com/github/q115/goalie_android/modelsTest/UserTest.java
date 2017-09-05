@@ -5,7 +5,7 @@ import com.github.q115.goalie_android.models.User;
 
 import org.junit.Test;
 
-import test_util.TestUtil;
+import test_util.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,50 +28,57 @@ import static org.junit.Assert.assertTrue;
 
 public class UserTest {
     @Test
-    public void initalization() throws Exception {
-        User userTest = null;
+    public void defaultConstructor() throws Exception {
+        User user = new User();
+        assertEquals("", user.username);
+        assertEquals("", user.bio);
+        assertEquals(100, user.reputation);
+        assertEquals(0, user.lastPhotoModifiedTime);
+        assertEquals(null, user.profileBitmapImage);
+        assertEquals(0, user.activieGoals.size());
+        assertEquals(0, user.finishedGoals.size());
+    }
 
-        User user1 = new User();
-        assertEquals("", user1.username);
-        assertEquals("", user1.bio);
-        assertEquals(100, user1.reputation);
-        assertEquals(0, user1.lastPhotoModifiedTime);
-        assertEquals(null, user1.profileBitmapImage);
-        assertEquals(0, user1.activieGoals.size());
-        assertEquals(0, user1.finishedGoals.size());
-
-        User user2 = new User("username");
-        userTest = new User();
+    @Test
+    public void initConstructor1() throws Exception {
+        User user = new User("username");
+        User userTest = new User();
         userTest.username = "username";
-        assertEquals("username", user2.username);
-        assertTrue(TestUtil.isUserEqual(user2, userTest));
+        assertEquals("username", user.username);
+        assertTrue(ModelUtil.isUserEqual(user, userTest));
+    }
 
-        User user3 = new User("username2", 200);
-        userTest = new User();
+    @Test
+    public void initConstructor2() throws Exception {
+        User user = new User("username2", 200);
+        User userTest = new User();
         userTest.username = "username2";
         userTest.reputation = 200;
-        assertTrue(TestUtil.isUserEqual(user3, userTest));
+        assertTrue(ModelUtil.isUserEqual(user, userTest));
+    }
 
-        User user4 = new User("username3", "bio", 300, 999);
-        userTest = new User();
+    @Test
+    public void initConstructor3() throws Exception {
+        User user = new User("username3", "bio", 300, 999);
+        User userTest = new User();
         userTest.username = "username3";
         userTest.reputation = 300;
         userTest.bio = "bio";
         userTest.lastPhotoModifiedTime = 999;
-        assertTrue(TestUtil.isUserEqual(user4, userTest));
+        assertTrue(ModelUtil.isUserEqual(user, userTest));
     }
 
     @Test
     public void addGoals() throws Exception {
-        User user1 = new User();
-        assertEquals(0, user1.activieGoals.size());
-        user1.addActivitGoal(new Goal());
-        user1.addActivitGoal(new Goal());
-        assertEquals(2, user1.activieGoals.size());
+        User user = new User();
+        assertEquals(0, user.activieGoals.size());
+        user.addActivitGoal(new Goal());
+        user.addActivitGoal(new Goal());
+        assertEquals(2, user.activieGoals.size());
 
-        assertEquals(0, user1.finishedGoals.size());
-        user1.addCompleteGoal(new Goal());
-        user1.addCompleteGoal(new Goal());
-        assertEquals(2, user1.finishedGoals.size());
+        assertEquals(0, user.finishedGoals.size());
+        user.addCompleteGoal(new Goal());
+        user.addCompleteGoal(new Goal());
+        assertEquals(2, user.finishedGoals.size());
     }
 }

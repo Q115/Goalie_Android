@@ -15,14 +15,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import test_util.TestUtil;
+import test_util.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static test_util.TestUtil.ReadDatabase;
+import static test_util.DatabaseUtil.ReadDatabase;
 
 /*
  * Copyright 2017 Qi Li
@@ -58,7 +58,7 @@ public class UserHelperInstrumentedTest {
         assertNotNull(UserHelper.getInstance().getAllContacts());
         assertNotNull(UserHelper.getInstance().getOwnerProfile());
         assertEquals(0, UserHelper.getInstance().getAllContacts().size());
-        assertTrue(TestUtil.isUserEqual(UserHelper.getInstance().getOwnerProfile(), new User()));
+        assertTrue(ModelUtil.isUserEqual(UserHelper.getInstance().getOwnerProfile(), new User()));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class UserHelperInstrumentedTest {
 
         int size = UserHelper.getInstance().getAllContacts().size();
         assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
-        assertTrue(TestUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
+        assertTrue(ModelUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
 
         // delete user
         UserHelper.getInstance().deleteUser(testUser.username);
@@ -110,7 +110,7 @@ public class UserHelperInstrumentedTest {
         UserHelper.getInstance().LoadContacts();
 
         assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
-        assertTrue(TestUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
+        assertTrue(ModelUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
         assertNotNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);
     }
 
@@ -119,7 +119,7 @@ public class UserHelperInstrumentedTest {
         assertEquals(0, UserHelper.getInstance().getAllContacts().size());
         UserHelper.getInstance().addUser(user);
         assertEquals(1, UserHelper.getInstance().getAllContacts().size());
-        assertTrue(TestUtil.isUserEqual(user, UserHelper.getInstance().getAllContacts().get(user.username)));
+        assertTrue(ModelUtil.isUserEqual(user, UserHelper.getInstance().getAllContacts().get(user.username)));
     }
 
     @Test

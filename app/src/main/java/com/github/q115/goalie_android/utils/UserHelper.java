@@ -43,6 +43,10 @@ public class UserHelper {
         return mRequests;
     }
 
+    public void setRequests(ArrayList<Goal> requests) {
+        mRequests = requests;
+    }
+
     private ArrayList<GoalFeed> mFeeds;
 
     public ArrayList<GoalFeed> getFeeds() {

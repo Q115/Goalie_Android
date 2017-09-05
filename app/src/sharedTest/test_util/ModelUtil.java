@@ -24,11 +24,7 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class TestUtil {
-    public static String getValidUsername() {
-        return "device";
-    }
-
+public class ModelUtil {
     public static boolean isGoalEqual(Goal goalA, Goal goalB) {
         boolean isEqual;
         isEqual = goalA.guid.equals(goalB.guid);
@@ -77,32 +73,5 @@ public class TestUtil {
         isEqual &= feedA.upvoteCount == feedB.upvoteCount;
 
         return isEqual;
-    }
-
-    public static void ReadDatabase() {
-        try {
-            List<User> users = SQLite.select().from(User.class).queryList();
-            //populate contacts
-            for (User user : users) {
-                UserHelper.getInstance().getAllContacts().put(user.username, user);
-            }
-
-            //populate goals
-            List<Goal> goals = SQLite.select().from(Goal.class).queryList();
-            for (Goal goal : goals) {
-                if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
-                    UserHelper.getInstance().getRequests().add(goal);
-                } else if (UserHelper.getInstance().getAllContacts().get(goal.createdByUsername) != null) {
-                    if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
-                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addActivitGoal(goal);
-                    else
-                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addCompleteGoal(goal);
-                }
-            }
-        } catch (OutOfMemoryError outOfMemoryException) {
-            Diagnostic.logError(Diagnostic.DiagnosticFlag.MainApplication, "Too many entries: " + outOfMemoryException.toString());
-        } catch (Exception ex) {
-            Diagnostic.logError(Diagnostic.DiagnosticFlag.MainApplication, "Error loading database: " + ex.toString());
-        }
     }
 }

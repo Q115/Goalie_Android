@@ -1,6 +1,5 @@
 package com.github.q115.goalie_android.httpTest;
 
-import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
@@ -8,12 +7,14 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.util.Pair;
 
-import java.util.UUID;
-
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.verify;
 
 /*
  * Copyright 2017 Qi Li
@@ -31,47 +32,58 @@ import static org.junit.Assert.assertNotEquals;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTSyncTest extends BaseTest {
-    private int operation1;
-
-    @Test(timeout = 10000)
+public class RESTSyncTest extends BaseREST {
+    @Test()
     public void sync() throws Exception {
-        operation1 = 1;
-        final String username = UUID.randomUUID().toString();
-
-        // register self
-        RESTRegisterTest.registerUser(username, null);
-        Thread.sleep(1500);
+        final Pair<Integer, RESTSync.Listener> pair = createAListener();
 
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username);
-        sm.setListener(null);
-        sm.execute();
-        Thread.sleep(1500);
-
-        // get userinfo on RESTNewGoal
-        assertEquals(UserHelper.getInstance().getFeeds().size(), 0);
-        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
-        sm2.setListener(new RESTSync.Listener() {
+        sm.setListener(new RESTNewGoal.Listener() {
             @Override
             public void onSuccess() {
-                assertNotEquals(PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), 0);
-                assertNotEquals(UserHelper.getInstance().getFeeds().size(), 0); // depends on server, can ignore this test if empty
-
-                assertEquals(UserHelper.getInstance().getRequests().size(), 1);
-                assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 1);
-                assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
-                operation1--;
+                assertEquals(UserHelper.getInstance().getFeeds().size(), 0);
+                RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+                sm2.setListener(pair.second);
+                sm2.execute();
             }
 
             @Override
             public void onFailure(String errMsg) {
-                operation1--;
+                assertTrue(false);
             }
         });
-        sm2.execute();
+        sm.execute();
 
-        while (operation1 != 0)
+        while (!isOperationCompleteList.get(pair.first)) {
             Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        assertNotEquals(PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), 0);
+        assertNotEquals(UserHelper.getInstance().getFeeds().size(), 0); // depends on server, can ignore this test if empty
+
+        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 1);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
+    }
+
+    private synchronized Pair<Integer, RESTSync.Listener> createAListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
+
+        RESTSync.Listener listener = Mockito.spy(new RESTSync.Listener() {
+            @Override
+            public void onSuccess() {
+                isOperationCompleteList.set(index, true);
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                isOperationCompleteList.set(index, true);
+            }
+        });
+
+        return new Pair<>(index, listener);
     }
 }
 

@@ -15,7 +15,7 @@ import org.robolectric.RobolectricTestRunner;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static test_util.TestUtil.getValidUsername;
+import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li
@@ -51,8 +51,8 @@ public class MainActivityPresenterUnitTest extends BaseTest {
         mPresenter.start();
         verify(mView).showLogin();
 
-        PreferenceHelper.getInstance().setAccountUsername(getValidUsername());
-        UserHelper.getInstance().getOwnerProfile().username = getValidUsername();
+        PreferenceHelper.getInstance().setAccountUsername(getValidFriendUsername());
+        UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.start();
         Thread.sleep(2000);
         verify(mView).reloadAll();

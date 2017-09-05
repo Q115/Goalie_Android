@@ -1,19 +1,21 @@
 package com.github.q115.goalie_android.httpTest;
 
-import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.https.RESTGetUserInfo;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.util.Pair;
 
-import java.util.UUID;
-
+import static com.github.q115.goalie_android.Constants.FAILED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static test_util.TestUtil.getValidUsername;
+import static org.mockito.Mockito.verify;
+import static test_util.RESTUtil.getTestUsername;
+import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li
@@ -31,41 +33,98 @@ import static test_util.TestUtil.getValidUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTGetUserInfoTest extends BaseTest {
-    private int operation1;
+public class RESTGetUserInfoTest extends BaseREST {
 
-    @Test(timeout = 10000)
+    @Test
     public void getUserInfo() throws Exception {
-        operation1 = 1;
-        String username = UUID.randomUUID().toString();
+        String friendUsername = getValidFriendUsername();
+        Pair<Integer, RESTGetUserInfo.Listener> pair = createAListener();
 
-        // register friend
-        final String friendUsername = getValidUsername();
-
-        // register self
-        RESTRegisterTest.registerUser(username, null);
-        Thread.sleep(1000);
-
-        // get userinfo on friend
         RESTGetUserInfo sm = new RESTGetUserInfo(friendUsername);
-        sm.setListener(new RESTGetUserInfo.Listener() {
+        sm.setListener(pair.second);
+        sm.execute();
+
+        while (!isOperationCompleteList.get(pair.first)) {
+            Thread.sleep(1000);
+        }
+
+        verify(pair.second).onSuccess();
+        User user = UserHelper.getInstance().getAllContacts().get(friendUsername);
+        assertNotNull(user);
+        assertEquals(user.username, friendUsername);
+    }
+
+    @Test
+    public void onResponseEmpty() throws Exception {
+        String friendUsername = getValidFriendUsername();
+        Pair<Integer, RESTGetUserInfo.Listener> pair = createAListener();
+
+        RESTGetUserInfo sm = new RESTGetUserInfo(friendUsername);
+        sm.setListener(pair.second);
+        sm.onResponse("");
+
+        verify(pair.second).onFailure(FAILED);
+    }
+
+    @Test
+    public void onResponseMissingFields() throws Exception {
+        String friendUsername = getValidFriendUsername();
+        Pair<Integer, RESTGetUserInfo.Listener> pair = createAListener();
+
+        RESTGetUserInfo sm = new RESTGetUserInfo(friendUsername);
+        sm.setListener(pair.second);
+        sm.onResponse("{\"lastPhotoModifiedTime\":123, \"bio\":\"bio\",\"reputation\":99,\"missing\":[]}");
+
+        verify(pair.second).onFailure(FAILED);
+    }
+
+    @Test
+    public void onResponseInvalidFields() throws Exception {
+        String friendUsername = getValidFriendUsername();
+        Pair<Integer, RESTGetUserInfo.Listener> pair = createAListener();
+
+        RESTGetUserInfo sm = new RESTGetUserInfo(friendUsername);
+        sm.setListener(pair.second);
+        sm.onResponse("{\"lastPhotoModifiedTime\":123, \"bio\":\"bio\",\"reputation\":99,\"goals\":invalid}");
+
+        verify(pair.second).onFailure(FAILED);
+    }
+
+    @Test
+    public void onResponseValidValuesSaved() throws Exception {
+        String friendUsername = getTestUsername();
+        Pair<Integer, RESTGetUserInfo.Listener> pair = createAListener();
+
+        RESTGetUserInfo sm = new RESTGetUserInfo(friendUsername);
+        sm.setListener(pair.second);
+        sm.onResponse("{\"lastPhotoModifiedTime\":123, \"bio\":\"bio\",\"reputation\":99,\"goals\":[]}");
+
+        verify(pair.second).onSuccess();
+
+        User user = UserHelper.getInstance().getAllContacts().get(friendUsername);
+        assertNotNull(user);
+        assertEquals(user.finishedGoals.size(), 0);
+        assertEquals(user.bio, "bio");
+        assertEquals(user.reputation, 99);
+        assertEquals(user.lastPhotoModifiedTime, 123);
+    }
+
+    private synchronized Pair<Integer, RESTGetUserInfo.Listener> createAListener() {
+        final Integer index = isOperationCompleteList.size();
+        isOperationCompleteList.add(false);
+
+        RESTGetUserInfo.Listener listener = Mockito.spy(new RESTGetUserInfo.Listener() {
             @Override
             public void onSuccess() {
-                User user = UserHelper.getInstance().getAllContacts().get(friendUsername);
-                assertNotNull(user);
-                assertEquals(user.username, friendUsername);
-
-                operation1--;
+                isOperationCompleteList.set(index, true);
             }
 
             @Override
             public void onFailure(String errMsg) {
-                operation1--;
+                isOperationCompleteList.set(index, true);
             }
         });
-        sm.execute();
 
-        while (operation1 != 0)
-            Thread.sleep(1000);
+        return new Pair<>(index, listener);
     }
 }
