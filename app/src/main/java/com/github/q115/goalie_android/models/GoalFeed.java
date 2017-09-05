@@ -52,7 +52,8 @@ public class GoalFeed extends BaseModel {
         hasVoted = false;
     }
 
-    public GoalFeed(String guid, long wager, String createdUsername, long upvoteCount, Goal.GoalCompleteResult goalCompleteResult) {
+    public GoalFeed(String guid, long wager, String createdUsername, long upvoteCount,
+                    Goal.GoalCompleteResult goalCompleteResult) {
         this();
         this.guid = guid;
         this.wager = wager;

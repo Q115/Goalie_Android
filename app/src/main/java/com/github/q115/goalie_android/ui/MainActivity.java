@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.services.MessagingService;
+import com.github.q115.goalie_android.services.MessagingServiceUtil;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
 import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
@@ -42,7 +43,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class MainActivity extends AppCompatActivity implements MainActivityView, MessagingService.MessagingServiceListener {
+public class MainActivity extends AppCompatActivity implements MainActivityView, MessagingServiceUtil.MessagingServiceListener {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
     @Override
     protected void onResume() {
         super.onResume();
-        MessagingService.setMessagingServiceListener("Main", this);
+        MessagingServiceUtil.setMessagingServiceListener("Main", this);
     }
 
     @Override
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
     @Override
     protected void onDestroy() {
-        MessagingService.setMessagingServiceListener("Main", null);
+        MessagingServiceUtil.setMessagingServiceListener("Main", null);
         super.onDestroy();
     }
 

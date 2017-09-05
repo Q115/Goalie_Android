@@ -37,26 +37,6 @@ public class UserHelper {
         return mAllContacts;
     }
 
-    private ArrayList<Goal> mRequests;
-
-    public ArrayList<Goal> getRequests() {
-        return mRequests;
-    }
-
-    public void setRequests(ArrayList<Goal> requests) {
-        mRequests = requests;
-    }
-
-    private ArrayList<GoalFeed> mFeeds;
-
-    public ArrayList<GoalFeed> getFeeds() {
-        return mFeeds;
-    }
-
-    public void setFeeds(ArrayList<GoalFeed> feeds) {
-        mFeeds = feeds;
-    }
-
     // User information of device owner
     private User mOwnerProfile;
 
@@ -89,8 +69,6 @@ public class UserHelper {
     public void initialize() {
         mAllContacts = new TreeMap<>();
         mOwnerProfile = new User();
-        mRequests = new ArrayList<>();
-        mFeeds = new ArrayList<>();
     }
 
     // Load profile image of friends from storage
@@ -136,55 +114,6 @@ public class UserHelper {
             SQLite.delete().from(User.class).where(User_Table.username.eq(username)).execute();
             ImageHelper.getInstance().deleteImageFromPrivateStorage(username, ImageType.PNG);
 
-            return true;
-        } catch (Exception ex) {
-            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
-            return false;
-        }
-    }
-
-    public boolean addGoal(Goal goal) {
-        try {
-            if (!goal.createdByUsername.equals(mOwnerProfile.username)) {
-                mRequests.add(goal);
-            } else {
-                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
-                    mOwnerProfile.addActivitGoal(goal);
-                else
-                    mOwnerProfile.addCompleteGoal(goal);
-            }
-            goal.activityDate = System.currentTimeMillis();
-            goal.save();
-
-            return true;
-        } catch (Exception ex) {
-            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
-            return false;
-        }
-    }
-
-    public boolean deleteGoal(String guid) {
-        try {
-            for (int i = 0; i < mOwnerProfile.activieGoals.size(); i++) {
-                Goal goal = mOwnerProfile.activieGoals.get(i);
-                if (goal.guid.equals(guid)) {
-                    mOwnerProfile.activieGoals.remove(i);
-                    break;
-                }
-            }
-
-            SQLite.delete().from(Goal.class).where(Goal_Table.guid.eq(guid)).execute();
-            return true;
-        } catch (Exception ex) {
-            Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
-            return false;
-        }
-    }
-
-    public boolean modifyGoal(Goal newGoal) {
-        try {
-            newGoal.activityDate = System.currentTimeMillis();
-            newGoal.update();
             return true;
         } catch (Exception ex) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());

@@ -27,11 +27,13 @@ public class Diagnostic {
 
     public static void logError(DiagnosticFlag diagnosticFlag, String message) {
         SimpleDateFormat timeFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.getDefault());
-        Log.e(diagnosticFlag.toString(), String.format("(%s): %s", timeFormatter.format(System.currentTimeMillis()), message));
+        Log.e(diagnosticFlag.toString(), String.format("(%s): %s",
+                timeFormatter.format(System.currentTimeMillis()), message));
     }
 
     public static void logDebug(DiagnosticFlag diagnosticFlag, String message) {
         SimpleDateFormat timeFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.getDefault());
-        Log.d(diagnosticFlag.toString(), String.format("(%s): %s", timeFormatter.format(System.currentTimeMillis()), message));
+        Log.d(diagnosticFlag.toString(), String.format("(%s): %s",
+                timeFormatter.format(System.currentTimeMillis()), message));
     }
 }

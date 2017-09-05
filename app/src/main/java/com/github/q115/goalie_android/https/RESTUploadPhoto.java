@@ -97,13 +97,13 @@ public class RESTUploadPhoto extends RESTBase<String> {
         VolleyRequestQueue.getInstance().addToRequestQueue(req);
     }
 
-    private byte[] getBytesFromBitmap(Bitmap bmp) {
+    public byte[] getBytesFromBitmap(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 99, baos);
         return baos.toByteArray();
     }
 
-    private byte[] getBytesFromString(String string) {
+    public byte[] getBytesFromString(String string) {
         return string.getBytes(Charset.defaultCharset());
     }
 

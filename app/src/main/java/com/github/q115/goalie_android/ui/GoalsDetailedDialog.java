@@ -23,6 +23,7 @@ import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTRemind;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -268,7 +269,7 @@ public class GoalsDetailedDialog extends DialogFragment {
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                UserHelper.getInstance().deleteGoal(guid);
+                GoalHelper.getInstance().deleteGoal(guid);
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("goalCompleteResultInt", String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal()));
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);

@@ -53,6 +53,15 @@ public class RESTPhotoTest extends BaseREST {
         assertTrue(UserHelper.getInstance().getOwnerProfile().profileBitmapImage != null);
     }
 
+    @Test
+    public void bitmapToByte() throws Exception {
+        Bitmap newImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        RESTUploadPhoto sm = new RESTUploadPhoto(newImage, username);
+
+        // compressed image shouldn't be bigger
+        assertTrue(newImage.getByteCount() >= sm.getBytesFromBitmap(newImage).length);
+    }
+
     private void downloadPhotoNotFound(String username) throws Exception {
         Pair<Integer, RESTGetPhoto.Listener> pair = createDownloadListener();
 

@@ -9,6 +9,7 @@ import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -144,7 +145,7 @@ public class RESTSync extends RESTBase<String> {
             goalFeedList.add(goalFeed);
         }
 
-        UserHelper.getInstance().setFeeds(goalFeedList);
+        GoalHelper.getInstance().setFeeds(goalFeedList);
     }
 
     private void setupMyGoals(JSONArray jsonMy) throws Exception {
@@ -170,7 +171,7 @@ public class RESTSync extends RESTBase<String> {
             if (fetchedGoal != null) {
                 if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
                     goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
-                    UserHelper.getInstance().modifyGoal(goal);
+                    GoalHelper.getInstance().modifyGoal(goal);
 
                     if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending
                             && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
@@ -211,6 +212,6 @@ public class RESTSync extends RESTBase<String> {
             }
         }
 
-        UserHelper.getInstance().setRequests(requests);
+        GoalHelper.getInstance().setRequests(requests);
     }
 }

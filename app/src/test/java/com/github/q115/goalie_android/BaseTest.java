@@ -18,11 +18,11 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertTrue;
@@ -51,7 +51,7 @@ public abstract class BaseTest {
 
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
         VolleyRequestQueue.getInstance().initialize(RuntimeEnvironment.application);
-        Whitebox.setInternalState(VolleyRequestQueue.getInstance(), "mRequestQueue",
+        setInternalState(VolleyRequestQueue.getInstance(), "mRequestQueue",
                 newVolleyRequestQueueForTest(RuntimeEnvironment.application));
 
         ImageHelper.getInstance().initialize(RuntimeEnvironment.application);
@@ -68,5 +68,40 @@ public abstract class BaseTest {
         queue.start();
 
         return queue;
+    }
+
+    public static void setInternalState(Object target, String field, Object value) {
+        Class<?> c = target.getClass();
+        try {
+            Field f = getFieldFromHierarchy(c, field);  // Checks superclasses.
+            f.setAccessible(true);
+            f.set(target, value);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Unable to set internal state on a private field. [...]", e);
+        }
+    }
+
+    private static Field getFieldFromHierarchy(Class<?> clazz, String field) {
+        Field f = getField(clazz, field);
+        while (f == null && clazz != Object.class) {
+            clazz = clazz.getSuperclass();
+            f = getField(clazz, field);
+        }
+        if (f == null) {
+            throw new RuntimeException(
+                    "You want me to get this field: '" + field +
+                            "' on this class: '" + clazz.getSimpleName() +
+                            "' but this field is not declared withing hierarchy of this class!");
+        }
+        return f;
+    }
+
+    private static Field getField(Class<?> clazz, String field) {
+        try {
+            return clazz.getDeclaredField(field);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 }

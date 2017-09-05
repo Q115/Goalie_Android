@@ -3,6 +3,7 @@ package test_util;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
@@ -37,12 +38,12 @@ public class DatabaseUtil {
             List<Goal> goals = SQLite.select().from(Goal.class).queryList();
             for (Goal goal : goals) {
                 if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
-                    UserHelper.getInstance().getRequests().add(goal);
+                    GoalHelper.getInstance().getRequests().add(goal);
                 } else if (UserHelper.getInstance().getAllContacts().get(goal.createdByUsername) != null) {
                     if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
-                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addActivitGoal(goal);
+                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).activieGoals.add(goal);
                     else
-                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).addCompleteGoal(goal);
+                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).finishedGoals.add(goal);
                 }
             }
         } catch (OutOfMemoryError outOfMemoryException) {

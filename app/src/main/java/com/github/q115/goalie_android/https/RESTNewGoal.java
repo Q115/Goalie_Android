@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
@@ -100,7 +101,7 @@ public class RESTNewGoal extends RESTBase<String> {
 
         Goal goal = new Goal(guid, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement,
                 Goal.GoalCompleteResult.Pending, mReferee, System.currentTimeMillis());
-        UserHelper.getInstance().addGoal(goal);
+        GoalHelper.getInstance().addGoal(goal);
 
         if (!mReferee.equals(mUsername)) {
             UserHelper.getInstance().getOwnerProfile().reputation -= mWager;

@@ -41,85 +41,85 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class MessagingService extends FirebaseMessagingService {
-    private static HashMap<String, MessagingServiceListener> MSGListener = new HashMap<>();
-
-    public interface MessagingServiceListener {
-        void onNotification();
-    }
-
-    public static void setMessagingServiceListener(String id, MessagingServiceListener messagingServiceListener) {
-        if (messagingServiceListener != null)
-            MSGListener.put(id, messagingServiceListener);
-        else
-            MSGListener.remove(id);
-    }
-
-    /**
-     * Called when message is received.
-     *
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
-     */
+    private String mMessage;
+    private String mGuid;
+    private int mResultCode;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // Check if message contains a data payload.
         Map<String, String> data = remoteMessage.getData();
         if (data != null && data.size() > 0) {
-            try {
-                String payload = data.get("payload");
-                JSONObject payloadJson = new JSONObject(payload);
-                String key = payloadJson.getString("key");
-                String message = payloadJson.getString("message");
-                String guid = payloadJson.getString("guid");
-                int result = payloadJson.getInt("result");
-                long time = payloadJson.getLong("time");
-
-                // no need to publish a notification
-                if (RESTSync.isSyncing() || time < PreferenceHelper.getInstance().getLastSyncedTimeEpoch()) {
-                    return;
-                }
-
-                switch (key) {
-                    case "remind":
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.putExtra("tab", 1 + result); // result = isRemindingRef
-                        showNotification(getString(R.string.notification_remind), message, intent);
-                        break;
-                    case "response":
-                        Intent intent2;
-                        if (result < Goal.GoalCompleteResult.values().length) {
-                            Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[result];
-                            if (goalCompleteResult == Goal.GoalCompleteResult.Ongoing) {
-                                intent2 = new Intent(this, MainActivity.class);
-                                intent2.putExtra("tab", 1);
-                            } else {
-                                intent2 = ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username);
-                            }
-                        } else
-                            intent2 = new Intent(this, MainActivity.class);
-                        sync();
-                        showNotification(getString(R.string.notification_response), message, intent2);
-                        break;
-                    case "request":
-                        sync();
-                        Intent intent3 = new Intent(this, MainActivity.class);
-                        intent3.putExtra("tab", 2);
-                        showNotification(getString(R.string.notification_request), message, intent3);
-                        break;
-                    default:
-                        showNotification(getString(R.string.notification_title), message, new Intent(this, MainActivity.class));
-                        break;
-                }
-            } catch (JSONException je) {
-                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to parse JSON");
-            } catch (Exception e) {
-                Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to handle notification data");
-            }
+            onJSONParsed(data.get("payload"));
         }
+    }
+
+    public void onJSONParsed(String payload) {
+        try {
+            JSONObject payloadJson = new JSONObject(payload);
+            mMessage = payloadJson.getString("message");
+            mGuid = payloadJson.getString("guid");
+            mResultCode = payloadJson.getInt("result");
+
+            String key = payloadJson.getString("key");
+            long time = payloadJson.getLong("time");
+
+            // no need to publish a notification if already syncing/synced
+            if (RESTSync.isSyncing() || time < PreferenceHelper.getInstance().getLastSyncedTimeEpoch()) {
+                return;
+            }
+
+            switch (key) {
+                case "remind":
+                    remind();
+                    break;
+                case "response":
+                    response();
+                    break;
+                case "request":
+                    request();
+                    break;
+                default:
+                    showNotification(getString(R.string.notification_title), mMessage, new Intent(this, MainActivity.class));
+                    break;
+            }
+        } catch (JSONException je) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to parse JSON");
+        } catch (Exception e) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.Notification, "Failed to handle notification data");
+        }
+    }
+
+    private void remind() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("tab", 1 + mResultCode); // result = isRemindingRef
+        showNotification(getString(R.string.notification_remind), mMessage, intent);
+    }
+
+    private void response() {
+        Intent intent2;
+        if (mResultCode < Goal.GoalCompleteResult.values().length) {
+            Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[mResultCode];
+            if (goalCompleteResult == Goal.GoalCompleteResult.Ongoing) {
+                intent2 = new Intent(this, MainActivity.class);
+                intent2.putExtra("tab", 1);
+            } else {
+                intent2 = ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username);
+            }
+        } else
+            intent2 = new Intent(this, MainActivity.class);
+
+        sync();
+        showNotification(getString(R.string.notification_response), mMessage, intent2);
+    }
+
+    private void request() {
+        sync();
+        Intent intent3 = new Intent(this, MainActivity.class);
+        intent3.putExtra("tab", 2);
+        showNotification(getString(R.string.notification_request), mMessage, intent3);
     }
 
     private void showNotification(String title, String description, Intent intent) {
@@ -154,8 +154,7 @@ public class MessagingService extends FirebaseMessagingService {
         sm.setListener(new RESTSync.Listener() {
             @Override
             public void onSuccess() {
-                for (MessagingServiceListener msgServiceListener : MSGListener.values())
-                    msgServiceListener.onNotification();
+                MessagingServiceUtil.callMessagingServiceListeners();
             }
 
             @Override

@@ -4,6 +4,7 @@ import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
@@ -39,10 +40,10 @@ public class RESTUpdateGoalTest extends BaseREST {
     public void acceptGoal() throws Exception {
         final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
 
-        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 0);
         setupGoal();
-        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
-        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, GoalHelper.getInstance().getRequests().get(0).guid,
                 Goal.GoalCompleteResult.Ongoing);
         sm.setListener(pair.second);
         sm.execute();
@@ -52,17 +53,17 @@ public class RESTUpdateGoalTest extends BaseREST {
         }
 
         verify(pair.second).onSuccess();
-        assertEquals(UserHelper.getInstance().getRequests().get(0).goalCompleteResult, Goal.GoalCompleteResult.Ongoing);
+        assertEquals(GoalHelper.getInstance().getRequests().get(0).goalCompleteResult, Goal.GoalCompleteResult.Ongoing);
     }
 
     @Test()
     public void passGoal() throws Exception {
         final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
 
-        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 0);
         setupGoal();
-        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
-        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, GoalHelper.getInstance().getRequests().get(0).guid,
                 Goal.GoalCompleteResult.Success);
         sm.setListener(pair.second);
         sm.execute();
@@ -72,17 +73,17 @@ public class RESTUpdateGoalTest extends BaseREST {
         }
 
         verify(pair.second).onSuccess();
-        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 0);
     }
 
     @Test()
     public void failGoal() throws Exception {
         final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
 
-        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 0);
         setupGoal();
-        assertEquals(UserHelper.getInstance().getRequests().size(), 1);
-        RESTUpdateGoal sm = new RESTUpdateGoal(username, UserHelper.getInstance().getRequests().get(0).guid,
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 1);
+        RESTUpdateGoal sm = new RESTUpdateGoal(username, GoalHelper.getInstance().getRequests().get(0).guid,
                 Goal.GoalCompleteResult.Failed);
         sm.setListener(pair.second);
         sm.execute();
@@ -92,7 +93,7 @@ public class RESTUpdateGoalTest extends BaseREST {
         }
 
         verify(pair.second).onSuccess();
-        assertEquals(UserHelper.getInstance().getRequests().size(), 0);
+        assertEquals(GoalHelper.getInstance().getRequests().size(), 0);
     }
 
     /* Cancelled goal not updating on server side at this time

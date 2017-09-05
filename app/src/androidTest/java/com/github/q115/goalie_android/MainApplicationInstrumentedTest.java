@@ -3,9 +3,12 @@ package com.github.q115.goalie_android;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.q115.goalie_android.utilsTest.GoalHelperInstrumentedTest;
 import com.github.q115.goalie_android.utilsTest.ImageHelperInstrumentedTest;
 import com.github.q115.goalie_android.utilsTest.PreferenceHelperInstrumentedTest;
 import com.github.q115.goalie_android.utilsTest.UserHelperInstrumentedTest;
+import com.raizlabs.android.dbflow.config.FlowManager;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,14 +34,5 @@ public class MainApplicationInstrumentedTest {
     public void initalization() throws Exception {
         MainApplication ma = new MainApplication();
         ma.initialize(InstrumentationRegistry.getTargetContext());
-
-        ImageHelperInstrumentedTest imageHelperInstrumentedTest = new ImageHelperInstrumentedTest();
-        imageHelperInstrumentedTest.initalization();
-
-        PreferenceHelperInstrumentedTest preferenceHelperInstrumentedTest = new PreferenceHelperInstrumentedTest();
-        preferenceHelperInstrumentedTest.initalization();
-
-        UserHelperInstrumentedTest userHelperInstrumentedTest = new UserHelperInstrumentedTest();
-        userHelperInstrumentedTest.initalization();
     }
 }

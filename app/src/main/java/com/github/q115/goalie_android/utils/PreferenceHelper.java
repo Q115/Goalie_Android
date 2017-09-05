@@ -73,9 +73,11 @@ public class PreferenceHelper {
     // Initialize all the preference settings. Should only be called from MainApplication class
     public void initialize(Context context) {
         mSharedPreferences = context.getSharedPreferences(Constants.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+
         mPushID = mSharedPreferences.getString(PreferenceValue.PushID.toString(), "");
         mAccountUsername = mSharedPreferences.getString(PreferenceValue.AccountUsername.toString(), "");
         mLastSyncedTimeEpoch = mSharedPreferences.getLong(PreferenceValue.LastSyncedTimeEpoch.toString(), 0);
+
         UserHelper.getInstance().getOwnerProfile().username = mAccountUsername;
     }
 

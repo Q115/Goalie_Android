@@ -43,11 +43,7 @@ public class InstanceIDService extends FirebaseInstanceIdService {
         saveToken(refreshedToken);
     }
 
-
-    /**
-     * Persist token to third-party servers.
-     */
-    private void saveToken(String pushID) {
+    public void saveToken(String pushID) {
         if (pushID == null || pushID.equals(PreferenceHelper.getInstance().getPushID()) || pushID.isEmpty())
             return;
         else if (pushID.length() < 12) {

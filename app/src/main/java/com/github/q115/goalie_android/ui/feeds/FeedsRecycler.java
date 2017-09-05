@@ -21,6 +21,7 @@ import com.github.q115.goalie_android.https.VolleyRequestQueue;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -68,7 +69,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
 
     public FeedsRecycler(FragmentActivity context) {
         this.mContext = context;
-        this.mGoalFeedList = UserHelper.getInstance().getFeeds();
+        this.mGoalFeedList = GoalHelper.getInstance().getFeeds();
 
         this.mProgressDialog = new ProgressDialog(this.mContext);
         this.mProgressDialog.setMessage(this.mContext.getString(R.string.connecting));
@@ -86,7 +87,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     }
 
     public void notifyDataSetHasChanged() {
-        mGoalFeedList = UserHelper.getInstance().getFeeds();
+        mGoalFeedList = GoalHelper.getInstance().getFeeds();
         super.notifyDataSetChanged();
     }
 

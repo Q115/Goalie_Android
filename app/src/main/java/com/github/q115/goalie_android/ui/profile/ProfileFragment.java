@@ -30,6 +30,7 @@ import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.services.MessagingService;
+import com.github.q115.goalie_android.services.MessagingServiceUtil;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -57,7 +58,7 @@ import static android.app.Activity.RESULT_OK;
  * limitations under the License.
  */
 
-public class ProfileFragment extends Fragment implements ProfileView, MessagingService.MessagingServiceListener {
+public class ProfileFragment extends Fragment implements ProfileView, MessagingServiceUtil.MessagingServiceListener {
     private ProfilePresenter mPresenter;
 
     private ImageView mEdit;
@@ -114,12 +115,12 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     public void onResume() {
         super.onResume();
         mPresenter.start();
-        MessagingService.setMessagingServiceListener("Profile", this);
+        MessagingServiceUtil.setMessagingServiceListener("Profile", this);
     }
 
     @Override
     public void onDestroy() {
-        MessagingService.setMessagingServiceListener("Profile", null);
+        MessagingServiceUtil.setMessagingServiceListener("Profile", null);
         super.onDestroy();
     }
 

@@ -5,6 +5,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
@@ -85,7 +86,7 @@ public class RESTUpdateGoal extends RESTBase<String> {
         if (mGoalCompleteResult == Goal.GoalCompleteResult.Failed
                 || mGoalCompleteResult == Goal.GoalCompleteResult.Success
                 || mGoalCompleteResult == Goal.GoalCompleteResult.Cancelled) {
-            ArrayList<Goal> list = UserHelper.getInstance().getRequests();
+            ArrayList<Goal> list = GoalHelper.getInstance().getRequests();
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).guid.equals(mGuid)) {
                     list.get(i).activityDate = System.currentTimeMillis();
@@ -94,7 +95,7 @@ public class RESTUpdateGoal extends RESTBase<String> {
                 }
             }
         } else {
-            ArrayList<Goal> list = UserHelper.getInstance().getRequests();
+            ArrayList<Goal> list = GoalHelper.getInstance().getRequests();
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).guid.equals(mGuid)) {
                     list.get(i).goalCompleteResult = mGoalCompleteResult;

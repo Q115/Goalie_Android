@@ -108,15 +108,6 @@ public class ImageHelper {
         return new File(mImageDirectory, imageNameWithType).getPath();
     }
 
-    // change bitmap to jpg byte array
-    public static byte[] bitmapToByte(Bitmap img) {
-        if (img == null)
-            return null;
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.JPEG, Constants.IMAGE_JPG_QUALITY, stream);
-        return stream.toByteArray();
-    }
-
     public static Drawable getRoundedCornerDrawable(Resources resources, Bitmap bitmap, float scale) {
         if (resources == null || bitmap == null)
             return null;
@@ -127,17 +118,6 @@ public class ImageHelper {
         return round;
     }
 
-    public static Bitmap drawableToBitmap(Drawable drawable, int widthPixels, int heightPixels) {
-        if (drawable == null)
-            return null;
-        Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(mutableBitmap);
-        drawable.setBounds(0, 0, widthPixels, heightPixels);
-        drawable.draw(canvas);
-
-        return mutableBitmap;
-    }
-
     public static int dpToPx(Resources resources, int dp) {
         return (int) (dp * resources.getDisplayMetrics().density);
     }
@@ -146,23 +126,18 @@ public class ImageHelper {
         return (int) (px / resources.getDisplayMetrics().density);
     }
 
-
-    // Instead of loading the whole image, just a sample to avoid Out Of Memory error
-    //     width & height in pixel
-    public static Bitmap decodeSampledBitmapFromUri(ContentResolver contentResolver, android.net.Uri uri, int width, int height) {
-        // First decode with inJustDecodeBounds=true to check dimensions
+    // Instead of loading the whole image, just a sample to avoid Out Of Memory error. width & height in pixel
+    public static Bitmap decodeSampledBitmapFromUri(ContentResolver contentResolver,
+                                                    android.net.Uri uri, int width, int height) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
 
         try {
+            // First decode with inJustDecodeBounds=true to check dimensions
+            options.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(contentResolver.openInputStream(uri), null, options);
-
-            // Calculate inSampleSize
             options.inSampleSize = getInstance().calculateInSampleSize(options, width, height);
 
-            // Decode bitmap with inSampleSize set
             options.inJustDecodeBounds = false;
-
             return BitmapFactory.decodeStream(contentResolver.openInputStream(uri), null, options);
         } catch (FileNotFoundException fnfe) {
             Diagnostic.logError(DiagnosticFlag.ImageHelper, "decodeSampledBitmapFromUri() FAILED" + fnfe.toString());

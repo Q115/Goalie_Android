@@ -72,13 +72,13 @@ public class UserTest {
     public void addGoals() throws Exception {
         User user = new User();
         assertEquals(0, user.activieGoals.size());
-        user.addActivitGoal(new Goal());
-        user.addActivitGoal(new Goal());
+        user.activieGoals.add(new Goal());
+        user.activieGoals.add(new Goal());
         assertEquals(2, user.activieGoals.size());
 
         assertEquals(0, user.finishedGoals.size());
-        user.addCompleteGoal(new Goal());
-        user.addCompleteGoal(new Goal());
+        user.finishedGoals.add(new Goal());
+        user.finishedGoals.add(new Goal());
         assertEquals(2, user.finishedGoals.size());
     }
 }

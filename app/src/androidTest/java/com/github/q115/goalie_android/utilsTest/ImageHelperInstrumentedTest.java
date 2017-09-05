@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.q115.goalie_android.https.RESTUploadPhoto;
 import com.github.q115.goalie_android.utils.ImageHelper;
 
 import org.junit.Before;
@@ -64,13 +65,5 @@ public class ImageHelperInstrumentedTest {
         // delete that image
         ImageHelper.getInstance().deleteImageFromPrivateStorage(imageName, ImageHelper.ImageType.PNG);
         assertFalse(ImageHelper.getInstance().isImageOnPrivateStorage(imageName, ImageHelper.ImageType.PNG));
-    }
-
-    @Test
-    public void bitmapToByte() throws Exception {
-        Bitmap newImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-
-        // compressed image shouldn't be bigger
-        assertTrue(newImage.getByteCount() >= ImageHelper.bitmapToByte(newImage).length);
     }
 }
