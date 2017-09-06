@@ -1,12 +1,8 @@
 package com.github.q115.goalie_android.ui.friends;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -14,17 +10,16 @@ import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTGetUserInfo;
+import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.utils.UserHelper;
+import com.github.q115.goalie_android.utils.ViewHelper;
 
 /*
  * Copyright 2017 Qi Li
@@ -44,6 +39,17 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 public class AddContactDialog extends DialogFragment {
     private String mUsername;
+    private TextView mUpdateStatus;
+    private TextView mUsernameText;
+    private AddContactOnAddedListener mListener;
+
+    public interface AddContactOnAddedListener {
+        void onAdded(String username);
+    }
+
+    public void setOnAdded(AddContactOnAddedListener listener) {
+        mListener = listener;
+    }
 
     // default constructor. Needed so rotation doesn't crash
     public AddContactDialog() {
@@ -55,7 +61,6 @@ public class AddContactDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         if (savedInstanceState != null) {
@@ -71,32 +76,31 @@ public class AddContactDialog extends DialogFragment {
         return builder.create();
     }
 
-    // show keyboard
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getDialog().getWindow() != null)
-            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        ViewHelper.showKeyboard(getDialog());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mUsername = ((EditText) getDialog().findViewById(R.id.add_username)).getText().toString().trim();
-
+        mUsername = mUsernameText.getText().toString().trim();
         outState.putString("username", mUsername);
+
         super.onSaveInstanceState(outState);
     }
 
-    // Set click events and set max length of editview.
     @Override
     public void onStart() {
         super.onStart();
 
-        EditText addUsernameInput = getDialog().findViewById(R.id.add_username);
-        addUsernameInput.setOnEditorActionListener(handleEditorAction());
-        addUsernameInput.setText(mUsername);
+        mUpdateStatus = getDialog().findViewById(R.id.add_friend_status);
+        mUsernameText = getDialog().findViewById(R.id.add_username);
 
-        (getDialog().findViewById(R.id.add_friend_status)).setVisibility(View.INVISIBLE);
+        mUsernameText.setOnEditorActionListener(handleEditorAction());
+        mUsernameText.setText(mUsername);
+        mUpdateStatus.setVisibility(View.INVISIBLE);
 
         AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
@@ -106,7 +110,7 @@ public class AddContactDialog extends DialogFragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    add();
+                    addCheck();
                 }
             });
             negativeButton.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +127,7 @@ public class AddContactDialog extends DialogFragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    add();
+                    addCheck();
                     return true;
                 }
                 return false;
@@ -131,52 +135,46 @@ public class AddContactDialog extends DialogFragment {
         };
     }
 
-    private void add() {
-        final String username = ((EditText) getDialog().findViewById(R.id.add_username)).getText().toString().trim();
-        final TextView updatestatus = getDialog().findViewById(R.id.add_friend_status);
-        updatestatus.setVisibility(View.INVISIBLE);
+    private void addCheck() {
+        mUsername = mUsernameText.getText().toString().trim();
+        mUpdateStatus.setVisibility(View.INVISIBLE);
 
-        //check if username is valid before pinging server
-        if (!UserHelper.isUsernameValid(username)) {
-            updatestatus.setVisibility(View.VISIBLE);
-            updatestatus.setText(getString(R.string.username_error));
-        } else if (UserHelper.getInstance().getAllContacts().containsKey(username)) {
-            updatestatus.setVisibility(View.VISIBLE);
-            updatestatus.setText(getString(R.string.already_friends));
-        } else if (username.equals(UserHelper.getInstance().getOwnerProfile().username)) {
-            updatestatus.setVisibility(View.VISIBLE);
-            updatestatus.setText(getString(R.string.no_self));
+        if (!UserHelper.isUsernameValid(mUsername)) {
+            mUpdateStatus.setVisibility(View.VISIBLE);
+            mUpdateStatus.setText(getString(R.string.username_error));
+        } else if (UserHelper.getInstance().getAllContacts().containsKey(mUsername)) {
+            mUpdateStatus.setVisibility(View.VISIBLE);
+            mUpdateStatus.setText(getString(R.string.already_friends));
+        } else if (mUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+            mUpdateStatus.setVisibility(View.VISIBLE);
+            mUpdateStatus.setText(getString(R.string.no_self));
         } else {
-            //hide keyboard
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            // verify if the soft keyboard is open
-            if (imm != null && getDialog().getCurrentFocus() != null) {
-                imm.hideSoftInputFromWindow(getDialog().getCurrentFocus().getWindowToken(), 0);
+            add();
+        }
+    }
+
+    private void add() {
+        ViewHelper.hideKeyboard(getActivity(), getDialog());
+
+        final DelayedProgressDialog progressDialog = new DelayedProgressDialog();
+        progressDialog.show(getActivity().getSupportFragmentManager(), "DelayedProgressDialog");
+
+        RESTGetUserInfo sm = new RESTGetUserInfo(mUsername);
+        sm.setListener(new RESTGetUserInfo.Listener() {
+            @Override
+            public void onSuccess() {
+                progressDialog.cancel();
+                mListener.onAdded(mUsername);
+                dismiss();
             }
 
-            final ProgressDialog progress = new ProgressDialog(getActivity());
-            progress.setMessage(getString(R.string.adding));
-            progress.show();
-
-            RESTGetUserInfo sm = new RESTGetUserInfo(username);
-            sm.setListener(new RESTGetUserInfo.Listener() {
-                @Override
-                public void onSuccess() {
-                    progress.cancel();
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("username", username);
-                    ((FriendsActivity) getActivity()).onActivityResult(Constants.RESULT_FRIENDS_ADD, Activity.RESULT_OK, returnIntent);
-                    dismiss();
-                }
-
-                @Override
-                public void onFailure(String errMsg) {
-                    progress.cancel();
-                    updatestatus.setVisibility(View.VISIBLE);
-                    updatestatus.setText(errMsg);
-                }
-            });
-            sm.execute();
-        }
+            @Override
+            public void onFailure(String errMsg) {
+                progressDialog.cancel();
+                mUpdateStatus.setVisibility(View.VISIBLE);
+                mUpdateStatus.setText(errMsg);
+            }
+        });
+        sm.execute();
     }
 }

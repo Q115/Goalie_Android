@@ -9,9 +9,9 @@ import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalPresenter;
-import com.github.q115.goalie_android.ui.my_goals.new_goal.NewGoalView;
-import com.github.q115.goalie_android.ui.my_goals.new_goal.SublimePickerDialog;
+import com.github.q115.goalie_android.ui.new_goal.NewGoalPresenter;
+import com.github.q115.goalie_android.ui.new_goal.NewGoalView;
+import com.github.q115.goalie_android.ui.new_goal.SublimePickerDialog;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;

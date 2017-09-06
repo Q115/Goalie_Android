@@ -1,8 +1,8 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import com.github.q115.goalie_android.BaseTest;
-import com.github.q115.goalie_android.ui.my_goals.popular_goal.PopularGoalPresenter;
-import com.github.q115.goalie_android.ui.my_goals.popular_goal.PopularGoalView;
+import com.github.q115.goalie_android.ui.popular_goal.PopularGoalPresenter;
+import com.github.q115.goalie_android.ui.popular_goal.PopularGoalView;
 
 import org.junit.Before;
 import org.junit.Test;

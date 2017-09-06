@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable;
 
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.ui.requests.RequestsPresenter;
-import com.github.q115.goalie_android.ui.requests.RequestsView;
+import com.github.q115.goalie_android.ui.main.requests.RequestsPresenter;
+import com.github.q115.goalie_android.ui.main.requests.RequestsView;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;

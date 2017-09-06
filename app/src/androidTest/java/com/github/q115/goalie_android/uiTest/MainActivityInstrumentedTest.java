@@ -7,7 +7,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.MainActivity;
+import com.github.q115.goalie_android.ui.main.MainActivity;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.utils.PreferenceHelper;

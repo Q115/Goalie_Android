@@ -1,8 +1,8 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import com.github.q115.goalie_android.BaseTest;
-import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;
-import com.github.q115.goalie_android.ui.feeds.FeedsView;
+import com.github.q115.goalie_android.ui.main.feeds.FeedsPresenter;
+import com.github.q115.goalie_android.ui.main.feeds.FeedsView;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;

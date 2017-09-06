@@ -1,8 +1,8 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import com.github.q115.goalie_android.BaseTest;
-import com.github.q115.goalie_android.ui.MainActivityPresenter;
-import com.github.q115.goalie_android.ui.MainActivityView;
+import com.github.q115.goalie_android.ui.main.MainActivityPresenter;
+import com.github.q115.goalie_android.ui.main.MainActivityView;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 

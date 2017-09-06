@@ -28,7 +28,8 @@ import com.github.q115.goalie_android.R;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FriendsActivity extends AppCompatActivity implements FriendsActivityView {
+public class FriendsActivity extends AppCompatActivity
+        implements FriendsActivityView, AddContactDialog.AddContactOnAddedListener {
     private FriendsActivityPresenter mPresenter;
     private FriendsListPresenter mFriendsListPresenter;
 
@@ -74,7 +75,6 @@ public class FriendsActivity extends AppCompatActivity implements FriendsActivit
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_friends, menu);
         return true;
     }
@@ -93,6 +93,7 @@ public class FriendsActivity extends AppCompatActivity implements FriendsActivit
                 return true;
             case R.id.action_add_friends:
                 AddContactDialog addContactDialog = new AddContactDialog();
+                addContactDialog.setOnAdded(this);
                 addContactDialog.show(getSupportFragmentManager(), "AddContactDialog");
                 return true;
         }
@@ -106,8 +107,6 @@ public class FriendsActivity extends AppCompatActivity implements FriendsActivit
 
         if (requestCode == Constants.REQUEST_PERMISSIONS_CONTACT && resultCode == RESULT_OK && data != null) {
             mPresenter.sendSMSInvite(data.getData());
-        } else if (requestCode == Constants.RESULT_FRIENDS_ADD && resultCode == RESULT_OK && data != null) {
-            mFriendsListPresenter.onAddContactDialogComplete(data.getStringExtra("username"));
         }
     }
 
@@ -116,5 +115,10 @@ public class FriendsActivity extends AppCompatActivity implements FriendsActivit
         Intent sendIntent = new Intent(Intent.ACTION_SENDTO, android.net.Uri.fromParts("smsto", phoneNum, null));
         sendIntent.putExtra("sms_body", getString(R.string.join_me));
         startActivity(sendIntent);
+    }
+
+    @Override
+    public void onAdded(String username) {
+        mFriendsListPresenter.onAddContactDialogComplete(username);
     }
 }

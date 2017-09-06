@@ -31,7 +31,7 @@ import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.ui.MainActivity;
+import com.github.q115.goalie_android.ui.main.MainActivity;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -122,6 +122,23 @@ public class MessagingService extends FirebaseMessagingService {
         showNotification(getString(R.string.notification_request), mMessage, intent3);
     }
 
+    private void sync() {
+        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
+                PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+        sm.setListener(new RESTSync.Listener() {
+            @Override
+            public void onSuccess() {
+                MessagingServiceUtil.callMessagingServiceListeners();
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                // intentionally left blank
+            }
+        });
+        sm.execute();
+    }
+
     private void showNotification(String title, String description, Intent intent) {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent =
@@ -147,22 +164,5 @@ public class MessagingService extends FirebaseMessagingService {
         // Get the notification manager & publish the notification
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(Constants.ID_NOTIFICATION_BROADCAST, notification);
-    }
-
-    private void sync() {
-        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
-                PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
-        sm.setListener(new RESTSync.Listener() {
-            @Override
-            public void onSuccess() {
-                MessagingServiceUtil.callMessagingServiceListeners();
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                // intentionally left blank
-            }
-        });
-        sm.execute();
     }
 }

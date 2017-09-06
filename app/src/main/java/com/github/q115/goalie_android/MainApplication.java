@@ -12,6 +12,7 @@ import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
+import com.github.q115.goalie_android.utils.ViewHelper;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -78,7 +79,7 @@ public class MainApplication extends Application {
             List<Goal> goals = SQLite.select().from(Goal.class).queryList();
             for (Goal goal : goals) {
                 User user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
-                if(user != null) {
+                if (user != null) {
                     if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing
                             || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
                         user.activeGoals.put(goal.guid, goal);
