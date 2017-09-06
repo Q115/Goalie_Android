@@ -62,10 +62,9 @@ public class RESTSyncTest extends BaseREST {
 
         verify(pair.second).onSuccess();
         assertNotEquals(PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), 0);
-        assertNotEquals(GoalHelper.getInstance().getFeeds().size(), 0); // depends on server, can ignore this test if empty
 
         assertEquals(GoalHelper.getInstance().getRequests().size(), 1);
-        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 1);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 1);
         assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
     }
 
@@ -90,7 +89,7 @@ public class RESTSyncTest extends BaseREST {
 
         verify(pair.second).onSuccess();
         assertEquals(UserHelper.getInstance().getOwnerProfile().reputation, 999);
-        assertEquals(UserHelper.getInstance().getOwnerProfile().activieGoals.size(), 0);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 0);
         assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
         assertEquals(GoalHelper.getInstance().getRequests().size(), 0);
         assertEquals(GoalHelper.getInstance().getFeeds().size(), 0);

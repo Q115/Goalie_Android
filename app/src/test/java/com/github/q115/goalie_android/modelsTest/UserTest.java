@@ -35,7 +35,7 @@ public class UserTest {
         assertEquals(100, user.reputation);
         assertEquals(0, user.lastPhotoModifiedTime);
         assertEquals(null, user.profileBitmapImage);
-        assertEquals(0, user.activieGoals.size());
+        assertEquals(0, user.activeGoals.size());
         assertEquals(0, user.finishedGoals.size());
     }
 
@@ -71,14 +71,14 @@ public class UserTest {
     @Test
     public void addGoals() throws Exception {
         User user = new User();
-        assertEquals(0, user.activieGoals.size());
-        user.activieGoals.add(new Goal());
-        user.activieGoals.add(new Goal());
-        assertEquals(2, user.activieGoals.size());
+        assertEquals(0, user.activeGoals.size());
+        user.activeGoals.put("", new Goal());
+        user.activeGoals.put("", new Goal());
+        assertEquals(1, user.activeGoals.size());
 
         assertEquals(0, user.finishedGoals.size());
-        user.finishedGoals.add(new Goal());
-        user.finishedGoals.add(new Goal());
+        user.finishedGoals.put("", new Goal());
+        user.finishedGoals.put("x", new Goal());
         assertEquals(2, user.finishedGoals.size());
     }
 }

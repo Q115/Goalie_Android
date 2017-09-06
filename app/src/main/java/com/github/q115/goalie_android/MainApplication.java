@@ -77,14 +77,17 @@ public class MainApplication extends Application {
             //populate goals
             List<Goal> goals = SQLite.select().from(Goal.class).queryList();
             for (Goal goal : goals) {
-                if (!goal.createdByUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
-                    GoalHelper.getInstance().getRequests().add(goal);
-                } else if (UserHelper.getInstance().getAllContacts().get(goal.createdByUsername) != null) {
+                User user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+                if(user != null) {
                     if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing
                             || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
-                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).activieGoals.add(goal);
+                        user.activeGoals.put(goal.guid, goal);
                     else
-                        UserHelper.getInstance().getAllContacts().get(goal.createdByUsername).finishedGoals.add(goal);
+                        user.finishedGoals.put(goal.guid, goal);
+
+                    if (!user.username.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+                        GoalHelper.getInstance().getRequests().add(goal);
+                    }
                 }
             }
         } catch (OutOfMemoryError ex) {

@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.raizlabs.android.dbflow.config.FlowManager;

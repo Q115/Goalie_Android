@@ -2,6 +2,7 @@ package com.github.q115.goalie_android.httpTest;
 
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTUpvote;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
@@ -43,7 +44,8 @@ public class RESTUpvoteTest extends BaseREST {
             @Override
             public void onSuccess() {
                 // upvote on that goal
-                RESTUpvote sm = new RESTUpvote(username, UserHelper.getInstance().getOwnerProfile().activieGoals.get(0).guid);
+                Object[] array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
+                RESTUpvote sm = new RESTUpvote(username, ((Goal) array[0]).guid);
                 sm.setListener(pair.second);
                 sm.execute();
             }

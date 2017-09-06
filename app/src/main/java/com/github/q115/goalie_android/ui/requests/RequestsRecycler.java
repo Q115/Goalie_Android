@@ -9,7 +9,6 @@ import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BaseGoalRecyler;
 import com.github.q115.goalie_android.utils.GoalHelper;
-import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;

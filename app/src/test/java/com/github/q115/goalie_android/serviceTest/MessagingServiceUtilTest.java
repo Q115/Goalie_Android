@@ -1,18 +1,11 @@
 package com.github.q115.goalie_android.serviceTest;
 
 import com.github.q115.goalie_android.BaseTest;
-import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.services.InstanceIDService;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
-import com.github.q115.goalie_android.utils.PreferenceHelper;
-import com.github.q115.goalie_android.utils.UserHelper;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-
-import static junit.framework.Assert.assertEquals;
 
 /*
  * Copyright 2017 Qi Li

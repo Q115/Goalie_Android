@@ -27,38 +27,11 @@ public class PreferenceHelper {
         PushID, AccountUsername, LastSyncedTimeEpoch
     }
 
-    private String mPushID;
-
-    public String getPushID() {
-        return mPushID;
-    }
-
-    public void setPushID(String pushID) {
-        commitStringPreference(PreferenceValue.PushID, pushID);
-    }
-
-    private String mAccountUsername;
-
-    public String getAccountUsername() {
-        return mAccountUsername;
-    }
-
-    public void setAccountUsername(String accountUsername) {
-        commitStringPreference(PreferenceValue.AccountUsername, accountUsername);
-    }
-
-    private long mLastSyncedTimeEpoch;
-
-    public long getLastSyncedTimeEpoch() {
-        return mLastSyncedTimeEpoch;
-    }
-
-    public void setLastSyncedTimeEpoch(long mLastSyncedTimeEpoch) {
-        commitLongPreference(PreferenceValue.LastSyncedTimeEpoch, mLastSyncedTimeEpoch);
-    }
-
     private static PreferenceHelper mInstance;
     private SharedPreferences mSharedPreferences;
+    private String mPushID;
+    private String mAccountUsername;
+    private long mLastSyncedTimeEpoch;
 
     private PreferenceHelper() {
     }
@@ -79,6 +52,30 @@ public class PreferenceHelper {
         mLastSyncedTimeEpoch = mSharedPreferences.getLong(PreferenceValue.LastSyncedTimeEpoch.toString(), 0);
 
         UserHelper.getInstance().getOwnerProfile().username = mAccountUsername;
+    }
+
+    public String getPushID() {
+        return mPushID;
+    }
+
+    public void setPushID(String pushID) {
+        commitStringPreference(PreferenceValue.PushID, pushID);
+    }
+
+    public String getAccountUsername() {
+        return mAccountUsername;
+    }
+
+    public void setAccountUsername(String accountUsername) {
+        commitStringPreference(PreferenceValue.AccountUsername, accountUsername);
+    }
+
+    public long getLastSyncedTimeEpoch() {
+        return mLastSyncedTimeEpoch;
+    }
+
+    public void setLastSyncedTimeEpoch(long mLastSyncedTimeEpoch) {
+        commitLongPreference(PreferenceValue.LastSyncedTimeEpoch, mLastSyncedTimeEpoch);
     }
 
     private void commitStringPreference(PreferenceValue key, String value) {

@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT;
 import static com.github.q115.goalie_android.Constants.FAILED;
@@ -165,19 +166,22 @@ public class RESTSync extends RESTBase<String> {
         }
 
         // check if activieGoals changed
-        for (int i = 0; i < UserHelper.getInstance().getOwnerProfile().activieGoals.size(); i++) {
-            Goal goal = UserHelper.getInstance().getOwnerProfile().activieGoals.get(i);
-            Goal fetchedGoal = goalHash.get(goal.guid);
-            if (fetchedGoal != null) {
-                if (goal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
-                    goal.goalCompleteResult = fetchedGoal.goalCompleteResult;
-                    GoalHelper.getInstance().modifyGoal(goal);
+        HashMap<String, Goal> localActiveGoals = UserHelper.getInstance().getOwnerProfile().activeGoals;
 
-                    if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending
-                            && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
-                        UserHelper.getInstance().getOwnerProfile().activieGoals.remove(i);
-                        i--;
-                        UserHelper.getInstance().getOwnerProfile().finishedGoals.add(goal);
+        Set<String> keySet = localActiveGoals.keySet();
+        for (String key : keySet) {
+            Goal localActiveGoal = localActiveGoals.get(key);
+            Goal fetchedGoal = goalHash.get(localActiveGoal.guid);
+            if (fetchedGoal != null) {
+                if (localActiveGoal.goalCompleteResult != fetchedGoal.goalCompleteResult) {
+
+                    localActiveGoal.goalCompleteResult = fetchedGoal.goalCompleteResult;
+                    GoalHelper.getInstance().modifyGoal(localActiveGoal);
+
+                    if (localActiveGoal.goalCompleteResult != Goal.GoalCompleteResult.Pending
+                            && localActiveGoal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
+                        localActiveGoals.remove(key);
+                        UserHelper.getInstance().getOwnerProfile().activeGoals.put(key, localActiveGoal);
                     }
                 }
             }

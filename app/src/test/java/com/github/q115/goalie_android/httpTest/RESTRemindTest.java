@@ -2,6 +2,7 @@ package com.github.q115.goalie_android.httpTest;
 
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTRemind;
+import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
@@ -43,7 +44,8 @@ public class RESTRemindTest extends BaseREST {
             @Override
             public void onSuccess() {
                 // remind on that goal
-                RESTRemind sm = new RESTRemind(username, friendUsername, UserHelper.getInstance().getOwnerProfile().activieGoals.get(0).guid, true);
+                Object[] array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
+                RESTRemind sm = new RESTRemind(username, friendUsername, ((Goal)array[0]).guid, true);
                 sm.setListener(pair.second);
                 sm.execute();
             }

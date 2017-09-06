@@ -10,6 +10,7 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
+import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -56,6 +57,7 @@ public abstract class BaseTest {
 
         ImageHelper.getInstance().initialize(RuntimeEnvironment.application);
         UserHelper.getInstance().initialize();
+        GoalHelper.getInstance().initialize();
         PreferenceHelper.getInstance().initialize(RuntimeEnvironment.application);
         UserHelper.getInstance().LoadContacts();
     }

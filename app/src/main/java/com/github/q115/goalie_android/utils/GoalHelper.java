@@ -26,27 +26,10 @@ import java.util.ArrayList;
  */
 
 public class GoalHelper {
-    private ArrayList<Goal> mRequests;
-
-    public ArrayList<Goal> getRequests() {
-        return mRequests;
-    }
-
-    public void setRequests(ArrayList<Goal> requests) {
-        mRequests = requests;
-    }
-
-    private ArrayList<GoalFeed> mFeeds;
-
-    public ArrayList<GoalFeed> getFeeds() {
-        return mFeeds;
-    }
-
-    public void setFeeds(ArrayList<GoalFeed> feeds) {
-        mFeeds = feeds;
-    }
-
     private static GoalHelper mInstance;
+
+    private ArrayList<Goal> mMyRequests;
+    private ArrayList<GoalFeed> mFeeds;
 
     public static synchronized GoalHelper getInstance() {
         if (mInstance == null) {
@@ -57,21 +40,39 @@ public class GoalHelper {
     }
 
     public void initialize() {
-        mRequests = new ArrayList<>();
+        mMyRequests = new ArrayList<>();
         mFeeds = new ArrayList<>();
+    }
+
+    public ArrayList<Goal> getRequests() {
+        return mMyRequests;
+    }
+
+    public void setRequests(ArrayList<Goal> requests) {
+        mMyRequests = requests;
+    }
+
+    public ArrayList<GoalFeed> getFeeds() {
+        return mFeeds;
+    }
+
+    public void setFeeds(ArrayList<GoalFeed> feeds) {
+        mFeeds = feeds;
     }
 
     public boolean addGoal(Goal goal) {
         try {
-            User owner = UserHelper.getInstance().getOwnerProfile();
-            if (!goal.createdByUsername.equals(owner.username)) {
-                mRequests.add(goal);
-            } else {
-                if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
-                    owner.activieGoals.add(goal);
-                else
-                    owner.finishedGoals.add(goal);
+            User user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+            if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing
+                    || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
+                user.activeGoals.put(goal.guid, goal);
+            else
+                user.finishedGoals.put(goal.guid, goal);
+
+            if (!user.username.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+                mMyRequests.add(goal);
             }
+
             goal.activityDate = System.currentTimeMillis();
             goal.save();
 
@@ -85,13 +86,7 @@ public class GoalHelper {
     public boolean deleteGoal(String guid) {
         try {
             User owner = UserHelper.getInstance().getOwnerProfile();
-            for (int i = 0; i < owner.activieGoals.size(); i++) {
-                Goal goal = owner.activieGoals.get(i);
-                if (goal.guid.equals(guid)) {
-                    owner.activieGoals.remove(i);
-                    break;
-                }
-            }
+            owner.activeGoals.remove(guid);
 
             SQLite.delete().from(Goal.class).where(Goal_Table.guid.eq(guid)).execute();
             return true;

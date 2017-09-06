@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -14,7 +13,6 @@ import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.Diagnostic.DiagnosticFlag;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,7 +39,6 @@ public class ImageHelper {
     }
 
     private static ImageHelper mInstance;
-
     private String mImageDirectory;
 
     public static synchronized ImageHelper getInstance() {
@@ -86,7 +83,7 @@ public class ImageHelper {
             FileInputStream fs = new FileInputStream(filePath);
             return BitmapFactory.decodeStream(fs);
         } catch (FileNotFoundException fnf) {
-            Diagnostic.logError(DiagnosticFlag.ImageHelper, "Error load image from InternalStorage (sync): " + fnf.toString());
+            Diagnostic.logError(DiagnosticFlag.ImageHelper, "Error load image from InternalStorage: " + fnf.toString());
             return null;
         }
     }
@@ -146,7 +143,7 @@ public class ImageHelper {
     }
 
     private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        if(options == null)
+        if (options == null)
             return 1;
 
         // Raw height and width of image

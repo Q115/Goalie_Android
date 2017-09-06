@@ -48,10 +48,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     }
 
     private void setupDataSet() {
-        this.mGoalList = UserHelper.getInstance().getOwnerProfile().activieGoals;
-
-        if (this.mGoalList == null)
-            this.mGoalList = new ArrayList<>();
+        this.mGoalList = new ArrayList<>(UserHelper.getInstance().getOwnerProfile().activeGoals.values());
         Collections.sort(mGoalList, new Comparator<Goal>() {
             @Override
             public int compare(Goal a1, Goal a2) {

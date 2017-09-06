@@ -54,7 +54,7 @@ public class MainActivityPresenterUnitTest extends BaseTest {
         PreferenceHelper.getInstance().setAccountUsername(getValidFriendUsername());
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.start();
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         verify(mView).reloadAll();
     }
 }

@@ -6,7 +6,6 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.GoalHelper;
-import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.json.JSONObject;
 

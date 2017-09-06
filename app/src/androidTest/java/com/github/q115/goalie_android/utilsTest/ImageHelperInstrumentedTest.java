@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.github.q115.goalie_android.https.RESTUploadPhoto;
 import com.github.q115.goalie_android.utils.ImageHelper;
 
 import org.junit.Before;

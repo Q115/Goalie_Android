@@ -41,7 +41,8 @@ public class RESTNewGoalTest extends BaseREST {
         String friendUsername = getValidFriendUsername();
         Pair<Integer, RESTNewGoal.Listener> pair = createAListener();
 
-        int currentActivitySize = UserHelper.getInstance().getOwnerProfile().activieGoals.size();
+        Object[] array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
+        int currentActivitySize = array.length;
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
         sm.setListener(pair.second);
         sm.execute();
@@ -55,9 +56,10 @@ public class RESTNewGoalTest extends BaseREST {
         User user = UserHelper.getInstance().getAllContacts().get(username);
         assertNotNull(user);
         assertEquals(user.username, username);
-        assertEquals(user.activieGoals.size(), currentActivitySize + 1);
+        assertEquals(user.activeGoals.size(), currentActivitySize + 1);
 
-        Goal goal = user.activieGoals.get(currentActivitySize);
+        array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
+        Goal goal = (Goal)array[currentActivitySize];
         assertEquals(goal.createdByUsername, username);
         assertEquals(goal.title, "title");
         assertEquals(goal.startDate, 12000);
@@ -76,7 +78,7 @@ public class RESTNewGoalTest extends BaseREST {
         assertNull(user);
 
         Pair<Integer, RESTNewGoal.Listener> pair = createAListener();
-        int currentActivitySize = UserHelper.getInstance().getOwnerProfile().activieGoals.size();
+        int currentActivitySize = UserHelper.getInstance().getOwnerProfile().activeGoals.size();
 
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
         sm.setListener(pair.second);
@@ -89,7 +91,7 @@ public class RESTNewGoalTest extends BaseREST {
 
         User owner = UserHelper.getInstance().getAllContacts().get(username);
         assertNotNull(owner);
-        assertEquals(owner.activieGoals.size(), currentActivitySize + 1);
+        assertEquals(owner.activeGoals.size(), currentActivitySize + 1);
     }
 
     private synchronized Pair<Integer, RESTNewGoal.Listener> createAListener() {

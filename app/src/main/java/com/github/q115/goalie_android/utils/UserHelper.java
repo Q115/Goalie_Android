@@ -2,15 +2,11 @@ package com.github.q115.goalie_android.utils;
 
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
-import com.github.q115.goalie_android.models.Goal;
-import com.github.q115.goalie_android.models.GoalFeed;
-import com.github.q115.goalie_android.models.Goal_Table;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.models.User_Table;
 import com.github.q115.goalie_android.utils.ImageHelper.ImageType;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -30,30 +26,10 @@ import java.util.TreeMap;
  * limitations under the License.
  */
 public class UserHelper {
-    // username -> User
-    private SortedMap<String, User> mAllContacts;
-
-    public SortedMap<String, User> getAllContacts() {
-        return mAllContacts;
-    }
-
-    // User information of device owner
-    private User mOwnerProfile;
-
-    public User getOwnerProfile() {
-        return mOwnerProfile;
-    }
-
-    public boolean setOwnerProfile(User user) {
-        if (addUser(user)) {
-            PreferenceHelper.getInstance().setAccountUsername(user.username);
-            mOwnerProfile = user;
-            return true;
-        }
-        return false;
-    }
-
     private static UserHelper mInstance;
+
+    private SortedMap<String, User> mAllContacts; // username -> User
+    private User mOwnerProfile; // device owner information
 
     private UserHelper() {
     }
@@ -76,12 +52,30 @@ public class UserHelper {
         for (User value : mAllContacts.values()) {
             // TODO: load on demand vs all at once & load async
             if (ImageHelper.getInstance().isImageOnPrivateStorage(value.username, ImageType.PNG)) {
-                value.profileBitmapImage = ImageHelper.getInstance().loadImageFromPrivateSorageSync(value.username, ImageType.PNG);
+                value.profileBitmapImage = ImageHelper.getInstance()
+                        .loadImageFromPrivateSorageSync(value.username, ImageType.PNG);
             }
 
             if (value.username.equals(mOwnerProfile.username))
                 mOwnerProfile = value;
         }
+    }
+
+    public SortedMap<String, User> getAllContacts() {
+        return mAllContacts;
+    }
+
+    public User getOwnerProfile() {
+        return mOwnerProfile;
+    }
+
+    public boolean setOwnerProfile(User user) {
+        if (addUser(user)) {
+            PreferenceHelper.getInstance().setAccountUsername(user.username);
+            mOwnerProfile = user;
+            return true;
+        }
+        return false;
     }
 
     // Insert/replace user into database
@@ -91,10 +85,10 @@ public class UserHelper {
                 User oldUser = mAllContacts.get(user.username);
                 oldUser.reputation = user.reputation;
                 oldUser.bio = user.bio.length() > 0 ? user.bio : oldUser.bio;
-                oldUser.profileBitmapImage = user.profileBitmapImage != null ? user.profileBitmapImage : oldUser.profileBitmapImage;
-                oldUser.lastPhotoModifiedTime = user.lastPhotoModifiedTime > 0 ? user.lastPhotoModifiedTime : oldUser.lastPhotoModifiedTime;
-                oldUser.activieGoals = user.activieGoals != null ? user.activieGoals : oldUser.activieGoals;
-                oldUser.finishedGoals = user.finishedGoals != null ? user.finishedGoals : oldUser.finishedGoals;
+                oldUser.profileBitmapImage = user.profileBitmapImage != null
+                        ? user.profileBitmapImage : oldUser.profileBitmapImage;
+                oldUser.lastPhotoModifiedTime = user.lastPhotoModifiedTime > 0
+                        ? user.lastPhotoModifiedTime : oldUser.lastPhotoModifiedTime;
 
                 oldUser.save();
             } else {
@@ -122,7 +116,17 @@ public class UserHelper {
     }
 
     public static boolean isUsernameValid(String username) {
-        boolean isValid = (username != null && username.length() >= 4 && username.length() <= Constants.MAX_USERNAME_LENGTH) && !username.equals("admin");
-        return isValid && !username.contains(":") && !username.contains(" ") && !username.contains("/") && !username.contains("\\");
+        if (username == null)
+            return false;
+
+        boolean isValid = username.length() >= 4;
+        isValid &= username.length() <= Constants.MAX_USERNAME_LENGTH;
+        isValid &= !username.equals("admin");
+        isValid &= !username.contains(":");
+        isValid &= !username.contains(" ");
+        isValid &= !username.contains("/");
+        isValid &= !username.contains("\\");
+
+        return isValid;
     }
 }

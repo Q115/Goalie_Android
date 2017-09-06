@@ -42,7 +42,8 @@ public class GoalTest {
 
     @Test
     public void initConstructor1() throws Exception {
-        Goal goal = new Goal("guid", "createdByUsername", "title", 111, 999, 100, "encouragement", Success, "referee", System.currentTimeMillis());
+        Goal goal = new Goal("guid", "createdByUsername", "title", 111, 999, 100, "encouragement",
+                Success, "referee", System.currentTimeMillis());
         Goal goalTest = new Goal();
         goalTest.guid = "guid";
         goalTest.createdByUsername = "createdByUsername";

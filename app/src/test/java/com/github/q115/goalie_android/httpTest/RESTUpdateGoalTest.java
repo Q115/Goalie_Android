@@ -5,7 +5,6 @@ import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.GoalHelper;
-import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

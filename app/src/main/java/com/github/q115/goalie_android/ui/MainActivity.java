@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
 import com.github.q115.goalie_android.ui.feeds.FeedsFragment;
 import com.github.q115.goalie_android.ui.feeds.FeedsPresenter;

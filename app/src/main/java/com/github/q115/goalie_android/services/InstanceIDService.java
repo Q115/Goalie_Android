@@ -54,7 +54,8 @@ public class InstanceIDService extends FirebaseInstanceIdService {
         }
 
         // check whether we need to send up to server or not
-        if (UserHelper.getInstance().getOwnerProfile().username == null || UserHelper.getInstance().getOwnerProfile().username.isEmpty()) {
+        if (UserHelper.getInstance().getOwnerProfile().username == null
+                || UserHelper.getInstance().getOwnerProfile().username.isEmpty()) {
             // let register take care of sending this to server
             PreferenceHelper.getInstance().setPushID(pushID);
         } else if (RESTRegister.isRegistering()) {

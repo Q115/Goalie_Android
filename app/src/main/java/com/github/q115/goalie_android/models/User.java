@@ -9,7 +9,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+
 /*
  * Copyright 2017 Qi Li
  *
@@ -44,10 +45,10 @@ public class User extends BaseModel {
     public Bitmap profileBitmapImage;
 
     @ColumnIgnore
-    public ArrayList<Goal> activieGoals; //TODO consider a hashmap for faster access
+    public HashMap<String, Goal> activeGoals; // username -> goal
 
     @ColumnIgnore
-    public ArrayList<Goal> finishedGoals; //TODO consider a hashmap for faster access
+    public HashMap<String, Goal> finishedGoals;
 
     public User() {
         username = "";
@@ -55,8 +56,8 @@ public class User extends BaseModel {
         reputation = 100;
         lastPhotoModifiedTime = 0;
         profileBitmapImage = null;
-        activieGoals = new ArrayList<>();
-        finishedGoals = new ArrayList<>();
+        activeGoals = new HashMap<>();
+        finishedGoals = new HashMap<>();
     }
 
     public User(String username) {

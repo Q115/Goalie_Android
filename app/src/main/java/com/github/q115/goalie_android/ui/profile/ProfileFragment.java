@@ -29,7 +29,6 @@ import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;

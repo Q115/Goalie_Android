@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_NORMAL_TIMEOUT;
@@ -87,7 +86,7 @@ public class RESTGetUserInfo extends RESTBase<String> {
             Long reputation = jsonObject.getLong("reputation");
             JSONArray finishedGoals = jsonObject.getJSONArray("goals");
 
-            ArrayList<Goal> finishedGoalsList = new ArrayList<>();
+            HashMap<String, Goal> finishedGoalsHash = new HashMap<>();
             for (int i = 0; i < finishedGoals.length(); i++) {
                 JSONObject jsonObj = finishedGoals.getJSONObject(i);
                 String guid = jsonObj.getString("guid");
@@ -101,11 +100,11 @@ public class RESTGetUserInfo extends RESTBase<String> {
 
                 Goal goal = new Goal(guid, mUsername, title, start, end, wager,
                         encouragement, Goal.GoalCompleteResult.Success, referee, activityDate);
-                finishedGoalsList.add(goal);
+                finishedGoalsHash.put(guid, goal);
             }
 
             User s = new User(mUsername, bio, reputation, lastPhotoModifiedTime);
-            s.finishedGoals = finishedGoalsList;
+            s.finishedGoals = finishedGoalsHash;
             UserHelper.getInstance().addUser(s);
 
             isSuccessful = true;

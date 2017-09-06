@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 
 import java.util.UUID;
 
-import test_util.ModelUtil;
 import test_util.RESTUtil;
 
 import static android.support.test.espresso.Espresso.onView;

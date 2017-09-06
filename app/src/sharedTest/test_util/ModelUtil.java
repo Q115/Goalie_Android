@@ -1,13 +1,8 @@
 package test_util;
 
-import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.utils.UserHelper;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-
-import java.util.List;
 
 /*
  * Copyright 2017 Qi Li
@@ -46,18 +41,25 @@ public class ModelUtil {
         isEqual &= userA.bio.equals(userB.bio);
         isEqual &= userA.lastPhotoModifiedTime == userB.lastPhotoModifiedTime;
         isEqual &= userA.reputation == userB.reputation;
-        isEqual &= ((userA.profileBitmapImage != null && userB.profileBitmapImage != null) || userA.profileBitmapImage == userB.profileBitmapImage);
-        isEqual &= userA.activieGoals == userB.activieGoals || userA.activieGoals.size() == userB.activieGoals.size();
-        isEqual &= userA.finishedGoals == userB.finishedGoals || userA.finishedGoals.size() == userB.finishedGoals.size();
+        isEqual &= (userA.profileBitmapImage != null && userB.profileBitmapImage != null)
+                || userA.profileBitmapImage == userB.profileBitmapImage;
+        isEqual &= userA.activeGoals == userB.activeGoals
+                || userA.activeGoals.size() == userB.activeGoals.size();
+        isEqual &= userA.finishedGoals == userB.finishedGoals
+                || userA.finishedGoals.size() == userB.finishedGoals.size();
 
-        if (userA.activieGoals != null && userB.activieGoals != null) {
-            for (int i = 0; i < userA.activieGoals.size(); i++) {
-                isEqual &= isGoalEqual(userA.activieGoals.get(i), userB.activieGoals.get(i));
+        if (userA.activeGoals != null && userB.activeGoals != null) {
+            isEqual &= userA.activeGoals.size() == userB.activeGoals.size();
+
+            for (String string : userA.activeGoals.keySet()) {
+                isEqual &= isGoalEqual(userA.activeGoals.get(string), userB.activeGoals.get(string));
             }
         }
         if (userA.finishedGoals != null && userB.finishedGoals != null) {
-            for (int i = 0; i < userA.finishedGoals.size(); i++) {
-                isEqual &= isGoalEqual(userA.finishedGoals.get(i), userB.finishedGoals.get(i));
+            isEqual &= userA.finishedGoals.size() == userB.finishedGoals.size();
+
+            for (String string : userA.finishedGoals.keySet()) {
+                isEqual &= isGoalEqual(userA.finishedGoals.get(string), userB.finishedGoals.get(string));
             }
         }
         return isEqual;
