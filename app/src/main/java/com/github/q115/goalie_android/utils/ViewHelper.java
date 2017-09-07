@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
@@ -41,5 +43,10 @@ public class ViewHelper {
     public static void showKeyboard(Dialog dialog) {
         if (dialog.getWindow() != null)
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    public static void showKeyboard(FragmentActivity fragmentActivity) {
+        if (fragmentActivity.getWindow() != null)
+            fragmentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 }

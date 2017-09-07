@@ -20,7 +20,7 @@ import com.github.q115.goalie_android.ui.BaseView;
  */
 
 public interface FriendsListView extends BaseView<FriendsListPresenter> {
-    void onAddContactDialog(User user);
+    void reload();
 
-    void reload(boolean shouldReloadList);
+    void updateProgress(boolean shouldShow);
 }

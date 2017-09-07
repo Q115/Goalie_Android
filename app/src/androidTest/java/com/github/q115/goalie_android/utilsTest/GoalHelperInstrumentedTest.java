@@ -8,6 +8,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -42,6 +43,12 @@ public class GoalHelperInstrumentedTest {
         FlowManager.reset();
     }
 
+    @Before
+    public void setup() {
+        UserHelper.getInstance().getOwnerProfile().activeGoals.clear();
+        UserHelper.getInstance().getOwnerProfile().finishedGoals.clear();
+    }
+
     @Test
     public void initalization() throws Exception {
         GoalHelper.getInstance().initialize();
@@ -52,7 +59,10 @@ public class GoalHelperInstrumentedTest {
     }
 
     @Test
-    public void goalTest() throws Exception {
+    public void goalTestAdd() throws Exception {
+        UserHelper.getInstance().getAllContacts().put("",
+                UserHelper.getInstance().getOwnerProfile());
+
         assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 0);
         assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
 
@@ -83,36 +93,51 @@ public class GoalHelperInstrumentedTest {
 
         UserHelper.getInstance().getOwnerProfile().finishedGoals.clear();
         UserHelper.getInstance().getOwnerProfile().activeGoals.clear();
-        UserHelper.getInstance().getAllContacts().put("", UserHelper.getInstance().getOwnerProfile());
+        UserHelper.getInstance().getAllContacts().put(UserHelper.getInstance().getOwnerProfile().username,
+                UserHelper.getInstance().getOwnerProfile());
+
         ReadDatabase();
+        UserHelper.getInstance().getAllContacts().put("",
+                UserHelper.getInstance().getOwnerProfile());
         assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 2);
         assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 3);
+    }
 
-        deleteGoal(goal2);
+    @Test
+    public void goalTestDelete() throws Exception {
+        UserHelper.getInstance().getAllContacts().put("",
+                UserHelper.getInstance().getOwnerProfile());
 
+        Goal goal4 = new Goal("goal4", Goal.GoalCompleteResult.Ongoing);
+        GoalHelper.getInstance().addGoal(goal4);
         assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 1);
-        modifyGoal(goal4);
+
+        Goal goal5 = new Goal("goal5", Goal.GoalCompleteResult.Ongoing);
+        GoalHelper.getInstance().addGoal(goal5);
         assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 2);
+
+        GoalHelper.getInstance().deleteGoal(goal5.guid);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 1);
     }
 
-    private void deleteGoal(Goal goal) {
-        int size = UserHelper.getInstance().getOwnerProfile().activeGoals.size()
-                + UserHelper.getInstance().getOwnerProfile().finishedGoals.size();
+    @Test
+    public void goalTestModify() throws Exception {
+        UserHelper.getInstance().getAllContacts().put("",
+                UserHelper.getInstance().getOwnerProfile());
 
-        GoalHelper.getInstance().deleteGoal(goal.guid);
+        Goal goal4 = new Goal("goal4", Goal.GoalCompleteResult.Ongoing);
+        GoalHelper.getInstance().addGoal(goal4);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 1);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
 
-        int newSize = UserHelper.getInstance().getOwnerProfile().activeGoals.size()
-                + UserHelper.getInstance().getOwnerProfile().finishedGoals.size();
-        assertEquals(newSize, size - 1);
-    }
+        Goal goal5 = new Goal("goal5", Goal.GoalCompleteResult.Ongoing);
+        GoalHelper.getInstance().addGoal(goal5);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 2);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 0);
 
-    private void modifyGoal(Goal goal) {
-        Goal newGoal = new Goal();
-        newGoal.guid = goal.guid;
-        goal.goalCompleteResult = Goal.GoalCompleteResult.Ongoing;
-
-        GoalHelper.getInstance().modifyGoal(newGoal);
-        UserHelper.getInstance().getOwnerProfile().finishedGoals.clear();
-        ReadDatabase();
+        goal5.goalCompleteResult = Goal.GoalCompleteResult.Success;
+        GoalHelper.getInstance().modifyGoal(goal5);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().activeGoals.size(), 1);
+        assertEquals(UserHelper.getInstance().getOwnerProfile().finishedGoals.size(), 1);
     }
 }

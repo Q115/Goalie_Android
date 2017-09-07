@@ -62,9 +62,9 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         }
     }
 
+    protected static HashMap<String, Drawable> mImages;
     protected FragmentActivity mContext;
     protected ArrayList<Goal> mGoalList;
-    protected static HashMap<String, Drawable> mImages;
     private DateFormat mDF;
     private boolean isRequest;
 
@@ -85,8 +85,6 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         return 0;
     }
 
-    //Bind our current data to your view holder.  Think of this as the equivalent
-    //of GetView for regular Adapters.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
@@ -100,6 +98,11 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
         viewHolder.mWagerTxt.setText(String.format(mContext.getString(R.string.wagered_), goal.wager));
         viewHolder.mEncouragementTxt.setText(goal.encouragement);
 
+        setGoalCompleteColor(viewHolder, goal);
+        setProfileImage(viewHolder, goal);
+    }
+
+    private void setGoalCompleteColor(BaseGoalRecyler.BaseGoalsHolder viewHolder, Goal goal) {
         switch (goal.goalCompleteResult) {
             case Pending:
                 viewHolder.mStatusTxt.setText(R.string.status_pending);
@@ -121,7 +124,9 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
                 viewHolder.mStatusTxt.setText("");
                 break;
         }
+    }
 
+    private void setProfileImage(BaseGoalRecyler.BaseGoalsHolder viewHolder, Goal goal) {
         User user;
         if (isRequest) {
             viewHolder.mRefereeTxt.setText(goal.createdByUsername);
@@ -131,10 +136,7 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
             user = UserHelper.getInstance().getAllContacts().get(goal.referee);
         }
 
-        if (user == null)
-            return;
-
-        if (user.profileBitmapImage == null)
+        if (user == null || user.profileBitmapImage == null)
             viewHolder.mRefereeTxt.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
         else {
             Drawable profileDrawableImage = mImages.get(user.username);

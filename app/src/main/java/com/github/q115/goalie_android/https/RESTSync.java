@@ -177,12 +177,6 @@ public class RESTSync extends RESTBase<String> {
 
                     localActiveGoal.goalCompleteResult = fetchedGoal.goalCompleteResult;
                     GoalHelper.getInstance().modifyGoal(localActiveGoal);
-
-                    if (localActiveGoal.goalCompleteResult != Goal.GoalCompleteResult.Pending
-                            && localActiveGoal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
-                        localActiveGoals.remove(key);
-                        UserHelper.getInstance().getOwnerProfile().activeGoals.put(key, localActiveGoal);
-                    }
                 }
             }
         }

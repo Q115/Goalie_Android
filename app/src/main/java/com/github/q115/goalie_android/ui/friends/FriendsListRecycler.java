@@ -84,21 +84,6 @@ public class FriendsListRecycler extends RecyclerView.Adapter {
             return null;
     }
 
-    public void addUserToList(User user) {
-        if (user == null)
-            return;
-
-        mUserList.add(user);
-        Collections.sort(mUserList, new Comparator<User>() {
-            @Override
-            public int compare(User a1, User a2) {
-                return a1.username.compareTo(a2.username);
-            }
-        });
-
-        super.notifyDataSetChanged();
-    }
-
     public void notifyDataSetHasChanged() {
         TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
         tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
@@ -107,29 +92,25 @@ public class FriendsListRecycler extends RecyclerView.Adapter {
         super.notifyDataSetChanged();
     }
 
-    //Must override, this inflates our Layout and instantiates and assigns
-    //it to the ViewHolder.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_friend, parent, false);
         return new FriendsHolder(itemView, mContext);
     }
 
-    //Bind our current data to your view holder.  Think of this as the equivalent
-    //of GetView for regular Adapters.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FriendsHolder viewHolder = (FriendsHolder) holder;
 
-        //Bind our data from our data source to our View References
         User user = mUserList.get(position);
         viewHolder.mFriendName.setText(user.username);
         viewHolder.mFriendReputation.setText(String.valueOf(user.reputation));
 
         if (user.profileBitmapImage == null)
-            viewHolder.mFriendImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_profile_default_small));
+            viewHolder.mFriendImage.setImageDrawable(
+                    ContextCompat.getDrawable(mContext, R.drawable.ic_profile_default_small));
         else
-            viewHolder.mFriendImage.setImageDrawable(ImageHelper.getRoundedCornerDrawable(mContext.getResources(),
-                    user.profileBitmapImage, Constants.CIRCLE_PROFILE));
+            viewHolder.mFriendImage.setImageDrawable(ImageHelper.getRoundedCornerDrawable(
+                    mContext.getResources(), user.profileBitmapImage, Constants.CIRCLE_PROFILE));
     }
 }

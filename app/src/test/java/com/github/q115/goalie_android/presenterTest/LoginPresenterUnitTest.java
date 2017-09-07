@@ -3,6 +3,7 @@ package com.github.q115.goalie_android.presenterTest;
 import android.test.mock.MockContext;
 
 import com.github.q115.goalie_android.BaseTest;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.login.LoginPresenter;
 import com.github.q115.goalie_android.ui.login.LoginView;
@@ -17,6 +18,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,29 +58,40 @@ public class LoginPresenterUnitTest extends BaseTest {
     }
 
     @Test
-    public void register() throws Exception {
+    public void registerBadUsername() throws Exception {
         when(mContext.getString(R.string.username_error))
                 .thenReturn("username_error");
+
+        mPresenter.register(mContext, " x ");
+        verify(mView).registerComplete(false, "username_error");
+    }
+
+    @Test
+    public void register() throws Exception {
         when(mContext.getString(R.string.welcome))
                 .thenReturn("welcome");
+
+        String username = UUID.randomUUID().toString().substring(20);
+        mPresenter.register(mContext, username);
+        verify(mView).updateProgress(true);
+
+        verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).updateProgress(false);
+        verify(mView).registerComplete(true, "welcome");
+    }
+
+    @Test
+    public void registerSameUsername() throws Exception {
         when(mContext.getString(R.string.username_taken))
                 .thenReturn("registered");
 
         String username = UUID.randomUUID().toString().substring(20);
         mPresenter.register(mContext, username);
         verify(mView).updateProgress(true);
-        Thread.sleep(2000);
-        verify(mView).updateProgress(false);
-        verify(mView).registerComplete(true, "welcome");
+        verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).updateProgress(false);
 
         // username is taken
         mPresenter.register(mContext, username);
-        Thread.sleep(2000);
+        verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(2)).updateProgress(false);
         verify(mView).registerComplete(false, "registered");
-
-        // bad username
-        mPresenter.register(mContext, " x ");
-        Thread.sleep(2000);
-        verify(mView).registerComplete(false, "username_error");
     }
 }

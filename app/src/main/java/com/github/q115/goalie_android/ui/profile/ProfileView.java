@@ -21,7 +21,7 @@ import com.github.q115.goalie_android.ui.BaseView;
  */
 
 public interface ProfileView extends BaseView<ProfilePresenter> {
-    void setupForOwner(boolean isOwner);
+    void toggleOwnerSpecificFeatures(boolean isOwner);
 
     void setupView(String username, String bio, long reputation);
 
@@ -29,5 +29,5 @@ public interface ProfileView extends BaseView<ProfilePresenter> {
 
     void uploadComplete(boolean isSuccessful, Bitmap image, String err);
 
-    void reloadList(boolean shouldReloadList);
+    void reloadList();
 }

@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTGetPhoto;
 import com.github.q115.goalie_android.https.RESTGetUserInfo;
-import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.BasePresenter;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -37,42 +36,39 @@ public class FriendsListPresenter implements BasePresenter {
     }
 
     public void onAddContactDialogComplete(String username) {
-        final User user = UserHelper.getInstance().getAllContacts().get(username);
-        if (user != null) {
-            mFriendListView.onAddContactDialog(user);
-            mFriendListView.reload(false);
-
-            //fetch user image if applicable
-            RESTGetPhoto sm = new RESTGetPhoto(username);
-            sm.setListener(new RESTGetPhoto.Listener() {
-                @Override
-                public void onSuccess(Bitmap photo3) {
-                    mFriendListView.reload(true);
-                }
-
-                @Override
-                public void onFailure(String errMsg) {
-                }
-            });
-            sm.execute();
-        }
+        getPhotoForUser(username);
     }
 
-    public void refresh(String username) {
+    public void refresh(final String username) {
+        mFriendListView.updateProgress(true);
         RESTGetUserInfo sm2 = new RESTGetUserInfo(username);
-        sm2.setListener(null);
-        sm2.execute();
-
-        RESTGetPhoto sm = new RESTGetPhoto(username);
-        sm.setListener(new RESTGetPhoto.Listener() {
+        sm2.setListener(new RESTGetUserInfo.Listener() {
             @Override
-            public void onSuccess(Bitmap photo3) {
-                mFriendListView.reload(true);
+            public void onSuccess() {
+                getPhotoForUser(username);
             }
 
             @Override
             public void onFailure(String errMsg) {
-                mFriendListView.reload(true);
+                getPhotoForUser(username);
+            }
+        });
+        sm2.execute();
+    }
+
+    private void getPhotoForUser(String username) {
+        RESTGetPhoto sm = new RESTGetPhoto(username);
+        sm.setListener(new RESTGetPhoto.Listener() {
+            @Override
+            public void onSuccess(Bitmap photo) {
+                mFriendListView.reload();
+                mFriendListView.updateProgress(false);
+            }
+
+            @Override
+            public void onFailure(String errMsg) {
+                mFriendListView.reload();
+                mFriendListView.updateProgress(false);
             }
         });
         sm.execute();
@@ -80,6 +76,6 @@ public class FriendsListPresenter implements BasePresenter {
 
     public void delete(String username) {
         UserHelper.getInstance().deleteUser(username);
-        mFriendListView.reload(true);
+        mFriendListView.reload();
     }
 }

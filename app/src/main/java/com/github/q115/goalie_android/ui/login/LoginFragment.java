@@ -1,19 +1,19 @@
 package com.github.q115.goalie_android.ui.login;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.ui.DelayedProgressDialog;
+import com.github.q115.goalie_android.utils.ViewHelper;
 
 /*
  * Copyright 2017 Qi Li
@@ -35,7 +35,7 @@ public class LoginFragment extends Fragment implements LoginView {
     private LoginPresenter mPresenter;
     private EditText mUsername;
     private TextView mServerMsg;
-    private ProgressDialog mProgressDialog;
+    private DelayedProgressDialog mProgressDialog;
 
     public LoginFragment() {
     }
@@ -62,19 +62,16 @@ public class LoginFragment extends Fragment implements LoginView {
             }
         });
 
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setMessage(getString(R.string.connecting));
+        mProgressDialog = new DelayedProgressDialog();
         mProgressDialog.setCancelable(false);
 
         return rootView;
     }
 
-    // show keyboard
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity().getWindow() != null)
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        ViewHelper.showKeyboard(getActivity());
     }
 
     @Override
@@ -116,8 +113,8 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void updateProgress(boolean shouldShow) {
         if (shouldShow) {
-            mProgressDialog.show();
-        } else if (mProgressDialog.isShowing()) {
+            mProgressDialog.show(getActivity().getSupportFragmentManager(), "DelayedProgressDialog");
+        } else {
             mProgressDialog.cancel();
         }
     }

@@ -80,7 +80,11 @@ public class RESTGetPhoto extends RESTBase<Bitmap> {
                     ImageHelper.ImageType.PNG);
 
             User user = UserHelper.getInstance().getAllContacts().get(mUsername);
-            if (user != null)
+            if (user == null) {
+                User newUser = new User(mUsername);
+                UserHelper.getInstance().addUser(newUser);
+                newUser.profileBitmapImage = photo;
+            } else
                 user.profileBitmapImage = photo;
         }
 

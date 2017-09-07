@@ -7,11 +7,12 @@ import android.support.annotation.Nullable;
 import android.test.mock.MockContext;
 
 import com.github.q115.goalie_android.BaseTest;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.ui.friends.FriendsListPresenter;
-import com.github.q115.goalie_android.ui.friends.FriendsListView;
 import com.github.q115.goalie_android.ui.friends.FriendsActivityPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsActivityView;
+import com.github.q115.goalie_android.ui.friends.FriendsListPresenter;
+import com.github.q115.goalie_android.ui.friends.FriendsListView;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static test_util.RESTUtil.getValidFriendUsername;
@@ -47,7 +49,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  */
 @RunWith(RobolectricTestRunner.class)
 public class FriendsPresenterUnitTest extends BaseTest {
-    private FriendsActivityPresenter mPresenter;
+    private FriendsActivityPresenter mActivityPresenter;
 
     @Mock
     private FriendsActivityView mView;
@@ -65,7 +67,7 @@ public class FriendsPresenterUnitTest extends BaseTest {
         MockitoAnnotations.initMocks(this);
 
         mView = mock(FriendsActivityView.class);
-        mPresenter = spy(new FriendsActivityPresenter(mContext, mView));
+        mActivityPresenter = spy(new FriendsActivityPresenter(mContext, mView));
 
         mListView = mock(FriendsListView.class);
         mListPresenter = spy(new FriendsListPresenter(mListView));
@@ -82,10 +84,10 @@ public class FriendsPresenterUnitTest extends BaseTest {
                     }
                 });
 
-        mPresenter.sendSMSInvite(Uri.EMPTY);
+        mActivityPresenter.sendSMSInvite(Uri.EMPTY);
         verify(mView, never()).sendSMSInvite("");
 
-        mPresenter.sendSMSInvite(null);
+        mActivityPresenter.sendSMSInvite(null);
         verify(mView, never()).sendSMSInvite("");
     }
 
@@ -94,29 +96,37 @@ public class FriendsPresenterUnitTest extends BaseTest {
         User user = new User("username");
         UserHelper.getInstance().addUser(user);
         assertNotNull(UserHelper.getInstance().getAllContacts().get(user.username));
+
         mListPresenter.delete(user.username);
         assertNull(UserHelper.getInstance().getAllContacts().get(user.username));
-        verify(mListView).reload(true);
+        verify(mListView).reload();
     }
 
     @Test
     public void onRefresh() throws Exception {
         mListPresenter.refresh(getValidFriendUsername());
-        Thread.sleep(2000);
-        verify(mListView).reload(true);
+        verify(mListView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).reload();
+    }
+
+    @Test
+    public void onAddContactDialogNoSuchUser() throws Exception {
+        assertNull(UserHelper.getInstance().getAllContacts().get(getValidFriendUsername()));
+
+        mListPresenter.onAddContactDialogComplete(getValidFriendUsername());
+
+        verify(mListView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).reload();
+        assertNotNull(UserHelper.getInstance().getAllContacts().get(getValidFriendUsername()));
+        assertNotNull(UserHelper.getInstance().getAllContacts().get(getValidFriendUsername()).profileBitmapImage);
     }
 
     @Test
     public void onAddContactDialog() throws Exception {
-        mListPresenter.onAddContactDialogComplete(getValidFriendUsername());
-        verify(mListView, never()).reload(false);
+        UserHelper.getInstance().addUser(new User(getValidFriendUsername()));
+        assertNull(UserHelper.getInstance().getAllContacts().get(getValidFriendUsername()).profileBitmapImage);
 
-        User user = new User(getValidFriendUsername());
-        UserHelper.getInstance().addUser(user);
         mListPresenter.onAddContactDialogComplete(getValidFriendUsername());
-        verify(mListView).onAddContactDialog(user);
 
-        Thread.sleep(2000);
-        verify(mListView).reload(true);
+        verify(mListView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).reload();
+        assertNotNull(UserHelper.getInstance().getAllContacts().get(getValidFriendUsername()).profileBitmapImage);
     }
 }

@@ -3,8 +3,6 @@ package com.github.q115.goalie_android.ui.profile;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,17 +12,17 @@ import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTUpdateUserInfo;
+import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
+import com.github.q115.goalie_android.utils.ViewHelper;
 
 /*
  * Copyright 2017 Qi Li
@@ -55,7 +53,6 @@ public class UpdateProfileDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         if (savedInstanceState != null) {
@@ -70,19 +67,18 @@ public class UpdateProfileDialog extends DialogFragment {
         return builder.create();
     }
 
-    // show keyboard
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getDialog().getWindow() != null)
-            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        ViewHelper.showKeyboard(getDialog());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mBio = ((EditText) getDialog().findViewById(R.id.profile_bio)).getText().toString().trim();
-
         outState.putString("bio", mBio);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -108,7 +104,7 @@ public class UpdateProfileDialog extends DialogFragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    update();
+                    updateCheck();
                 }
             });
             negativeButton.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +121,7 @@ public class UpdateProfileDialog extends DialogFragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    update();
+                    updateCheck();
                     return true;
                 }
                 return false;
@@ -133,45 +129,42 @@ public class UpdateProfileDialog extends DialogFragment {
         };
     }
 
-    private void update() {
-        final String newBio = ((EditText) getDialog().findViewById(R.id.profile_bio)).getText().toString().trim();
+    private void updateCheck() {
+        mBio = ((EditText) getDialog().findViewById(R.id.profile_bio)).getText().toString().trim();
 
-        //check if anything changed before pinging the server
-        if (newBio.equals(UserHelper.getInstance().getOwnerProfile().bio)) {
+        if (mBio.equals(UserHelper.getInstance().getOwnerProfile().bio)) {
             this.dismiss();
         } else {
-            //hide keyboard
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            // verify if the soft keyboard is open
-            if (imm != null && getDialog().getCurrentFocus() != null) {
-                imm.hideSoftInputFromWindow(getDialog().getCurrentFocus().getWindowToken(), 0);
+            update();
+        }
+    }
+
+    private void update() {
+        ViewHelper.hideKeyboard(getActivity(), getDialog());
+
+        final DelayedProgressDialog progress = new DelayedProgressDialog();
+        progress.show(getActivity().getSupportFragmentManager(), "DelayedProgressDialog");
+
+        RESTUpdateUserInfo sm = new RESTUpdateUserInfo(UserHelper.getInstance().getOwnerProfile().username,
+                mBio, PreferenceHelper.getInstance().getPushID());
+        sm.setListener(new RESTUpdateUserInfo.Listener() {
+            @Override
+            public void onSuccess() {
+                progress.cancel();
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("bio", mBio);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
+                dismiss();
             }
 
-            final ProgressDialog progress = new ProgressDialog(getActivity());
-            progress.setMessage(getString(R.string.updating));
-            progress.show();
-
-            RESTUpdateUserInfo sm = new RESTUpdateUserInfo(UserHelper.getInstance().getOwnerProfile().username,
-                    newBio, PreferenceHelper.getInstance().getPushID());
-            sm.setListener(new RESTUpdateUserInfo.Listener() {
-                @Override
-                public void onSuccess() {
-                    progress.cancel();
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("bio", newBio);
-                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
-                    dismiss();
-                }
-
-                @Override
-                public void onFailure(String errMsg) {
-                    progress.cancel();
-                    TextView updatestatus = getDialog().findViewById(R.id.update_profile_status);
-                    updatestatus.setVisibility(View.VISIBLE);
-                    updatestatus.setText(String.format(getString(R.string.error_updating), errMsg));
-                }
-            });
-            sm.execute();
-        }
+            @Override
+            public void onFailure(String errMsg) {
+                progress.cancel();
+                TextView updatestatus = getDialog().findViewById(R.id.update_profile_status);
+                updatestatus.setVisibility(View.VISIBLE);
+                updatestatus.setText(String.format(getString(R.string.error_updating), errMsg));
+            }
+        });
+        sm.execute();
     }
 }

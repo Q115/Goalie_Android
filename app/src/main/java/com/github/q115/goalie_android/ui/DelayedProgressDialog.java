@@ -33,13 +33,13 @@ import com.github.q115.goalie_android.utils.ImageHelper;
  */
 
 public class DelayedProgressDialog extends DialogFragment {
-    private static final int mDelayMillisecond = 500;
-    private static final int mMinShowMillisecond = 300;
+    private static final int DELAY_MILLISECOND = 450;
+    private static final int SHOW_MIN_MILLISECOND = 300;
 
     private ProgressBar mProgressBar;
-    private boolean startedShowing = false;
-    private long mStartMillisecond = 0;
-    private long mStopMillisecond = Long.MAX_VALUE;
+    private boolean startedShowing;
+    private long mStartMillisecond;
+    private long mStopMillisecond;
 
     // default constructor. Needed so rotation doesn't crash
     public DelayedProgressDialog() {
@@ -72,6 +72,9 @@ public class DelayedProgressDialog extends DialogFragment {
     @Override
     public void show(final FragmentManager fm, final String tag) {
         mStartMillisecond = System.currentTimeMillis();
+        startedShowing = false;
+        mStopMillisecond = Long.MAX_VALUE;
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -79,7 +82,7 @@ public class DelayedProgressDialog extends DialogFragment {
                 if (mStopMillisecond > System.currentTimeMillis())
                     showDialogAfterDelay(fm, tag);
             }
-        }, mDelayMillisecond);
+        }, DELAY_MILLISECOND);
     }
 
     private void showDialogAfterDelay(FragmentManager fm, String tag) {
@@ -100,15 +103,14 @@ public class DelayedProgressDialog extends DialogFragment {
     }
 
     private void cancelWhenShowing() {
-        if (mStopMillisecond < mStartMillisecond + mDelayMillisecond + mMinShowMillisecond) {
+        if (mStopMillisecond < mStartMillisecond + DELAY_MILLISECOND + SHOW_MIN_MILLISECOND) {
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     dismiss();
                 }
-            }, mMinShowMillisecond);
-
+            }, SHOW_MIN_MILLISECOND);
         } else {
             dismiss();
         }
@@ -121,6 +123,6 @@ public class DelayedProgressDialog extends DialogFragment {
             public void run() {
                 dismiss();
             }
-        }, mDelayMillisecond);
+        }, DELAY_MILLISECOND);
     }
 }

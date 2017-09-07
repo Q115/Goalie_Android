@@ -51,8 +51,6 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
         return mPopularGoalArray.length;
     }
 
-    //Must override, this inflates our Layout and instantiates and assigns
-    //it to the ViewHolder.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_popular_goals, parent, false);
@@ -60,21 +58,22 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 Intent intent = NewGoalActivity.newIntent(mContext);
-                if ((int) itemView.getTag() < mPopularGoalArray.length)
-                    intent.putExtra("title", mPopularGoalArray[(int) itemView.getTag()] + ": ");
+                int position = (int) itemView.getTag();
+                if (position < mPopularGoalArray.length) {
+                    intent.putExtra("title", mPopularGoalArray[position] + ": ");
+                }
                 mContext.startActivityForResult(intent, RESULT_GOAL_SET);
             }
         });
+
         return new PopularGoalHolder(itemView);
     }
 
-    //Bind our current data to your view holder.  Think of this as the equivalent
-    //of GetView for regular Adapters.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         PopularGoalHolder viewHolder = (PopularGoalHolder) holder;
         viewHolder.itemView.setTag(position);
-        //Bind our data from our data source to our View References
+
         switch (position) {
             case 0:
                 viewHolder.itemView.setBackgroundResource(R.drawable.popular1);

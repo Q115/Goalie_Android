@@ -51,8 +51,6 @@ public class ProfileActivitiesRecycler extends BaseGoalRecyler {
         this.notifyDataSetChanged();
     }
 
-    //Must override, this inflates our Layout and instantiates and assigns
-    //it to the ViewHolder.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_my_goal, parent, false);

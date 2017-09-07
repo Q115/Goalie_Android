@@ -2,13 +2,12 @@ package com.github.q115.goalie_android.uiTest;
 
 import android.app.Instrumentation;
 import android.content.pm.ActivityInfo;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.main.MainActivity;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
+import com.github.q115.goalie_android.ui.main.MainActivity;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -45,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
     @Rule
-    public ActivityTestRule<MainActivity> mMainActivityTestRule =
+    public ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(MainActivity.class);
 
     @BeforeClass
@@ -57,8 +56,8 @@ public class MainActivityInstrumentedTest {
     @Test
     public void viewCorrectlyLaidout() throws Exception {
         // menus
-        onView(ViewMatchers.withId(R.id.action_profile)).check(matches(isDisplayed()));
         onView(withId(R.id.action_profile)).check(matches(isDisplayed()));
+        onView(withId(R.id.action_friends)).check(matches(isDisplayed()));
 
         onView(withId(R.id.container)).check(matches(isDisplayed()));
     }
@@ -85,9 +84,9 @@ public class MainActivityInstrumentedTest {
 
     @Test
     public void rotate() throws Exception {
-        mMainActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         Thread.sleep(500);
-        mMainActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Thread.sleep(500);
     }
 
@@ -107,10 +106,10 @@ public class MainActivityInstrumentedTest {
         onView(withId(R.id.fab_menu1)).check(matches(isDisplayed()));
         onView(withId(R.id.fab_menu2)).check(matches(isDisplayed()));
 
-        mMainActivityTestRule.getActivity().runOnUiThread(new Runnable() {
+        mActivityRule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mMainActivityTestRule.getActivity().onBackPressed();
+                mActivityRule.getActivity().onBackPressed();
             }
         });
         Thread.sleep(500); // wait for animation to finish

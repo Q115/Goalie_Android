@@ -63,6 +63,11 @@ public class GoalHelper {
     public boolean addGoal(Goal goal) {
         try {
             User user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+            if (user == null) {
+                UserHelper.getInstance().addUser(new User(goal.createdByUsername));
+                user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+            }
+
             if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing
                     || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
                 user.activeGoals.put(goal.guid, goal);
@@ -96,10 +101,23 @@ public class GoalHelper {
         }
     }
 
-    public boolean modifyGoal(Goal newGoal) {
+    public boolean modifyGoal(Goal goal) {
         try {
-            newGoal.activityDate = System.currentTimeMillis();
-            newGoal.update();
+            goal.activityDate = System.currentTimeMillis();
+
+            if (goal.goalCompleteResult != Goal.GoalCompleteResult.Pending
+                    && goal.goalCompleteResult != Goal.GoalCompleteResult.Ongoing) {
+                User user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+                if (user == null) {
+                    UserHelper.getInstance().addUser(new User(goal.createdByUsername));
+                    user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
+                }
+
+                user.activeGoals.remove(goal.guid);
+                user.finishedGoals.put(goal.guid, goal);
+            }
+
+            goal.update();
             return true;
         } catch (Exception ex) {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());

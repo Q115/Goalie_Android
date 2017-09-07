@@ -38,9 +38,10 @@ public class LoginPresenter implements BasePresenter {
     public void register(Context context, String username) {
         if (UserHelper.isUsernameValid(username)) {
             mLoginView.updateProgress(true);
-            final String welcome = context.getString(R.string.welcome);
 
+            final String welcome = context.getString(R.string.welcome);
             final String usernameTaken = context.getString(R.string.username_taken);
+
             RESTRegister rest = new RESTRegister(username, PreferenceHelper.getInstance().getPushID());
             rest.setListener(new RESTRegister.Listener() {
                 @Override

@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 import com.github.q115.goalie_android.https.RESTUploadPhoto;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.BasePresenter;
+import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
+
+import java.io.File;
 
 /*
  * Copyright 2017 Qi Li
@@ -35,17 +38,26 @@ public class ProfilePresenter implements BasePresenter {
     }
 
     public void start() {
-        if (mUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
-            mProfileView.setupForOwner(true);
-        } else {
-            mProfileView.setupForOwner(false);
-        }
-
         User user = UserHelper.getInstance().getAllContacts().get(mUsername);
         if (user != null)
             mProfileView.setupView(user.username, user.bio, user.reputation);
 
-        mProfileView.reloadList(false);
+        if (mUsername.equals(UserHelper.getInstance().getOwnerProfile().username)) {
+            mProfileView.toggleOwnerSpecificFeatures(true);
+        } else {
+            mProfileView.toggleOwnerSpecificFeatures(false);
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public File getTempImageFileForOwner() {
+        File newFile = new File(ImageHelper.getInstance().getImagePrivateStorageDirectory(
+                UserHelper.getInstance().getOwnerProfile().username + "Temp.png"));
+        if (!newFile.exists()) {
+            newFile.getParentFile().mkdirs();
+        }
+
+        return newFile;
     }
 
     public void newProfileImageSelected(final Bitmap image) {
