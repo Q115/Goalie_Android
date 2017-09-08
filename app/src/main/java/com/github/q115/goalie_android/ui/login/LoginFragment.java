@@ -31,8 +31,8 @@ import com.github.q115.goalie_android.utils.ViewHelper;
  * limitations under the License.
  */
 
-public class LoginFragment extends Fragment implements LoginView {
-    private LoginPresenter mPresenter;
+public class LoginFragment extends Fragment implements LoginFragmentView {
+    private LoginFragmentPresenter mPresenter;
     private EditText mUsername;
     private TextView mServerMsg;
     private DelayedProgressDialog mProgressDialog;
@@ -81,7 +81,7 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     @Override
-    public void setPresenter(LoginPresenter presenter) {
+    public void setPresenter(LoginFragmentPresenter presenter) {
         mPresenter = presenter;
     }
 

@@ -26,8 +26,8 @@ import com.github.q115.goalie_android.R;
  * limitations under the License.
  */
 
-public class PopularGoalFragment extends Fragment implements PopularGoalView {
-    private PopularGoalPresenter mPopularGoalPresenter;
+public class PopularGoalFragment extends Fragment implements PopularGoalFragmentView {
+    private PopularGoalFragmentPresenter mPopularGoalPresenter;
 
     public PopularGoalFragment() {
     }
@@ -44,7 +44,7 @@ public class PopularGoalFragment extends Fragment implements PopularGoalView {
         RecyclerView popularlist = rootView.findViewById(R.id.popular_goal_list);
         popularlist.setLayoutManager(new LinearLayoutManager(getContext()));
         popularlist.setHasFixedSize(true);
-        popularlist.setAdapter(new PopularGoalRecycler(getActivity()));
+        popularlist.setAdapter(new PopularGoalFragmentRecycler(getActivity()));
         return rootView;
     }
 
@@ -55,7 +55,7 @@ public class PopularGoalFragment extends Fragment implements PopularGoalView {
     }
 
     @Override
-    public void setPresenter(PopularGoalPresenter presenter) {
+    public void setPresenter(PopularGoalFragmentPresenter presenter) {
         mPopularGoalPresenter = presenter;
     }
 }

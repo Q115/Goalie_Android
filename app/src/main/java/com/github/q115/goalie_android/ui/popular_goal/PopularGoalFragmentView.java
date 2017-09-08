@@ -18,6 +18,6 @@ import com.github.q115.goalie_android.ui.BaseView;
  * limitations under the License.
  */
 
-public interface PopularGoalView extends BaseView<PopularGoalPresenter> {
+public interface PopularGoalFragmentView extends BaseView<PopularGoalFragmentPresenter> {
 
 }

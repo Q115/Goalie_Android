@@ -30,8 +30,8 @@ import java.util.Comparator;
  * limitations under the License.
  */
 
-public class ProfileActivitiesRecycler extends BaseGoalRecyler {
-    public ProfileActivitiesRecycler(FragmentActivity context) {
+public class ProfileFragmentRecycler extends BaseGoalRecyler {
+    public ProfileFragmentRecycler(FragmentActivity context) {
         super(context, false);
         setupDataSet();
     }

@@ -1,8 +1,8 @@
-package com.github.q115.goalie_android.ui.popular_goal;
+package com.github.q115.goalie_android.ui.profile;
 
-import android.support.annotation.NonNull;
+import android.graphics.Bitmap;
 
-import com.github.q115.goalie_android.ui.BasePresenter;
+import com.github.q115.goalie_android.ui.BaseView;
 
 /*
  * Copyright 2017 Qi Li
@@ -20,14 +20,14 @@ import com.github.q115.goalie_android.ui.BasePresenter;
  * limitations under the License.
  */
 
-public class PopularGoalPresenter implements BasePresenter {
-    private final PopularGoalView mPopularGoalView;
+public interface ProfileFragmentView extends BaseView<ProfileFragmentPresenter> {
+    void toggleOwnerSpecificFeatures(boolean isOwner);
 
-    public PopularGoalPresenter(@NonNull PopularGoalView popularGoalView) {
-        mPopularGoalView = popularGoalView;
-        mPopularGoalView.setPresenter(this);
-    }
+    void setupView(String username, String bio, long reputation);
 
-    public void start() {
-    }
+    void updateProgress(boolean shouldShow);
+
+    void uploadComplete(boolean isSuccessful, Bitmap image, String err);
+
+    void reloadList();
 }

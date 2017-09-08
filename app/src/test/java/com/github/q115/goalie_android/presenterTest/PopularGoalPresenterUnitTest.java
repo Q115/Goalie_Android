@@ -1,8 +1,8 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import com.github.q115.goalie_android.BaseTest;
-import com.github.q115.goalie_android.ui.popular_goal.PopularGoalPresenter;
-import com.github.q115.goalie_android.ui.popular_goal.PopularGoalView;
+import com.github.q115.goalie_android.ui.popular_goal.PopularGoalFragmentPresenter;
+import com.github.q115.goalie_android.ui.popular_goal.PopularGoalFragmentView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,15 +31,15 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(RobolectricTestRunner.class)
 public class PopularGoalPresenterUnitTest extends BaseTest {
-    private PopularGoalPresenter mPresenter;
+    private PopularGoalFragmentPresenter mPresenter;
 
     @Mock
-    private PopularGoalView mView;
+    private PopularGoalFragmentView mView;
 
     @Before
     public void setup() {
-        mView = mock(PopularGoalView.class);
-        mPresenter = spy(new PopularGoalPresenter(mView));
+        mView = mock(PopularGoalFragmentView.class);
+        mPresenter = spy(new PopularGoalFragmentPresenter(mView));
     }
 
     @Test

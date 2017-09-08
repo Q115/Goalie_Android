@@ -9,8 +9,8 @@ import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.ui.new_goal.NewGoalPresenter;
-import com.github.q115.goalie_android.ui.new_goal.NewGoalView;
+import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentPresenter;
+import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentView;
 import com.github.q115.goalie_android.ui.new_goal.SublimePickerDialog;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -24,8 +24,9 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,10 +50,10 @@ import static test_util.RESTUtil.getValidFriendUsername;
  */
 
 public class NewGoalPresenterUnitTest extends BaseTest {
-    private NewGoalPresenter mPresenter;
+    private NewGoalFragmentPresenter mPresenter;
 
     @Mock
-    private NewGoalView mView;
+    private NewGoalFragmentView mView;
 
     @Mock
     private MockContext mContext;
@@ -60,8 +61,8 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        mView = mock(NewGoalView.class);
-        mPresenter = spy(new NewGoalPresenter(mView));
+        mView = mock(NewGoalFragmentView.class);
+        mPresenter = spy(new NewGoalFragmentPresenter(mView));
     }
 
     @Test
@@ -69,35 +70,22 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         mPresenter.start();
         verify(mView).updateTime(false, "(Not Set)");
         verify(mView).updateWager(5, 100, 5);
-        verify(mView).updateReferee(false, 0);
-
-        /*
-        // expands menu
-        mPresenter.toggleFAB();
-        verify(mView, never()).closeFABMenu();
-        verify(mView).showFABMenu();
-        assertTrue(mPresenter.isFABOpen());
-
-        // collapse menu
-        mPresenter.toggleFAB();
-        verify(mView).closeFABMenu();
-        assertFalse(mPresenter.isFABOpen());
-        */
+        verify(mView, never()).updateRefereeOnSpinner(0);
     }
 
     @Test
     public void saveRestore() {
-        mPresenter.restore(mPresenter.save());
+        mPresenter.restore(mPresenter.getSaveHash());
     }
 
     @Test
     public void getOptions() {
-        assertTrue(mPresenter.getOptions().first);
+        assertNotNull(mPresenter.getSublimePickerOptions());
     }
 
     @Test
     public void onWagerClicked() {
-        View.OnClickListener onWagerClicked = mPresenter.onWagerClicked();
+        View.OnClickListener onWagerClicked = mPresenter.getWagerClickedListener();
         Resources res = mock(Resources.class);
         when(res.getDisplayMetrics())
                 .thenReturn(new DisplayMetrics());
@@ -120,13 +108,13 @@ public class NewGoalPresenterUnitTest extends BaseTest {
 
     @Test
     public void onTimePicked() {
-        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.onTimePicked();
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(new GregorianCalendar()), 1, 1, null, null, 100);
+        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
+        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(new GregorianCalendar()), 1, 1, 100);
     }
 
     @Test
     public void refereeArray() throws Exception {
-        String[] strings = mPresenter.refereeArray();
+        String[] strings = mPresenter.getRefereeArray();
         assertEquals(strings.length, 1);
         assertEquals(strings[0], "");
 
@@ -134,7 +122,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         UserHelper.getInstance().addUser(new User("self"));
         UserHelper.getInstance().getOwnerProfile().username = "self";
 
-        strings = mPresenter.refereeArray();
+        strings = mPresenter.getRefereeArray();
         assertEquals(strings.length, 3);
         assertEquals(strings[0], "");
         assertEquals(strings[1], "self");
@@ -142,18 +130,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     }
 
     @Test
-    public void resetReferee() throws Exception {
-        boolean isFromSpinner = true;
-        mPresenter.resetReferee(isFromSpinner);
-        verify(mView).resetReferee(isFromSpinner);
-
-        isFromSpinner = false;
-        mPresenter.resetReferee(isFromSpinner);
-        verify(mView).resetReferee(isFromSpinner);
-    }
-
-    @Test
-    public void setGoal() throws Exception {
+    public void setGoalInvalid() throws Exception {
         String title = "title";
         String encouragement = "encouragement";
         String referee = getValidFriendUsername();
@@ -173,16 +150,22 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         mPresenter.setGoal(mContext, title, encouragement, referee);
         verify(mView).onSetGoal(false, "error_goal_invalid_date");
 
-        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.onTimePicked();
+        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
         Calendar endDate = Calendar.getInstance(Locale.getDefault());
         endDate.add(Calendar.YEAR, 9);
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(
-                new SelectedDate(endDate), 1, 1, null, null, 100);
+        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1, 100);
         mPresenter.setGoal(mContext, title, encouragement, "");
         verify(mView).onSetGoal(false, "error_goal_no_referee");
 
         mPresenter.setGoal(mContext, title, encouragement, "ref");
         verify(mView).onSetGoal(false, "username_error");
+    }
+
+    @Test
+    public void setGoal() throws Exception {
+        String title = "title";
+        String encouragement = "encouragement";
+        String referee = getValidFriendUsername();
 
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.setGoal(mContext, title, encouragement, referee);

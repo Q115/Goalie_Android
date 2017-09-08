@@ -31,43 +31,38 @@ import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicke
 import com.github.q115.goalie_android.R;
 
 public class SublimePickerDialog extends DialogFragment {
-    // Callback to activity
-    private Callback mCallback;
-
-    // identify which picker
-    private int viewID;
-
-    private SublimeListenerAdapter mListener = new SublimeListenerAdapter() {
-        @Override
-        public void onCancelled() {
-            if (mCallback != null) {
-                mCallback.onCancelled();
-            }
-
-            // Should actually be called by activity inside `Callback.onCancelled()`
-            dismiss();
-        }
-
-        @Override
-        public void onDateTimeRecurrenceSet(SublimePicker sublimeMaterialPicker,
-                                            SelectedDate selectedDate,
-                                            int hourOfDay, int minute,
-                                            SublimeRecurrencePicker.RecurrenceOption recurrenceOption,
-                                            String recurrenceRule) {
-            if (mCallback != null) {
-                mCallback.onDateTimeRecurrenceSet(selectedDate,
-                        hourOfDay, minute, recurrenceOption, recurrenceRule, viewID);
-            }
-
-            // Should actually be called by activity inside `Callback.onCancelled()`
-            dismiss();
-        }
-    };
-
-    public SublimePickerDialog() {
+    public interface Callback {
+        void onDateTimeRecurrenceSet(SelectedDate selectedDate, int hourOfDay, int minute, int viewID);
     }
 
-    // Set activity callback
+    private Callback mCallback;
+
+    // identify which picker (start or end)
+    private int viewID;
+
+    private SublimeListenerAdapter mListener;
+
+    public SublimePickerDialog() {
+        mListener = new SublimeListenerAdapter() {
+            @Override
+            public void onCancelled() {
+                dismiss();
+            }
+
+            @Override
+            public void onDateTimeRecurrenceSet(SublimePicker sublimeMaterialPicker,
+                                                SelectedDate selectedDate,
+                                                int hourOfDay, int minute,
+                                                SublimeRecurrencePicker.RecurrenceOption recurrenceOption,
+                                                String recurrenceRule) {
+                if (mCallback != null) {
+                    mCallback.onDateTimeRecurrenceSet(selectedDate, hourOfDay, minute, viewID);
+                }
+                dismiss();
+            }
+        };
+    }
+
     public void setCallback(Callback callback) {
         mCallback = callback;
     }
@@ -78,12 +73,10 @@ public class SublimePickerDialog extends DialogFragment {
         SublimePicker mSublimePicker = (SublimePicker) getActivity()
                 .getLayoutInflater().inflate(R.layout.sublime_picker, container);
 
-        // Retrieve SublimeOptions
         Bundle arguments = getArguments();
         SublimeOptions options = null;
 
-        // Options can be null, in which case, default
-        // options are used.
+        // Options can be null, in which case, default options are used.
         if (arguments != null) {
             options = arguments.getParcelable("SUBLIME_OPTIONS");
             viewID = arguments.getInt("viewID");
@@ -91,15 +84,5 @@ public class SublimePickerDialog extends DialogFragment {
 
         mSublimePicker.initializePicker(options, mListener);
         return mSublimePicker;
-    }
-
-    // For communicating with the activity
-    public interface Callback {
-        void onCancelled();
-
-        void onDateTimeRecurrenceSet(SelectedDate selectedDate,
-                                     int hourOfDay, int minute,
-                                     SublimeRecurrencePicker.RecurrenceOption recurrenceOption,
-                                     String recurrenceRule, int viewID);
     }
 }

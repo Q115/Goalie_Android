@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static com.github.q115.goalie_android.Constants.FAILED_TO_CONNECT;
-import static com.github.q115.goalie_android.Constants.FAILED_TO_Send;
+import static com.github.q115.goalie_android.Constants.FAILED_TO_SEND;
 
 /*
  * Copyright 2017 Qi Li
@@ -63,7 +63,7 @@ abstract class RESTBase<T> implements Response.Listener<T>, Response.ErrorListen
                     : error.networkResponse.headers.get("response");
             mListener.onFailure(msgErr);
         } else {
-            mListener.onFailure(FAILED_TO_Send);
+            mListener.onFailure(FAILED_TO_SEND);
         }
     }
 }

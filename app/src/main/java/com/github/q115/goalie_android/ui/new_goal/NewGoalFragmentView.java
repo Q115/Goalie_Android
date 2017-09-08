@@ -1,6 +1,4 @@
-package com.github.q115.goalie_android.ui.profile;
-
-import android.graphics.Bitmap;
+package com.github.q115.goalie_android.ui.new_goal;
 
 import com.github.q115.goalie_android.ui.BaseView;
 
@@ -20,14 +18,18 @@ import com.github.q115.goalie_android.ui.BaseView;
  * limitations under the License.
  */
 
-public interface ProfileView extends BaseView<ProfilePresenter> {
-    void toggleOwnerSpecificFeatures(boolean isOwner);
+public interface NewGoalFragmentView extends BaseView<NewGoalFragmentPresenter> {
+    void updateTime(boolean isStart, String date);
 
-    void setupView(String username, String bio, long reputation);
+    void updateWager(long wagering, long total, int percent);
+
+    void updateRefereeOnSpinner(int position);
+
+    void resetReferee(boolean isFromSpinner);
+
+    void onSetGoal(boolean isSuccessful, String errMsg);
 
     void updateProgress(boolean shouldShow);
 
-    void uploadComplete(boolean isSuccessful, Bitmap image, String err);
-
-    void reloadList();
+    void showTimePicker(int viewID);
 }

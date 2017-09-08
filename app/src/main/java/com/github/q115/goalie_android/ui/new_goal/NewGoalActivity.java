@@ -49,7 +49,7 @@ public class NewGoalActivity extends AppCompatActivity {
         }
 
         // Create the presenters
-        new NewGoalPresenter(newGoalFragment);
+        new NewGoalFragmentPresenter(newGoalFragment);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

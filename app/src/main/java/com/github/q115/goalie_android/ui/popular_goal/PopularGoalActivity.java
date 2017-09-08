@@ -50,7 +50,7 @@ public class PopularGoalActivity extends AppCompatActivity {
         }
 
         // Create the presenters
-        new PopularGoalPresenter(popularGoalFragment);
+        new PopularGoalFragmentPresenter(popularGoalFragment);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

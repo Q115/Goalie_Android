@@ -27,11 +27,11 @@ import java.io.File;
  * limitations under the License.
  */
 
-public class ProfilePresenter implements BasePresenter {
-    private final ProfileView mProfileView;
+public class ProfileFragmentPresenter implements BasePresenter {
+    private final ProfileFragmentView mProfileView;
     private final String mUsername;
 
-    public ProfilePresenter(String username, @NonNull ProfileView profileView) {
+    public ProfileFragmentPresenter(String username, @NonNull ProfileFragmentView profileView) {
         mUsername = username;
         mProfileView = profileView;
         mProfileView.setPresenter(this);

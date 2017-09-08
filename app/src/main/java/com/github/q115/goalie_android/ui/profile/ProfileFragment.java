@@ -57,8 +57,8 @@ import static android.app.Activity.RESULT_OK;
  * limitations under the License.
  */
 
-public class ProfileFragment extends Fragment implements ProfileView, MessagingServiceUtil.MessagingServiceListener {
-    private ProfilePresenter mPresenter;
+public class ProfileFragment extends Fragment implements ProfileFragmentView, MessagingServiceUtil.MessagingServiceListener {
+    private ProfileFragmentPresenter mPresenter;
 
     private ImageView mEdit;
     private ImageView mProfile;
@@ -79,7 +79,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
         RecyclerView activityList = rootView.findViewById(R.id.profile_activity_list);
         activityList.setLayoutManager(new LinearLayoutManager(getContext()));
         activityList.setHasFixedSize(true);
-        activityList.setAdapter(new ProfileActivitiesRecycler(getActivity()));
+        activityList.setAdapter(new ProfileFragmentRecycler(getActivity()));
 
         mEdit = rootView.findViewById(R.id.profile_edit);
         mEdit.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +117,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     }
 
     @Override
-    public void setPresenter(ProfilePresenter presenter) {
+    public void setPresenter(ProfileFragmentPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -292,7 +292,7 @@ public class ProfileFragment extends Fragment implements ProfileView, MessagingS
     public void reloadList() {
         if (getView() != null) {
             RecyclerView profileList = getView().findViewById(R.id.profile_activity_list);
-            ((ProfileActivitiesRecycler) profileList.getAdapter()).notifyDataSetHasChanged();
+            ((ProfileFragmentRecycler) profileList.getAdapter()).notifyDataSetHasChanged();
             showHideEmptyMessage();
         }
     }

@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory;
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.ui.profile.ProfilePresenter;
-import com.github.q115.goalie_android.ui.profile.ProfileView;
+import com.github.q115.goalie_android.ui.profile.ProfileFragmentPresenter;
+import com.github.q115.goalie_android.ui.profile.ProfileFragmentView;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;
@@ -40,15 +40,15 @@ import static test_util.RESTUtil.getValidFriendUsername;
  */
 @RunWith(RobolectricTestRunner.class)
 public class ProfilePresenterUnitTest extends BaseTest {
-    private ProfilePresenter mPresenter;
+    private ProfileFragmentPresenter mPresenter;
 
     @Mock
-    private ProfileView mView;
+    private ProfileFragmentView mView;
 
     @Before
     public void setup() {
-        mView = mock(ProfileView.class);
-        mPresenter = spy(new ProfilePresenter(getValidFriendUsername(), mView));
+        mView = mock(ProfileFragmentView.class);
+        mPresenter = spy(new ProfileFragmentPresenter(getValidFriendUsername(), mView));
     }
 
     @Test

@@ -24,10 +24,10 @@ import com.github.q115.goalie_android.utils.UserHelper;
  * limitations under the License.
  */
 
-public class LoginPresenter implements BasePresenter {
-    private final LoginView mLoginView;
+public class LoginFragmentPresenter implements BasePresenter {
+    private final LoginFragmentView mLoginView;
 
-    public LoginPresenter(@NonNull LoginView loginView) {
+    public LoginFragmentPresenter(@NonNull LoginFragmentView loginView) {
         mLoginView = loginView;
         mLoginView.setPresenter(this);
     }

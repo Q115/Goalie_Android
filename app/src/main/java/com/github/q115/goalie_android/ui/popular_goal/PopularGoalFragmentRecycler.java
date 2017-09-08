@@ -28,7 +28,7 @@ import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
  * limitations under the License.
  */
 
-public class PopularGoalRecycler extends RecyclerView.Adapter {
+public class PopularGoalFragmentRecycler extends RecyclerView.Adapter {
     private class PopularGoalHolder extends RecyclerView.ViewHolder {
         private TextView mGoalName;
 
@@ -41,7 +41,7 @@ public class PopularGoalRecycler extends RecyclerView.Adapter {
     private FragmentActivity mContext;
     private String[] mPopularGoalArray;
 
-    public PopularGoalRecycler(FragmentActivity context) {
+    public PopularGoalFragmentRecycler(FragmentActivity context) {
         this.mContext = context;
         this.mPopularGoalArray = context.getResources().getStringArray(R.array.popular_goals);
     }

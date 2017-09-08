@@ -1,4 +1,4 @@
-package com.github.q115.goalie_android.ui.new_goal;
+package com.github.q115.goalie_android.ui.login;
 
 import com.github.q115.goalie_android.ui.BaseView;
 
@@ -18,16 +18,8 @@ import com.github.q115.goalie_android.ui.BaseView;
  * limitations under the License.
  */
 
-public interface NewGoalView extends BaseView<NewGoalPresenter> {
-    void updateTime(boolean isStart, String date);
-
-    void updateWager(long wagering, long total, int percent);
-
-    void updateReferee(boolean isFromSpinner, int position);
-
-    void resetReferee(boolean isFromSpinner);
-
-    void onSetGoal(boolean isSuccessful, String errMsg);
+public interface LoginFragmentView extends BaseView<LoginFragmentPresenter> {
+    void registerComplete(boolean isSuccessful, String msg);
 
     void updateProgress(boolean shouldShow);
 }

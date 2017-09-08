@@ -5,8 +5,8 @@ import android.test.mock.MockContext;
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.ui.login.LoginPresenter;
-import com.github.q115.goalie_android.ui.login.LoginView;
+import com.github.q115.goalie_android.ui.login.LoginFragmentPresenter;
+import com.github.q115.goalie_android.ui.login.LoginFragmentView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,10 +40,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 public class LoginPresenterUnitTest extends BaseTest {
-    private LoginPresenter mPresenter;
+    private LoginFragmentPresenter mPresenter;
 
     @Mock
-    private LoginView mView;
+    private LoginFragmentView mView;
 
     @Mock
     private MockContext mContext;
@@ -52,8 +52,8 @@ public class LoginPresenterUnitTest extends BaseTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        mView = mock(LoginView.class);
-        mPresenter = new LoginPresenter(mView);
+        mView = mock(LoginFragmentView.class);
+        mPresenter = new LoginFragmentPresenter(mView);
         verify(mView).setPresenter(mPresenter);
     }
 

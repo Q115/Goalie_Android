@@ -21,7 +21,7 @@ public class Constants {
     public static final String PREFERENCE_FILE_NAME = "PREFERENCE_FILE_NAME";
 
     public static final String FAILED_TO_CONNECT = "Connection failure, please ensure internet connection is active.";
-    public static final String FAILED_TO_Send = "Failed to reach server, please try again.";
+    public static final String FAILED_TO_SEND = "Failed to reach server, please try again.";
     public static final String FAILED = "Failed";
 
     public static final int MAX_USERNAME_LENGTH = 30;
@@ -40,7 +40,6 @@ public class Constants {
     public static final int RESULT_PROFILE_IMAGE_SELECTED = 10;
     public static final int RESULT_PROFILE_IMAGE_TAKEN = 11;
     public static final int RESULT_PROFILE_UPDATE = 12;
-    public static final int RESULT_FRIENDS_ADD = 20;
     public static final int RESULT_GOAL_SET = 30;
     public static final int RESULT_MY_GOAL_DIALOG = 40;
 

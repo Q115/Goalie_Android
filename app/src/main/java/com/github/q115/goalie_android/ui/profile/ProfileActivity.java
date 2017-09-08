@@ -60,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         // Create the presenter
-        new ProfilePresenter(mUsername, profileFragment);
+        new ProfileFragmentPresenter(mUsername, profileFragment);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

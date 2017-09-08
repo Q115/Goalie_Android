@@ -86,26 +86,9 @@ public class RESTGetUserInfo extends RESTBase<String> {
             Long reputation = jsonObject.getLong("reputation");
             JSONArray finishedGoals = jsonObject.getJSONArray("goals");
 
-            HashMap<String, Goal> finishedGoalsHash = new HashMap<>();
-            for (int i = 0; i < finishedGoals.length(); i++) {
-                JSONObject jsonObj = finishedGoals.getJSONObject(i);
-                String guid = jsonObj.getString("guid");
-                String title = jsonObj.getString("title");
-                long start = jsonObj.getLong("start");
-                long end = jsonObj.getLong("end");
-                long wager = jsonObj.getLong("wager");
-                String encouragement = jsonObj.getString("encouragement");
-                String referee = jsonObj.getString("referee");
-                long activityDate = jsonObj.getLong("activityDate");
-
-                Goal goal = new Goal(guid, mUsername, title, start, end, wager,
-                        encouragement, Goal.GoalCompleteResult.Success, referee, activityDate);
-                finishedGoalsHash.put(guid, goal);
-            }
-
-            User s = new User(mUsername, bio, reputation, lastPhotoModifiedTime);
-            s.finishedGoals = finishedGoalsHash;
-            UserHelper.getInstance().addUser(s);
+            User user = new User(mUsername, bio, reputation, lastPhotoModifiedTime);
+            user.finishedGoals = parseFinishedGoals(finishedGoals);
+            UserHelper.getInstance().addUser(user);
 
             isSuccessful = true;
         } catch (Exception e) {
@@ -117,5 +100,25 @@ public class RESTGetUserInfo extends RESTBase<String> {
             mListener.onSuccess();
         else if (mListener != null)
             mListener.onFailure(FAILED);
+    }
+
+    private HashMap<String, Goal> parseFinishedGoals(JSONArray finishedGoals) throws Exception {
+        HashMap<String, Goal> finishedGoalsHash = new HashMap<>();
+        for (int i = 0; i < finishedGoals.length(); i++) {
+            JSONObject jsonObj = finishedGoals.getJSONObject(i);
+            String guid = jsonObj.getString("guid");
+            String title = jsonObj.getString("title");
+            long start = jsonObj.getLong("start");
+            long end = jsonObj.getLong("end");
+            long wager = jsonObj.getLong("wager");
+            String encouragement = jsonObj.getString("encouragement");
+            String referee = jsonObj.getString("referee");
+            long activityDate = jsonObj.getLong("activityDate");
+
+            Goal goal = new Goal(guid, mUsername, title, start, end, wager,
+                    encouragement, Goal.GoalCompleteResult.Success, referee, activityDate);
+            finishedGoalsHash.put(guid, goal);
+        }
+        return finishedGoalsHash;
     }
 }

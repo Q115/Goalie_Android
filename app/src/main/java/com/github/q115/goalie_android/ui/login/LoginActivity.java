@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Create the presenter
-        new LoginPresenter(loginFragment);
+        new LoginFragmentPresenter(loginFragment);
     }
 
     @Override

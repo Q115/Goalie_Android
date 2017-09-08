@@ -3,7 +3,6 @@ package com.github.q115.goalie_android.ui.main;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,6 +22,7 @@ import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTRemind;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
 import com.github.q115.goalie_android.models.Goal;
+import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -55,9 +55,32 @@ public class GoalsDetailedDialog extends DialogFragment {
     private String mGuid;
     private Bitmap mProfileImage;
 
-    // default constructor. Needed so rotation doesn't crash
+    private DelayedProgressDialog delayedProgressDialog;
+    private View.OnClickListener deleteAction;
+    private View.OnClickListener remindAction;
+    private View.OnClickListener updateAction;
+
     public GoalsDetailedDialog() {
         super();
+
+        deleteAction = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delete();
+            }
+        };
+        remindAction = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                remind();
+            }
+        };
+        updateAction = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateGoal((Goal.GoalCompleteResult) view.getTag());
+            }
+        };
     }
 
     @NonNull
@@ -65,7 +88,6 @@ public class GoalsDetailedDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
 
         if (savedInstanceState != null) {
             isMyGoal = savedInstanceState.getBoolean("isMyGoal", true);
@@ -91,6 +113,7 @@ public class GoalsDetailedDialog extends DialogFragment {
             mGuid = getArguments().getString("guid", "");
         }
 
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.dialog_my_goals_detail, null));
         return builder.create();
     }
@@ -115,162 +138,142 @@ public class GoalsDetailedDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
 
+        delayedProgressDialog = new DelayedProgressDialog();
+
         ((TextView) getDialog().findViewById(R.id.goal_title)).setText(mTitle);
         ((TextView) getDialog().findViewById(R.id.goal_start)).setText(mStart);
         ((TextView) getDialog().findViewById(R.id.goal_end)).setText(mEnd);
         ((TextView) getDialog().findViewById(R.id.goal_wager)).setText(mReputation);
         ((TextView) getDialog().findViewById(R.id.goal_encouragement)).setText(mEncouragement);
 
+        int goal_referee_invisible;
+        int goal_referee_visible;
+
+        if (isMyGoal) {
+            setupMyGoals();
+            goal_referee_invisible = R.id.goal_from;
+            goal_referee_visible = R.id.goal_referee;
+        } else {
+            setupMyRequests();
+            goal_referee_invisible = R.id.goal_referee;
+            goal_referee_visible = R.id.goal_from;
+        }
+
+        getDialog().findViewById(goal_referee_invisible).setVisibility(View.GONE);
+        ((TextView) getDialog().findViewById(goal_referee_visible)).setText(mReferee);
+        ((TextView) getDialog().findViewById(goal_referee_visible)).setCompoundDrawablesWithIntrinsicBounds(
+                null, ImageHelper.getRoundedCornerDrawable(
+                        getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
+    }
+
+    private void setupMyGoals() {
         Button btn1 = getDialog().findViewById(R.id.btn_1);
         Button btn2 = getDialog().findViewById(R.id.btn_2);
         Button btn3 = getDialog().findViewById(R.id.btn_3);
-        if (isMyGoal) {
-            btn1.setText(getString(R.string.delete));
+
+        btn1.setText(getString(R.string.delete));
+        btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
+        btn1.setOnClickListener(deleteAction);
+
+        btn2.setVisibility(View.VISIBLE);
+        btn2.setText(getString(R.string.remind_referee));
+        btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        btn2.setOnClickListener(remindAction);
+
+        btn3.setVisibility(View.GONE);
+    }
+
+    private void setupMyRequests() {
+        Button btn1 = getDialog().findViewById(R.id.btn_1);
+        Button btn2 = getDialog().findViewById(R.id.btn_2);
+        Button btn3 = getDialog().findViewById(R.id.btn_3);
+
+        if (mGoalCompleteResult != Goal.GoalCompleteResult.Pending) {
+            btn1.setText(getString(R.string.fail));
             btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
-            btn1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    delete(mGuid);
-                }
-            });
+            btn1.setTag(Goal.GoalCompleteResult.Failed);
+            btn1.setOnClickListener(updateAction);
 
             btn2.setVisibility(View.VISIBLE);
-            btn2.setText(getString(R.string.remind_referee));
-            btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-            btn2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    remindClicked(true);
-                }
-            });
+            btn2.setText(getString(R.string.pass));
+            btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
+            btn2.setTag(Goal.GoalCompleteResult.Success);
+            btn2.setOnClickListener(updateAction);
 
-            btn3.setVisibility(View.GONE);
-
-            getDialog().findViewById(R.id.goal_from).setVisibility(View.GONE);
-            ((TextView) getDialog().findViewById(R.id.goal_referee)).setText(mReferee);
-            ((TextView) getDialog().findViewById(R.id.goal_referee)).setCompoundDrawablesWithIntrinsicBounds(
-                    null, ImageHelper.getRoundedCornerDrawable(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
+            btn3.setVisibility(View.VISIBLE);
+            btn3.setText(getString(R.string.remind_friend));
+            btn3.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+            btn3.setOnClickListener(remindAction);
         } else {
-            if (mGoalCompleteResult != Goal.GoalCompleteResult.Pending) {
-                btn1.setText(getString(R.string.fail));
-                btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
-                btn1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        actionPicked(Goal.GoalCompleteResult.Failed);
-                    }
-                });
+            btn1.setText(getString(R.string.accept));
+            btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
+            btn1.setTag(Goal.GoalCompleteResult.Ongoing);
+            btn1.setOnClickListener(updateAction);
 
-                btn2.setVisibility(View.VISIBLE);
-                btn2.setText(getString(R.string.pass));
-                btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
-                btn2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        actionPicked(Goal.GoalCompleteResult.Success);
-                    }
-                });
-
-                btn3.setVisibility(View.VISIBLE);
-                btn3.setText(getString(R.string.remind_friend));
-                btn3.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-                btn3.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        remindClicked(false);
-                    }
-                });
-            } else {
-                btn1.setText(getString(R.string.accept));
-                btn1.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
-                btn1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        actionPicked(Goal.GoalCompleteResult.Ongoing);
-                    }
-                });
-
-                btn2.setVisibility(View.GONE);
-                /* No decline for now until server better implements how to deal with this
-                btn2.setVisibility(View.VISIBLE);
-                btn2.setText(getString(R.string.accept));
-                btn2.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
-                btn2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        actionPicked(Goal.GoalCompleteResult.Ongoing);
-                    }
-                });*/
-
-                btn3.setVisibility(View.GONE);
-            }
-
-            getDialog().findViewById(R.id.goal_referee).setVisibility(View.GONE);
-            ((TextView) getDialog().findViewById(R.id.goal_from)).setText(mReferee);
-            ((TextView) getDialog().findViewById(R.id.goal_from)).setCompoundDrawablesWithIntrinsicBounds(
-                    null, ImageHelper.getRoundedCornerDrawable(getActivity().getResources(), mProfileImage, Constants.CIRCLE_PROFILE), null, null);
+            btn2.setVisibility(View.GONE); //No decline for now until server adds implemention
+            btn3.setVisibility(View.GONE);
         }
     }
 
-    private void actionPicked(Goal.GoalCompleteResult goalCompleteResult) {
-        final ProgressDialog progress = new ProgressDialog(getActivity());
-        progress.setMessage(getString(R.string.connecting));
-        progress.show();
+    private void updateGoal(Goal.GoalCompleteResult goalCompleteResult) {
+        delayedProgressDialog.show(getActivity().getSupportFragmentManager(), "DelayedProgressDialog");
 
-        final String goalCompleteResultInt = String.valueOf(goalCompleteResult.ordinal());
-        RESTUpdateGoal sm = new RESTUpdateGoal(UserHelper.getInstance().getOwnerProfile().username, mGuid, goalCompleteResult);
+        String fromUsername = UserHelper.getInstance().getOwnerProfile().username;
+        final String goalCompleteResultString = String.valueOf(goalCompleteResult.ordinal());
+        RESTUpdateGoal sm = new RESTUpdateGoal(fromUsername, mGuid, goalCompleteResult);
         sm.setListener(new RESTUpdateGoal.Listener() {
             @Override
             public void onSuccess() {
-                progress.cancel();
+                delayedProgressDialog.cancel();
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultInt);
+                returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultString);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
                 dismiss();
             }
 
             @Override
             public void onFailure(String errMsg) {
-                progress.cancel();
+                delayedProgressDialog.cancel();
                 Toast.makeText(getDialog().getContext(), "failed: " + errMsg, Toast.LENGTH_LONG).show();
             }
         });
         sm.execute();
     }
 
-    private void remindClicked(boolean isRemindingRef) {
-        final ProgressDialog progress = new ProgressDialog(getActivity());
-        progress.setMessage(getString(R.string.connecting));
-        progress.show();
+    private void remind() {
+        delayedProgressDialog.show(getActivity().getSupportFragmentManager(), "DelayedProgressDialog");
 
-        RESTRemind sm = new RESTRemind(UserHelper.getInstance().getOwnerProfile().username, mReferee, mGuid, isRemindingRef);
+        String fromUsername = UserHelper.getInstance().getOwnerProfile().username;
+        RESTRemind sm = new RESTRemind(fromUsername, mReferee, mGuid, isMyGoal);
         sm.setListener(new RESTRemind.Listener() {
             @Override
             public void onSuccess() {
-                progress.cancel();
-                Toast.makeText(getDialog().getContext(), String.format(getString(R.string.remind_sent), mReferee), Toast.LENGTH_LONG).show();
+                delayedProgressDialog.cancel();
+                Toast.makeText(getDialog().getContext(),
+                        String.format(getString(R.string.remind_sent), mReferee), Toast.LENGTH_LONG).show();
                 dismiss();
             }
 
             @Override
             public void onFailure(String errMsg) {
-                progress.cancel();
+                delayedProgressDialog.cancel();
                 Toast.makeText(getDialog().getContext(), "failed: " + errMsg, Toast.LENGTH_LONG).show();
             }
         });
         sm.execute();
     }
 
-    private void delete(final String guid) {
+    private void delete() {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle(getString(R.string.are_you_sure));
         alertDialog.setMessage(getString(R.string.no_refund));
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                GoalHelper.getInstance().deleteGoal(guid);
+                GoalHelper.getInstance().deleteGoal(mGuid);
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("goalCompleteResultInt", String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal()));
+                String goalCompleteResultString = String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal());
+                returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultString);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
                 dismiss();
             }

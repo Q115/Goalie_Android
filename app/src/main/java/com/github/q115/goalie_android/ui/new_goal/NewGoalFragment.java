@@ -2,26 +2,24 @@ package com.github.q115.goalie_android.ui.new_goal;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.ui.DelayedProgressDialog;
+import com.github.q115.goalie_android.utils.ViewHelper;
 
 import java.util.HashMap;
 
@@ -41,9 +39,9 @@ import java.util.HashMap;
  * limitations under the License.
  */
 
-public class NewGoalFragment extends Fragment implements NewGoalView {
-    private ProgressDialog mProgressDialog;
-    private NewGoalPresenter mNewGoalPresenter;
+public class NewGoalFragment extends Fragment implements NewGoalFragmentView {
+    private DelayedProgressDialog mProgressDialog;
+    private NewGoalFragmentPresenter mNewGoalPresenter;
     private String mTitle;
 
     private EditText mGoalTitle;
@@ -54,6 +52,8 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     private EditText mGoalEncouragement;
     private AppCompatSpinner mGoalRefereeSpinner;
     private EditText mGoalRefereeText;
+
+    private TextWatcher textWatcher;
 
     public NewGoalFragment() {
     }
@@ -86,19 +86,14 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
         // start & end
         mGoalStart = rootView.findViewById(R.id.goal_start_text);
         mGoalEnd = rootView.findViewById(R.id.goal_end_text);
-        View.OnClickListener showPicker = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimePicker(view.getId());
-            }
-        };
+        View.OnClickListener showPicker = mNewGoalPresenter.getTimePickerClickedListener();
         rootView.findViewById(R.id.goal_start_btn).setOnClickListener(showPicker);
         rootView.findViewById(R.id.goal_end_btn).setOnClickListener(showPicker);
 
         // wager
         mGoalWager = rootView.findViewById(R.id.goal_wager);
         mGoalWagerPercentage = rootView.findViewById(R.id.goal_wager_middle);
-        View.OnClickListener wagerClicked = mNewGoalPresenter.onWagerClicked();
+        View.OnClickListener wagerClicked = mNewGoalPresenter.getWagerClickedListener();
         rootView.findViewById(R.id.goal_wager_minus).setOnClickListener(wagerClicked);
         rootView.findViewById(R.id.goal_wager_plus).setOnClickListener(wagerClicked);
 
@@ -107,22 +102,26 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
 
         // Referee
         mGoalRefereeSpinner = rootView.findViewById(R.id.goal_referee_spinner);
-        mGoalRefereeSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mNewGoalPresenter.refereeArray()));
+        mGoalRefereeSpinner.setAdapter(new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, mNewGoalPresenter.getRefereeArray()));
         mGoalRefereeSpinner.setOnItemSelectedListener(mNewGoalPresenter.getSelectionChangedListener());
+
+        textWatcher = mNewGoalPresenter.getTextChangedListener();
         mGoalRefereeText = rootView.findViewById(R.id.goal_referee);
-        mGoalRefereeText.addTextChangedListener(mNewGoalPresenter.getTextChangedListener());
+        mGoalRefereeText.addTextChangedListener(textWatcher);
 
         // set goal
         rootView.findViewById(R.id.set_goal).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString().trim(), mGoalEncouragement.getText().toString().trim(),
-                        mGoalRefereeSpinner.getSelectedItemPosition() == 0 ? mGoalRefereeText.getText().toString().trim() : (String) mGoalRefereeSpinner.getSelectedItem());
+                String referee = mGoalRefereeSpinner.getSelectedItemPosition() == 0 ?
+                        mGoalRefereeText.getText().toString().trim() : (String) mGoalRefereeSpinner.getSelectedItem();
+                mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString().trim(),
+                        mGoalEncouragement.getText().toString().trim(), referee);
             }
         });
 
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setMessage(getString(R.string.connecting));
+        mProgressDialog = new DelayedProgressDialog();
         mProgressDialog.setCancelable(false);
 
         if (savedInstanceState != null) {
@@ -139,36 +138,28 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     }
 
     @Override
-    public void setPresenter(NewGoalPresenter presenter) {
+    public void setPresenter(NewGoalFragmentPresenter presenter) {
         mNewGoalPresenter = presenter;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        // Edittext values are saved by default, so no need to save title & others, just save timer etc.
-        outState.putSerializable("presenter", mNewGoalPresenter.save());
+        // Edittext values are saved by default, so no need to save title & others, just timer etc.
+        outState.putSerializable("presenter", mNewGoalPresenter.getSaveHash());
         super.onSaveInstanceState(outState);
     }
 
-    private void showTimePicker(int viewID) {
-        // DialogFragment to host SublimePicker
+    @Override
+    public void showTimePicker(int viewID) {
         SublimePickerDialog pickerFrag = new SublimePickerDialog();
-        pickerFrag.setCallback(mNewGoalPresenter.onTimePicked());
+        SublimePickerDialog.Callback onTimePickedCallback = mNewGoalPresenter.getTimePickerCallbackListener();
+        pickerFrag.setCallback(onTimePickedCallback);
 
-        // Options
-        Pair<Boolean, SublimeOptions> optionsPair = mNewGoalPresenter.getOptions();
-
-        if (!optionsPair.first) { // If options are not valid
-            Toast.makeText(getActivity(), "No pickers activated", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Valid options
         Bundle bundle = new Bundle();
-        bundle.putParcelable("SUBLIME_OPTIONS", optionsPair.second);
+        bundle.putParcelable("SUBLIME_OPTIONS", mNewGoalPresenter.getSublimePickerOptions());
         bundle.putInt("viewID", viewID);
-        pickerFrag.setArguments(bundle);
 
+        pickerFrag.setArguments(bundle);
         pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         pickerFrag.show(getActivity().getSupportFragmentManager(), "SublimePickerDialog");
     }
@@ -188,16 +179,19 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     }
 
     @Override
+    public void updateRefereeOnSpinner(int position) {
+        mGoalRefereeSpinner.setSelection(position);
+    }
+
+    @Override
     public void resetReferee(boolean isFromSpinner) {
         if (isFromSpinner) {
             mGoalRefereeText.clearFocus();
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null && getActivity().getCurrentFocus() != null) {
-                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-            }
-            mGoalRefereeText.removeTextChangedListener(mNewGoalPresenter.getTextChangedListener());
+            ViewHelper.hideKeyboard(getActivity());
+
+            mGoalRefereeText.removeTextChangedListener(textWatcher);
             mGoalRefereeText.setText("");
-            mGoalRefereeText.addTextChangedListener(mNewGoalPresenter.getTextChangedListener());
+            mGoalRefereeText.addTextChangedListener(textWatcher);
         } else {
             mGoalRefereeSpinner.setSelection(0);
         }
@@ -221,16 +215,9 @@ public class NewGoalFragment extends Fragment implements NewGoalView {
     @Override
     public void updateProgress(boolean shouldShow) {
         if (shouldShow) {
-            mProgressDialog.show();
-        } else if (mProgressDialog.isShowing()) {
+            mProgressDialog.show(getActivity().getSupportFragmentManager(), "DelayedProgressDialog");
+        } else {
             mProgressDialog.cancel();
-        }
-    }
-
-    @Override
-    public void updateReferee(boolean isFromSpinner, int position) {
-        if (isFromSpinner) {
-            mGoalRefereeSpinner.setSelection(position);
         }
     }
 }

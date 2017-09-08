@@ -4,27 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
-import com.github.q115.goalie_android.ui.main.feeds.FeedsFragment;
-import com.github.q115.goalie_android.ui.main.feeds.FeedsPresenter;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
 import com.github.q115.goalie_android.ui.login.LoginActivity;
-import com.github.q115.goalie_android.ui.main.my_goals.MyGoalsFragment;
+import com.github.q115.goalie_android.ui.main.feeds.FeedsPresenter;
 import com.github.q115.goalie_android.ui.main.my_goals.MyGoalsPresenter;
-import com.github.q115.goalie_android.ui.profile.ProfileActivity;
-import com.github.q115.goalie_android.ui.main.requests.RequestsFragment;
 import com.github.q115.goalie_android.ui.main.requests.RequestsPresenter;
+import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 /*
@@ -42,20 +35,11 @@ import com.github.q115.goalie_android.utils.UserHelper;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class MainActivity extends AppCompatActivity implements MainActivityView, MessagingServiceUtil.MessagingServiceListener {
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
+public class MainActivity extends AppCompatActivity implements MainActivityView,
+        MessagingServiceUtil.MessagingServiceListener, ViewPager.OnPageChangeListener {
     private MainActivityPresenter mPresenter;
-    private MyGoalsPresenter mMyGoalsPresenter;
-    private RequestsPresenter mRequestsPresenter;
-    private FeedsPresenter mFeedsPresenter;
     private ViewPager mViewPager;
+    private MainActivityPagerAdapter mViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,34 +52,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        MainActivityPagerAdapter mSectionsPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // intentionally left blank
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (mMyGoalsPresenter != null)
-                    mMyGoalsPresenter.closeFABMenu();
-                AppBarLayout appBarLayout = findViewById(R.id.appbar);
-                appBarLayout.setExpanded(true, true);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // intentionally left blank
-            }
-        });
-
         TabLayout tabLayout = findViewById(R.id.tabs);
+        mViewPager = findViewById(R.id.container);
+
+        mViewPagerAdapter = new MainActivityPagerAdapter(this, getSupportFragmentManager());
+        mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.addOnPageChangeListener(this);
         tabLayout.setupWithViewPager(mViewPager);
 
         if (getIntent() != null)
@@ -163,11 +126,31 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
     }
 
     @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        // intentionally left blank
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        MyGoalsPresenter myGoalsPresenter = mViewPagerAdapter.getMyGoalsPresenter();
+        if (myGoalsPresenter != null)
+            myGoalsPresenter.closeFABMenu();
+        AppBarLayout appBarLayout = findViewById(R.id.appbar);
+        appBarLayout.setExpanded(true, true);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        // intentionally left blank
+    }
+
+    @Override
     public void onBackPressed() {
-        if (mMyGoalsPresenter == null || !mMyGoalsPresenter.isFABOpen()) {
+        MyGoalsPresenter myGoalsPresenter = mViewPagerAdapter.getMyGoalsPresenter();
+        if (myGoalsPresenter == null || !myGoalsPresenter.isFABOpen()) {
             super.onBackPressed();
         } else {
-            mMyGoalsPresenter.closeFABMenu();
+            myGoalsPresenter.closeFABMenu();
         }
     }
 
@@ -178,14 +161,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
     @Override
     public void reloadAll() {
-        if (mMyGoalsPresenter != null)
-            mMyGoalsPresenter.reload();
+        MyGoalsPresenter myGoalsPresenter = mViewPagerAdapter.getMyGoalsPresenter();
+        RequestsPresenter requestsPresenter = mViewPagerAdapter.getRequestsPresenter();
+        FeedsPresenter feedsPresenter = mViewPagerAdapter.getFeedsPresenter();
 
-        if (mRequestsPresenter != null)
-            mRequestsPresenter.reload();
+        if (myGoalsPresenter != null)
+            myGoalsPresenter.reload();
 
-        if (mFeedsPresenter != null)
-            mFeedsPresenter.reload();
+        if (requestsPresenter != null)
+            requestsPresenter.reload();
+
+        if (feedsPresenter != null)
+            feedsPresenter.reload();
     }
 
     @Override
@@ -196,59 +183,5 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
                 reloadAll();
             }
         });
-    }
-
-    // Create 3 fragments
-    private class MainActivityPagerAdapter extends FragmentPagerAdapter {
-        private final String[] mTitles = {getString(R.string.tab_feeds),
-                getString(R.string.tab_my_goal),
-                getString(R.string.tab_requests)};
-
-        public MainActivityPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
-            // save the appropriate reference depending on position
-            switch (position) {
-                case 0:
-                    mFeedsPresenter = new FeedsPresenter((FeedsFragment) createdFragment);
-                    break;
-                case 1:
-                    mMyGoalsPresenter = new MyGoalsPresenter((MyGoalsFragment) createdFragment);
-                    break;
-                case 2:
-                    mRequestsPresenter = new RequestsPresenter((RequestsFragment) createdFragment);
-                    break;
-            }
-            return createdFragment;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return FeedsFragment.newInstance();
-                case 1:
-                    return MyGoalsFragment.newInstance();
-                case 2:
-                    return RequestsFragment.newInstance();
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return mTitles.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (position < mTitles.length)
-                return mTitles[position];
-            return null;
-        }
     }
 }

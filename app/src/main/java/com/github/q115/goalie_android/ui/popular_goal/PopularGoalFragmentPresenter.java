@@ -1,6 +1,8 @@
-package com.github.q115.goalie_android.ui.login;
+package com.github.q115.goalie_android.ui.popular_goal;
 
-import com.github.q115.goalie_android.ui.BaseView;
+import android.support.annotation.NonNull;
+
+import com.github.q115.goalie_android.ui.BasePresenter;
 
 /*
  * Copyright 2017 Qi Li
@@ -18,8 +20,14 @@ import com.github.q115.goalie_android.ui.BaseView;
  * limitations under the License.
  */
 
-public interface LoginView extends BaseView<LoginPresenter> {
-    void registerComplete(boolean isSuccessful, String msg);
+public class PopularGoalFragmentPresenter implements BasePresenter {
+    private final PopularGoalFragmentView mPopularGoalView;
 
-    void updateProgress(boolean shouldShow);
+    public PopularGoalFragmentPresenter(@NonNull PopularGoalFragmentView popularGoalView) {
+        mPopularGoalView = popularGoalView;
+        mPopularGoalView.setPresenter(this);
+    }
+
+    public void start() {
+    }
 }
