@@ -1,6 +1,7 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import com.github.q115.goalie_android.BaseTest;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.ui.main.MainActivityPresenter;
 import com.github.q115.goalie_android.ui.main.MainActivityView;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
@@ -14,6 +15,7 @@ import org.robolectric.RobolectricTestRunner;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static test_util.RESTUtil.getValidFriendUsername;
@@ -47,14 +49,18 @@ public class MainActivityPresenterUnitTest extends BaseTest {
     }
 
     @Test
-    public void onStart() throws Exception {
+    public void onStartNotRegistered() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername("");
         mPresenter.start();
         verify(mView).showLogin();
+    }
 
+    @Test
+    public void onStartRegistered() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername(getValidFriendUsername());
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.start();
-        verify(mView, times(1)).reloadAll();
+
+        verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).reloadAll();
     }
 }

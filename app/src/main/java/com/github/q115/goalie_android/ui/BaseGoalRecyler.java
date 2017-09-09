@@ -93,9 +93,12 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
 
         //Bind our data from our data source to our View References
         viewHolder.mTitleTxt.setText(goal.title);
-        viewHolder.mStartDateTxt.setText(String.format(mContext.getString(R.string.start_), mDF.format(new Date(goal.startDate))));
-        viewHolder.mEndDateTxt.setText(String.format(mContext.getString(R.string.end_), mDF.format(new Date(goal.endDate))));
-        viewHolder.mWagerTxt.setText(String.format(mContext.getString(R.string.wagered_), goal.wager));
+        viewHolder.mStartDateTxt.setText(
+                String.format(mContext.getString(R.string.start_), mDF.format(new Date(goal.startDate))));
+        viewHolder.mEndDateTxt.setText(
+                String.format(mContext.getString(R.string.end_), mDF.format(new Date(goal.endDate))));
+        viewHolder.mWagerTxt.setText(
+                String.format(mContext.getString(R.string.wagered_), goal.wager));
         viewHolder.mEncouragementTxt.setText(goal.encouragement);
 
         setGoalCompleteColor(viewHolder, goal);

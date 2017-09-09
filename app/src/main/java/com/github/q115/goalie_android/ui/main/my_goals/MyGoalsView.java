@@ -26,11 +26,10 @@ public interface MyGoalsView extends BaseView<MyGoalsPresenter> {
 
     void closeFABMenu();
 
-    void showDialog(String title, String end, String start, String reputation, String encouragement,
-                    String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
-
-
     void syncComplete(boolean isSuccessful, String errMsg);
 
     void reload();
+
+    void showDialog(String title, String end, String start, String reputation, String encouragement, String referee,
+                    Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
 }

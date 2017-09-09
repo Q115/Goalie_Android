@@ -103,10 +103,10 @@ public class LoginActivityInstrumentedTest {
         onView(withId(R.id.username)).check(matches(withText("")));
         onView(withId(R.id.username)).perform(clearText(), typeText(RESTUtil.getValidFriendUsername()));
         mActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        Thread.sleep(1000);
+        Thread.sleep(750);
         onView(withId(R.id.username)).check(matches(withText(RESTUtil.getValidFriendUsername())));
         mActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Thread.sleep(1000);
+        Thread.sleep(750);
     }
 
     @AfterClass

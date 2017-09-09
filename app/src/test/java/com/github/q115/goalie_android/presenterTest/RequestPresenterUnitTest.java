@@ -48,18 +48,6 @@ public class RequestPresenterUnitTest extends BaseTest {
     }
 
     @Test
-    public void onRefresh() throws Exception {
-        mPresenter.onRefresherRefresh();
-        Thread.sleep(1000);
-        verify(mView).syncComplete(false, "Unauthorized, Please Update App");
-
-        UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
-        mPresenter.onRefresherRefresh();
-        Thread.sleep(2000);
-        verify(mView).syncComplete(true, "");
-    }
-
-    @Test
     public void reload() {
         mPresenter.reload();
         verify(mView).reload();

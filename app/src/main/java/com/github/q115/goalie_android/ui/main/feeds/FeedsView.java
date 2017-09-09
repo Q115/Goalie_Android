@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.ui.main.feeds;
 
-import com.github.q115.goalie_android.ui.BaseView;
-
 /*
  * Copyright 2017 Qi Li
  *
@@ -17,6 +15,8 @@ import com.github.q115.goalie_android.ui.BaseView;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import com.github.q115.goalie_android.ui.BaseView;
 
 public interface FeedsView extends BaseView<FeedsPresenter> {
     void syncComplete(boolean isSuccessful, String errMsg);

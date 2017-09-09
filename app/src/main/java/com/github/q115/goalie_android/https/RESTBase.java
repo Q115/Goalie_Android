@@ -43,6 +43,7 @@ abstract class RESTBase<T> implements Response.Listener<T>, Response.ErrorListen
         mHeaders.put("Content-Type", "application/json");
         mHeaders.put("Username", mUsername);
         mHeaders.put("Authorization", Constants.KEY);
+        mHeaders.put("CustomKey", Constants.CUSTOM_KEY);
         return mHeaders;
     }
 

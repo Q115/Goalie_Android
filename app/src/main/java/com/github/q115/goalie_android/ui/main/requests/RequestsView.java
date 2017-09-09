@@ -25,6 +25,6 @@ public interface RequestsView extends BaseView<RequestsPresenter> {
 
     void reload();
 
-    void showDialog(String title, String end, String start, String reputation, String encouragment,
-                    String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
+    void showDialog(String title, String end, String start, String reputation, String encouragment, String referee,
+                    Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid);
 }

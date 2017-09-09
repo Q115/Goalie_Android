@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.github.q115.goalie_android.BaseTest;
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentPresenter;
@@ -28,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -150,10 +152,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         mPresenter.setGoal(mContext, title, encouragement, referee);
         verify(mView).onSetGoal(false, "error_goal_invalid_date");
 
-        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
-        Calendar endDate = Calendar.getInstance(Locale.getDefault());
-        endDate.add(Calendar.YEAR, 9);
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1, 100);
+        pickAValidDate();
         mPresenter.setGoal(mContext, title, encouragement, "");
         verify(mView).onSetGoal(false, "error_goal_no_referee");
 
@@ -167,10 +166,17 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         String encouragement = "encouragement";
         String referee = getValidFriendUsername();
 
+        pickAValidDate();
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
         mPresenter.setGoal(mContext, title, encouragement, referee);
         verify(mView).updateProgress(true);
-        Thread.sleep(1000);
-        verify(mView).onSetGoal(true, "");
+        verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).onSetGoal(true, "");
+    }
+
+    private void pickAValidDate() {
+        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
+        Calendar endDate = Calendar.getInstance(Locale.getDefault());
+        endDate.add(Calendar.YEAR, 9);
+        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1, 100);
     }
 }

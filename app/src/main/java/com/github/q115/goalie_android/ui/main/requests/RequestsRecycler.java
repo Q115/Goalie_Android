@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.main.requests;
 
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -61,16 +62,12 @@ public class RequestsRecycler extends BaseGoalRecyler {
         });
     }
 
-    //Must override, this inflates our Layout and instantiates and assigns
-    //it to the ViewHolder.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_request, parent, false);
         return new BaseGoalsHolder(itemView);
     }
 
-    //Bind our current data to your view holder.  Think of this as the equivalent
-    //of GetView for regular Adapters.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
@@ -82,12 +79,20 @@ public class RequestsRecycler extends BaseGoalRecyler {
             public void onClick(View view) {
                 Goal goal = mGoalList.get(pos);
 
-                if (mRequestsPresenter != null)
-                    mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(), viewHolder.mEndDateTxt.getText().toString(),
-                            viewHolder.mStartDateTxt.getText().toString(), viewHolder.mWagerTxt.getText().toString(), viewHolder.mEncouragementTxt.getText().toString(),
+                if (mRequestsPresenter != null) {
+                    Drawable profileImage = mImages.containsKey(goal.createdByUsername) ?
+                            mImages.get(goal.createdByUsername)
+                            : viewHolder.mRefereeTxt.getCompoundDrawables()[1];
+
+                    mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(),
+                            viewHolder.mEndDateTxt.getText().toString(),
+                            viewHolder.mStartDateTxt.getText().toString(),
+                            viewHolder.mWagerTxt.getText().toString(),
+                            viewHolder.mEncouragementTxt.getText().toString(),
                             viewHolder.mRefereeTxt.getText().toString(),
-                            mImages.containsKey(goal.createdByUsername) ? mImages.get(goal.createdByUsername) : viewHolder.mRefereeTxt.getCompoundDrawables()[1],
+                            profileImage,
                             goal.goalCompleteResult, goal.guid);
+                }
             }
         });
     }

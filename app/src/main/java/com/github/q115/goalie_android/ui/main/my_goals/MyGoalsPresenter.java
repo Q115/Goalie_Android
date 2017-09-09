@@ -2,12 +2,11 @@ package com.github.q115.goalie_android.ui.main.my_goals;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.view.MotionEvent;
+import android.view.View;
 
-import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BasePresenter;
-import com.github.q115.goalie_android.utils.PreferenceHelper;
-import com.github.q115.goalie_android.utils.UserHelper;
 
 /*
  * Copyright 2017 Qi Li
@@ -64,25 +63,10 @@ public class MyGoalsPresenter implements BasePresenter {
         return isFABOpen;
     }
 
-    public void onRefresherRefresh() {
-        RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
-        sm.setListener(new RESTSync.Listener() {
-            @Override
-            public void onSuccess() {
-                mMyGoalsView.syncComplete(true, "");
-            }
-
-            @Override
-            public void onFailure(String errMsg) {
-                mMyGoalsView.syncComplete(false, errMsg);
-            }
-        });
-        sm.execute();
-    }
-
-    public void showDialog(String title, String end, String start, String reputation, String encouragement,
-                           String referee, Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
-        mMyGoalsView.showDialog(title, end, start, reputation, encouragement, referee, profileImage, goalCompleteResult, guid);
+    public void showDialog(String title, String end, String start, String reputation, String encouragement, String referee,
+                           Drawable profileImage, Goal.GoalCompleteResult goalCompleteResult, String guid) {
+        mMyGoalsView.showDialog(title, end, start, reputation, encouragement, referee,
+                profileImage, goalCompleteResult, guid);
     }
 
     public void reload() {

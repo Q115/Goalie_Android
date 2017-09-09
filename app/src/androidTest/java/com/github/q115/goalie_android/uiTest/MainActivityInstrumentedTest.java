@@ -85,9 +85,9 @@ public class MainActivityInstrumentedTest {
     @Test
     public void rotate() throws Exception {
         mActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        Thread.sleep(500);
+        Thread.sleep(750);
         mActivityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Thread.sleep(500);
+        Thread.sleep(750);
     }
 
     // @Test
@@ -112,7 +112,7 @@ public class MainActivityInstrumentedTest {
                 mActivityRule.getActivity().onBackPressed();
             }
         });
-        Thread.sleep(500); // wait for animation to finish
+        Thread.sleep(750); // wait for animation to finish
         onView(withId(R.id.fab_menu1)).check(matches(not(isDisplayed())));
         onView(withId(R.id.fab_menu2)).check(matches(not(isDisplayed())));
     }
