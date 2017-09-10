@@ -59,17 +59,12 @@ public class RequestsFragment extends BaseRefresherFragment implements RequestsV
         mRecyclerView.setAdapter(new RequestsRecycler(getActivity(), mRequestsPresenter));
         mRecyclerView.addOnScrollListener(onScrollListener());
 
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);
+        mSwipeRefreshLayout.setOnRefreshListener(onRefresherRefreshListener());
+        mSwipeRefreshLayout.setEnabled(true);
+
         mEmptyMsg = rootView.findViewById(R.id.empty);
         showEmptyWhenNecessary();
-
-        mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                onRefresherRefreshListener();
-            }
-        });
-        mSwipeRefreshLayout.setEnabled(true);
 
         return rootView;
     }

@@ -136,6 +136,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         String title = "title";
         String encouragement = "encouragement";
         String referee = getValidFriendUsername();
+        boolean isGoalPublic = true;
 
         when(mContext.getString(R.string.error_goal_no_title))
                 .thenReturn("error_goal_no_title");
@@ -146,17 +147,17 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         when(mContext.getString(R.string.username_error))
                 .thenReturn("username_error");
 
-        mPresenter.setGoal(mContext, "", encouragement, referee);
+        mPresenter.setGoal(mContext, "", encouragement, referee, isGoalPublic);
         verify(mView).onSetGoal(false, "error_goal_no_title");
 
-        mPresenter.setGoal(mContext, title, encouragement, referee);
+        mPresenter.setGoal(mContext, title, encouragement, referee, isGoalPublic);
         verify(mView).onSetGoal(false, "error_goal_invalid_date");
 
         pickAValidDate();
-        mPresenter.setGoal(mContext, title, encouragement, "");
+        mPresenter.setGoal(mContext, title, encouragement, "", isGoalPublic);
         verify(mView).onSetGoal(false, "error_goal_no_referee");
 
-        mPresenter.setGoal(mContext, title, encouragement, "ref");
+        mPresenter.setGoal(mContext, title, encouragement, "ref", isGoalPublic);
         verify(mView).onSetGoal(false, "username_error");
     }
 
@@ -168,7 +169,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
 
         pickAValidDate();
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
-        mPresenter.setGoal(mContext, title, encouragement, referee);
+        mPresenter.setGoal(mContext, title, encouragement, referee, true);
         verify(mView).updateProgress(true);
         verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).onSetGoal(true, "");
     }

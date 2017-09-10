@@ -67,7 +67,7 @@ public class RESTRemind extends RESTBase<String> {
                 params.put("fromUsername", mUsername);
                 params.put("toUsername", mToUsername);
                 params.put("guid", mGuid);
-                params.put("isRemindingRef", String.valueOf(isRemindingRef ? 1 : 0));
+                params.put("isRemindingRef", isRemindingRef ? "1" : "0");
                 return new JSONObject(params).toString().getBytes();
             }
         };

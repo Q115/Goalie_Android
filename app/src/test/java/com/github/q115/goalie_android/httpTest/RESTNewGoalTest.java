@@ -43,7 +43,7 @@ public class RESTNewGoalTest extends BaseREST {
 
         Object[] array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
         int currentActivitySize = array.length;
-        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername, true);
         sm.setListener(pair.second);
         sm.execute();
 
@@ -80,7 +80,7 @@ public class RESTNewGoalTest extends BaseREST {
         Pair<Integer, RESTNewGoal.Listener> pair = createAListener();
         int currentActivitySize = UserHelper.getInstance().getOwnerProfile().activeGoals.size();
 
-        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername, true);
         sm.setListener(pair.second);
         sm.onResponse("");
 

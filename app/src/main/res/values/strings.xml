@@ -107,8 +107,9 @@
     <string name="wager">Wager</string>
     <string name="wagered">%1$d of %2$d Reputation</string>
     <string name="percent">%1$d%%</string>
+    <string name="is_public">Show Goal Status in Feeds?</string>
     <string name="encouragement">Encouragement</string>
-    <string name="encouragement_hint">(Optional) Say something to stay motivated</string>
+    <string name="encouragement_hint">(Optional) Notes or motivations</string>
     <string name="referee">Referee</string>
     <string name="or">or</string>
     <string name="new_referee_hint">Username of Referee</string>

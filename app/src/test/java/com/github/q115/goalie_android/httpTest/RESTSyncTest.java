@@ -39,7 +39,7 @@ public class RESTSyncTest extends BaseREST {
     public void sync() throws Exception {
         final Pair<Integer, RESTSync.Listener> pair = createAListener();
 
-        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username);
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
             public void onSuccess() {

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView {
     private EditText mGoalEncouragement;
     private AppCompatSpinner mGoalRefereeSpinner;
     private EditText mGoalRefereeText;
+    private Switch isGoalPublicFeed;
 
     private TextWatcher textWatcher;
 
@@ -97,9 +99,6 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView {
         rootView.findViewById(R.id.goal_wager_minus).setOnClickListener(wagerClicked);
         rootView.findViewById(R.id.goal_wager_plus).setOnClickListener(wagerClicked);
 
-        // encouragement
-        mGoalEncouragement = rootView.findViewById(R.id.goal_encouragement);
-
         // Referee
         mGoalRefereeSpinner = rootView.findViewById(R.id.goal_referee_spinner);
         mGoalRefereeSpinner.setAdapter(new ArrayAdapter<>(getActivity(),
@@ -110,6 +109,12 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView {
         mGoalRefereeText = rootView.findViewById(R.id.goal_referee);
         mGoalRefereeText.addTextChangedListener(textWatcher);
 
+        // is public
+        isGoalPublicFeed = rootView.findViewById(R.id.is_public_goal);
+
+        // encouragement
+        mGoalEncouragement = rootView.findViewById(R.id.goal_encouragement);
+
         // set goal
         rootView.findViewById(R.id.set_goal).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +122,7 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView {
                 String referee = mGoalRefereeSpinner.getSelectedItemPosition() == 0 ?
                         mGoalRefereeText.getText().toString().trim() : (String) mGoalRefereeSpinner.getSelectedItem();
                 mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString().trim(),
-                        mGoalEncouragement.getText().toString().trim(), referee);
+                        mGoalEncouragement.getText().toString().trim(), referee, isGoalPublicFeed.isChecked());
             }
         });
 

@@ -39,7 +39,7 @@ public class RESTUpvoteTest extends BaseREST {
         final Pair<Integer, RESTUpvote.Listener> pair = createAListener();
 
         // set up a new goal
-        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername);
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
             public void onSuccess() {

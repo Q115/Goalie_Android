@@ -137,7 +137,7 @@ public class RESTUpdateGoalTest extends BaseREST {
 
     private void setupGoal() throws Exception {
         isSettingUpGoal = true;
-        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username);
+        RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
             public void onSuccess() {

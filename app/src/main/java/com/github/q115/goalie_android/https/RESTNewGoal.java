@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.https;
 
+import android.graphics.Bitmap;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -41,9 +43,10 @@ public class RESTNewGoal extends RESTBase<String> {
     private long mWager;
     private String mEncouragement;
     private String mReferee;
+    private boolean isGoalPublic;
 
     public RESTNewGoal(String username, String title, long start, long end, long wager,
-                       String encouragement, String referee) {
+                       String encouragement, String referee, boolean isGoalPublic) {
         mUsername = username;
         mStart = start;
         mEnd = end;
@@ -51,6 +54,7 @@ public class RESTNewGoal extends RESTBase<String> {
         mEncouragement = encouragement;
         mReferee = referee;
         mTitle = title;
+        this.isGoalPublic = isGoalPublic;
     }
 
     public interface Listener extends RESTBaseListener {
@@ -83,6 +87,7 @@ public class RESTNewGoal extends RESTBase<String> {
                 params.put("encouragement", mEncouragement);
                 params.put("referee", mReferee);
                 params.put("title", mTitle);
+                params.put("isGoalPublic", isGoalPublic ? "1" : "0");
                 return new JSONObject(params).toString().getBytes();
             }
         };
@@ -96,8 +101,13 @@ public class RESTNewGoal extends RESTBase<String> {
 
     @Override
     public void onResponse(String guid) {
-        if (UserHelper.getInstance().getAllContacts().get(mReferee) == null)
+        if (UserHelper.getInstance().getAllContacts().get(mReferee) == null) {
             UserHelper.getInstance().addUser(new User(mReferee));
+
+            RESTGetPhoto sm = new RESTGetPhoto(mReferee);
+            sm.setListener(null);
+            sm.execute();
+        }
 
         Goal goal = new Goal(guid, mUsername, mTitle, mStart, mEnd, mWager, mEncouragement,
                 Goal.GoalCompleteResult.Pending, mReferee, System.currentTimeMillis());

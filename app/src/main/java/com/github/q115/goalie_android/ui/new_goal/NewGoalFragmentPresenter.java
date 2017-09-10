@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.TreeMap;
@@ -108,7 +109,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               mNewGoalView.showTimePicker(view.getId());
+                mNewGoalView.showTimePicker(view.getId());
             }
         };
     }
@@ -133,12 +134,11 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         return new SublimePickerDialog.Callback() {
             @Override
             public void onDateTimeRecurrenceSet(SelectedDate selectedDate, int hourOfDay, int minute, int viewID) {
-                long epoch = selectedDate.getEndDate().getTimeInMillis();
-                epoch -= selectedDate.getEndDate().get(Calendar.HOUR) * 60 * 60 * 1000;
-                epoch -= selectedDate.getEndDate().get(Calendar.MINUTE) * 60 * 1000;
-                epoch -= selectedDate.getEndDate().get(Calendar.SECOND) * 1000;
-                epoch -= selectedDate.getEndDate().get(Calendar.MILLISECOND);
-                epoch += (hourOfDay * 60 + minute) * 60 * 1000;
+                int year = selectedDate.getEndDate().get(Calendar.YEAR);
+                int month = selectedDate.getEndDate().get(Calendar.MONTH);
+                int day = selectedDate.getEndDate().get(Calendar.DATE);
+                GregorianCalendar date = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
+                long epoch = date.getTimeInMillis();
 
                 if (viewID == R.id.goal_start_btn)
                     mStart = epoch;
@@ -214,11 +214,11 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         };
     }
 
-    public void setGoal(Context context, String title, String encouragement, String referee) {
+    public void setGoal(Context context, String title, String encouragement, String referee, boolean isGoalPublic) {
         if (checkGoalIsValid(context, title, referee)) {
             mNewGoalView.updateProgress(true);
             RESTNewGoal rest = new RESTNewGoal(UserHelper.getInstance().getOwnerProfile().username,
-                    title, mStart, mEnd, getWagering(), encouragement, referee);
+                    title, mStart, mEnd, getWagering(), encouragement, referee, isGoalPublic);
             rest.setListener(new RESTNewGoal.Listener() {
                 @Override
                 public void onSuccess() {

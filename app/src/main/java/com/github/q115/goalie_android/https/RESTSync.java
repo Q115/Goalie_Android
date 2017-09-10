@@ -207,6 +207,10 @@ public class RESTSync extends RESTBase<String> {
 
             if (!UserHelper.getInstance().getAllContacts().containsKey(goal.createdByUsername)) {
                 UserHelper.getInstance().addUser(new User(goal.createdByUsername));
+
+                RESTGetPhoto sm = new RESTGetPhoto(goal.createdByUsername);
+                sm.setListener(null);
+                sm.execute();
             }
         }
 
