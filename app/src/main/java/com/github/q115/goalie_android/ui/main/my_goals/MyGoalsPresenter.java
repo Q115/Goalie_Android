@@ -2,8 +2,6 @@ package com.github.q115.goalie_android.ui.main.my_goals;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.view.MotionEvent;
-import android.view.View;
 
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BasePresenter;

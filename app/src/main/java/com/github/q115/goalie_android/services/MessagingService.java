@@ -102,7 +102,7 @@ public class MessagingService extends FirebaseMessagingService {
         Intent intent2;
         if (mResultCode < Goal.GoalCompleteResult.values().length) {
             Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[mResultCode];
-            if (goalCompleteResult == Goal.GoalCompleteResult.Ongoing) {
+            if (goalCompleteResult.isActive()) {
                 intent2 = new Intent(this, MainActivity.class);
                 intent2.putExtra("tab", 1);
             } else {
@@ -157,7 +157,6 @@ public class MessagingService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
-        // Build the notification:
         Notification notification = builder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 

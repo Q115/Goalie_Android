@@ -2,9 +2,7 @@ package com.github.q115.goalie_android.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;

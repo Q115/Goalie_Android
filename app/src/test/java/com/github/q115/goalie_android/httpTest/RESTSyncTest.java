@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTSyncTest extends BaseREST {
+public class RESTSyncTest extends BaseRESTTest {
     @Test()
     public void sync() throws Exception {
         final Pair<Integer, RESTSync.Listener> pair = createAListener();

@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.https;
 
-import android.graphics.Bitmap;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;

@@ -31,7 +31,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTRemindTest extends BaseREST {
+public class RESTRemindTest extends BaseRESTTest {
 
     @Test()
     public void sendReminder() throws Exception {

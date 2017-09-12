@@ -34,7 +34,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTNewGoalTest extends BaseREST {
+public class RESTNewGoalTest extends BaseRESTTest {
 
     @Test
     public void setNewGoal() throws Exception {

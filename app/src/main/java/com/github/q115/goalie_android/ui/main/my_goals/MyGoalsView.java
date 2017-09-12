@@ -26,8 +26,6 @@ public interface MyGoalsView extends BaseView<MyGoalsPresenter> {
 
     void closeFABMenu();
 
-    void syncComplete(boolean isSuccessful, String errMsg);
-
     void reload();
 
     void showDialog(String title, String end, String start, String reputation, String encouragement, String referee,

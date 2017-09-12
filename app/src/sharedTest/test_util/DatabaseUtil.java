@@ -39,8 +39,7 @@ public class DatabaseUtil {
             for (Goal goal : goals) {
                 User user = UserHelper.getInstance().getAllContacts().get(goal.createdByUsername);
                 if(user != null) {
-                    if (goal.goalCompleteResult == Goal.GoalCompleteResult.Ongoing
-                            || goal.goalCompleteResult == Goal.GoalCompleteResult.Pending)
+                    if (goal.goalCompleteResult.isActive())
                         user.activeGoals.put(goal.guid, goal);
                     else
                         user.finishedGoals.put(goal.guid, goal);

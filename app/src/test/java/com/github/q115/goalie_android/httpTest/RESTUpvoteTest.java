@@ -31,7 +31,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTUpvoteTest extends BaseREST {
+public class RESTUpvoteTest extends BaseRESTTest {
 
     @Test
     public void doUpvote() throws Exception {

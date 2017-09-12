@@ -17,7 +17,6 @@ import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTGetPhoto;
 import com.github.q115.goalie_android.https.RESTUpvote;
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
-import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.DelayedProgressDialog;
@@ -172,8 +171,7 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     }
 
     private void setupButtonText(TextView goalResult, TextView goalFeedAction, GoalFeed feed) {
-        if (feed.goalCompleteResult == Goal.GoalCompleteResult.Ongoing
-                || feed.goalCompleteResult == Goal.GoalCompleteResult.Pending) {
+        if (feed.goalCompleteResult.isActive()) {
             goalResult.setText(String.format(mContext.getString(R.string.feed_title),
                     mContext.getString(R.string.started), feed.wager));
             goalFeedAction.setText(mContext.getString(R.string.goodluck));

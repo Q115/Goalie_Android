@@ -82,7 +82,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
 
     @Test
     public void getOptions() {
-        assertNotNull(mPresenter.getSublimePickerOptions());
+        assertNotNull(mPresenter.getSublimePickerOptions(0));
     }
 
     @Test

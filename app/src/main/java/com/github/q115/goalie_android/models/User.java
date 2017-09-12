@@ -48,7 +48,7 @@ public class User extends BaseModel {
     public HashMap<String, Goal> activeGoals; // username -> goal
 
     @ColumnIgnore
-    public HashMap<String, Goal> finishedGoals;
+    public HashMap<String, Goal> finishedGoals; // username -> goal
 
     public User() {
         username = "";

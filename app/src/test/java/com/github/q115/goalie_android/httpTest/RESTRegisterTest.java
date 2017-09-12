@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTRegisterTest extends BaseREST {
+public class RESTRegisterTest extends BaseRESTTest {
     @Before
     @Override
     public void registerOwner() throws Exception {

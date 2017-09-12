@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTUpdateGoalTest extends BaseREST {
+public class RESTUpdateGoalTest extends BaseRESTTest {
     private boolean isSettingUpGoal;
 
     @Test()

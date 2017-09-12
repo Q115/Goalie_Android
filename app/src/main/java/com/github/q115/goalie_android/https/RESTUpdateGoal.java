@@ -81,24 +81,21 @@ public class RESTUpdateGoal extends RESTBase<String> {
 
     @Override
     public void onResponse(String response) {
-        // remove goal if completed
-        if (mGoalCompleteResult == Goal.GoalCompleteResult.Failed
-                || mGoalCompleteResult == Goal.GoalCompleteResult.Success
-                || mGoalCompleteResult == Goal.GoalCompleteResult.Cancelled) {
-            ArrayList<Goal> list = GoalHelper.getInstance().getRequests();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).guid.equals(mGuid)) {
-                    list.get(i).activityDate = System.currentTimeMillis();
-                    list.remove(i);
-                    break;
-                }
-            }
-        } else {
+        if (mGoalCompleteResult.isActive()) {
             ArrayList<Goal> list = GoalHelper.getInstance().getRequests();
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).guid.equals(mGuid)) {
                     list.get(i).goalCompleteResult = mGoalCompleteResult;
                     list.get(i).activityDate = System.currentTimeMillis();
+                    break;
+                }
+            }
+        } else {  // remove goal if completed
+            ArrayList<Goal> list = GoalHelper.getInstance().getRequests();
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).guid.equals(mGuid)) {
+                    list.get(i).activityDate = System.currentTimeMillis();
+                    list.remove(i);
                     break;
                 }
             }

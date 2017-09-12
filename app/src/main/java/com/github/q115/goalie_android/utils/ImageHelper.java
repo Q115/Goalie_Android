@@ -129,7 +129,6 @@ public class ImageHelper {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         try {
-            // First decode with inJustDecodeBounds=true to check dimensions
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(contentResolver.openInputStream(uri), null, options);
             options.inSampleSize = getInstance().calculateInSampleSize(options, width, height);

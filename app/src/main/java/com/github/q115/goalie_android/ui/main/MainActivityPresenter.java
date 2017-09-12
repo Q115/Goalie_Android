@@ -1,10 +1,7 @@
 package com.github.q115.goalie_android.ui.main;
 
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.view.ViewPager;
 
-import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.ui.BasePresenter;
 import com.github.q115.goalie_android.utils.PreferenceHelper;

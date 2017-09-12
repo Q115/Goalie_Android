@@ -21,8 +21,6 @@ import com.github.q115.goalie_android.ui.BaseView;
  * limitations under the License.
  */
 public interface RequestsView extends BaseView<RequestsPresenter> {
-    void syncComplete(boolean isSuccessful, String errMsg);
-
     void reload();
 
     void showDialog(String title, String end, String start, String reputation, String encouragment, String referee,

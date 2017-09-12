@@ -33,7 +33,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTGetUserInfoTest extends BaseREST {
+public class RESTGetUserInfoTest extends BaseRESTTest {
 
     @Test
     public void getUserInfo() throws Exception {

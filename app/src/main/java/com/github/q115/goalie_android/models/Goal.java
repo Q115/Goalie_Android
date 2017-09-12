@@ -24,7 +24,33 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 @Table(database = MainDB.class)
 public class Goal extends BaseModel {
     public enum GoalCompleteResult {
-        None, Pending, Ongoing, Success, Failed, Cancelled
+        None {
+            public boolean isActive() {
+                return false;
+            }
+        }, Pending {
+            public boolean isActive() {
+                return true;
+            }
+        }, Ongoing {
+            public boolean isActive() {
+                return true;
+            }
+        }, Success {
+            public boolean isActive() {
+                return false;
+            }
+        }, Failed {
+            public boolean isActive() {
+                return false;
+            }
+        }, Cancelled {
+            public boolean isActive() {
+                return false;
+            }
+        };
+
+        public abstract boolean isActive();
     }
 
     @PrimaryKey

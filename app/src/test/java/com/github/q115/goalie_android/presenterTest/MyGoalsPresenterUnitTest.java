@@ -6,7 +6,6 @@ import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.main.my_goals.MyGoalsPresenter;
 import com.github.q115.goalie_android.ui.main.my_goals.MyGoalsView;
-import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static test_util.RESTUtil.getValidFriendUsername;
 
 /*
  * Copyright 2017 Qi Li

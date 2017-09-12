@@ -19,7 +19,5 @@ package com.github.q115.goalie_android.ui.main.feeds;
 import com.github.q115.goalie_android.ui.BaseView;
 
 public interface FeedsView extends BaseView<FeedsPresenter> {
-    void syncComplete(boolean isSuccessful, String errMsg);
-
     void reload();
 }

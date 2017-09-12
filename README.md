@@ -1,8 +1,8 @@
 
 <p align="center">
-  <img src="./app/src/main/res/mipmap-xxhdpi/ic_launcher.png?raw=true" alt="Goalie">
-  <br>
   <a href="https://play.google.com/store/apps/details?id=com.github.q115.goalie_android">
+    <img src="./app/src/main/res/mipmap-xxhdpi/ic_launcher.png" alt="Goalie">
+    <br>
     <img src="https://coverse.co/webimages/download_android.svg" alt="Goalie">
   </a>
 <p>
@@ -19,7 +19,15 @@ MVP architecture is currently used for all Activities and core Fragments (Dialog
 
 ## Backend server
 
-A development test server is setup at: http://104.197.166.11:8080. Check out the [Wiki](https://github.com/Q115/Goalie_Android/wiki) for backend APIs. If you have a feature that you would like to add that also requires server integration, please mock the interface and I'll implement the logic on the server side once you make the pull request.
+A development test server is setup at: http<nolink>://104.197.166.11:8080. Check out the [Wiki](https://github.com/Q115/Goalie_Android/wiki) for backend APIs. If you have a feature that you would like to add that also requires server integration, please mock the interface and I'll implement the logic on the server side once you make the pull request.
+
+## Statistic
+
+Excluding all tests and layout XML files, below is the statistic for Goalie as of version 1.1
+
+| Language   | Number of files | Blank lines | Comment lines | Code lines | Total |
+| ---------- | --------------- | ----------- | ------------- | ---------- | ----- |
+| **Java**   |               78|         1132|           1229|        5240|  7601 |
 
 ## License
 

@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTPhotoTest extends BaseREST {
+public class RESTPhotoTest extends BaseRESTTest {
     private Bitmap imageDownloaded;
 
     @Test

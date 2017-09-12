@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
  * limitations under the License.
  */
 @RunWith(RobolectricTestRunner.class)
-public class RESTUpdateUserInfoTest extends BaseREST {
+public class RESTUpdateUserInfoTest extends BaseRESTTest {
     @Test
     public void updatePushID() throws Exception {
         Pair<Integer, RESTUpdateUserInfo.Listener> pair = createAListener();

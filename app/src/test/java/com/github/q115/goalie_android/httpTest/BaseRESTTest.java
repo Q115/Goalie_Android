@@ -30,7 +30,7 @@ import test_util.RESTUtil;
  */
 
 @RunWith(RobolectricTestRunner.class)
-public abstract class BaseREST extends BaseTest {
+public abstract class BaseRESTTest extends BaseTest {
     protected static String username;
     protected static List<Boolean> isOperationCompleteList = Collections.synchronizedList(new ArrayList<Boolean>());
 
