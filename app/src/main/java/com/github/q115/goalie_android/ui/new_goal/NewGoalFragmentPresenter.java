@@ -114,7 +114,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         };
     }
 
-    public SublimeOptions getSublimePickerOptions() {
+    public SublimeOptions getSublimePickerOptions(Boolean isStart) {
         SublimeOptions options = new SublimeOptions();
         int displayOptions = 0;
 
@@ -126,8 +126,27 @@ public class NewGoalFragmentPresenter implements BasePresenter {
 
         options.setDisplayOptions(displayOptions);
         options.setCanPickDateRange(false);
+        setSublimeDateOptions(options, isStart);
 
         return options;
+    }
+
+    // Set correct date and time based on previous selection.
+    private void setSublimeDateOptions(SublimeOptions options, Boolean isStart) {
+        long epoch;
+        if (isStart) {
+            epoch = mStart;
+        }
+        else {
+            epoch = mEnd;
+        }
+
+        if (epoch != 0) {   // User has made a selection before.
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(epoch);
+            options.setDateParams(c);
+            options.setTimeParams(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+        }
     }
 
     public SublimePickerDialog.Callback getTimePickerCallbackListener() {

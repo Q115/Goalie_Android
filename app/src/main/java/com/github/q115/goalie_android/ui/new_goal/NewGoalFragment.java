@@ -161,7 +161,7 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView {
         pickerFrag.setCallback(onTimePickedCallback);
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable("SUBLIME_OPTIONS", mNewGoalPresenter.getSublimePickerOptions());
+        bundle.putParcelable("SUBLIME_OPTIONS", mNewGoalPresenter.getSublimePickerOptions(viewID == R.id.goal_start_btn));
         bundle.putInt("viewID", viewID);
 
         pickerFrag.setArguments(bundle);
