@@ -93,6 +93,7 @@ public class UpdateProfileDialog extends DialogFragment {
         profileBioInput.setOnEditorActionListener(handleEditorAction());
         profileBioInput.setSingleLine(false);
         profileBioInput.setText(mBio);
+        profileBioInput.setSelection(mBio.length());
 
         (getDialog().findViewById(R.id.update_profile_status)).setVisibility(View.INVISIBLE);
 
