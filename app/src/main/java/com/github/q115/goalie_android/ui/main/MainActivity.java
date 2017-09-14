@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
+import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
 import com.github.q115.goalie_android.ui.login.LoginActivity;
 import com.github.q115.goalie_android.ui.main.feeds.FeedsPresenter;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
     private MainActivityPresenter mPresenter;
     private ViewPager mViewPager;
     private MainActivityPagerAdapter mViewPagerAdapter;
+    private DelayedProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
         mViewPager.setAdapter(mViewPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
         tabLayout.setupWithViewPager(mViewPager);
+
+        progressDialog = new DelayedProgressDialog();
 
         if (getIntent() != null)
             onNewIntent(getIntent());
@@ -183,5 +187,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
                 reloadAll();
             }
         });
+    }
+
+    @Override
+    public void updateProgress(boolean shouldShow) {
+        if (shouldShow) {
+            progressDialog.show(getSupportFragmentManager(), "DelayedProgressDialog");
+        } else {
+            progressDialog.cancel();
+        }
     }
 }

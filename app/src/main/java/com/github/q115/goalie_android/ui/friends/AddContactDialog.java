@@ -40,7 +40,7 @@ import com.github.q115.goalie_android.utils.ViewHelper;
 public class AddContactDialog extends DialogFragment {
     private String mUsername;
     private TextView mUpdateStatus;
-    private TextView mUsernameText;
+    private EditText mUsernameText;
     private AddContactOnAddedListener mListener;
 
     interface AddContactOnAddedListener {
@@ -100,6 +100,7 @@ public class AddContactDialog extends DialogFragment {
 
         mUsernameText.setOnEditorActionListener(handleEditorAction());
         mUsernameText.setText(mUsername);
+        mUsernameText.setSelection(mUsername.length());
         mUpdateStatus.setVisibility(View.INVISIBLE);
 
         AlertDialog dialog = (AlertDialog) getDialog();

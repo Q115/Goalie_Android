@@ -38,15 +38,18 @@ public class MainActivityPresenter implements BasePresenter {
             mMainActivityView.showLogin();
         } else if (!isSyncedOnStartup) {
             isSyncedOnStartup = true;
+            mMainActivityView.updateProgress(true);
             RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
             sm.setListener(new RESTSync.Listener() {
                 @Override
                 public void onSuccess() {
                     mMainActivityView.reloadAll();
+                    mMainActivityView.updateProgress(false);
                 }
 
                 @Override
                 public void onFailure(String errMsg) {
+                    mMainActivityView.updateProgress(false);
                 }
             });
             sm.execute();

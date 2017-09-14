@@ -16,6 +16,7 @@
 package com.github.q115.goalie_android.services;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -140,13 +141,13 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String description, Intent intent) {
+        String channelID = getNotificationChannelID();
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Bitmap largeNotificationImage = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.app_name))
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelID)
                 .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(description)
@@ -163,5 +164,26 @@ public class MessagingService extends FirebaseMessagingService {
         // Get the notification manager & publish the notification
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(Constants.ID_NOTIFICATION_BROADCAST, notification);
+    }
+
+    private String getNotificationChannelID() {
+        final String channelID = "GoalieChannelID";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            CharSequence name = getString(R.string.app_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+
+            NotificationChannel mChannel = new NotificationChannel(channelID, name, importance);
+            mChannel.setDescription(description);
+            mChannel.enableLights(true);
+            mChannel.enableVibration(true);
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
+
+        return channelID;
     }
 }

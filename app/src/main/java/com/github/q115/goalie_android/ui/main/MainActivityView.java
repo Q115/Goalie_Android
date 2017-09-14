@@ -22,4 +22,6 @@ public interface MainActivityView extends BaseView<MainActivityPresenter> {
     void showLogin();
 
     void reloadAll();
+
+    void updateProgress(boolean shouldShow);
 }
