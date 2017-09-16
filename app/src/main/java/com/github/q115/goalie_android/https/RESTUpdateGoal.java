@@ -34,8 +34,8 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTUpdateGoal extends RESTBase<String> {
     private RESTUpdateGoal.Listener mListener;
-    private String mGuid;
-    private Goal.GoalCompleteResult mGoalCompleteResult;
+    private final String mGuid;
+    private final Goal.GoalCompleteResult mGoalCompleteResult;
 
     public RESTUpdateGoal(String username, String guid, Goal.GoalCompleteResult goalCompleteResult) {
         mUsername = username;

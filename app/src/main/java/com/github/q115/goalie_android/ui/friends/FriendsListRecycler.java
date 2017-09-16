@@ -36,10 +36,10 @@ import java.util.TreeMap;
 
 public class FriendsListRecycler extends RecyclerView.Adapter {
     private class FriendsHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        private ImageView mFriendImage;
-        private TextView mFriendName;
-        private TextView mFriendReputation;
-        private FragmentActivity mContext;
+        private final ImageView mFriendImage;
+        private final TextView mFriendName;
+        private final TextView mFriendReputation;
+        private final FragmentActivity mContext;
 
         public FriendsHolder(View itemView, FragmentActivity context) {
             super(itemView);
@@ -58,7 +58,7 @@ public class FriendsListRecycler extends RecyclerView.Adapter {
         }
     }
 
-    private FragmentActivity mContext;
+    private final FragmentActivity mContext;
     private ArrayList<User> mUserList;
 
     public FriendsListRecycler(FragmentActivity context) {

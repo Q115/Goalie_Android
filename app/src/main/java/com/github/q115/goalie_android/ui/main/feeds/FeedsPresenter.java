@@ -21,7 +21,7 @@ import com.github.q115.goalie_android.ui.BasePresenter;
  */
 
 public class FeedsPresenter implements BasePresenter {
-    private FeedsView mFeedsView;
+    private final FeedsView mFeedsView;
 
     public FeedsPresenter(@NonNull FeedsView feedsView) {
         mFeedsView = feedsView;

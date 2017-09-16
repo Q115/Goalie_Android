@@ -45,7 +45,7 @@ public class User extends BaseModel {
     public Bitmap profileBitmapImage;
 
     @ColumnIgnore
-    public HashMap<String, Goal> activeGoals; // username -> goal
+    public final HashMap<String, Goal> activeGoals; // username -> goal
 
     @ColumnIgnore
     public HashMap<String, Goal> finishedGoals; // username -> goal

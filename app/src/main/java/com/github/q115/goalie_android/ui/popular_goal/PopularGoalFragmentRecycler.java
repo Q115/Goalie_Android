@@ -30,7 +30,7 @@ import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
 
 public class PopularGoalFragmentRecycler extends RecyclerView.Adapter {
     private class PopularGoalHolder extends RecyclerView.ViewHolder {
-        private TextView mGoalName;
+        private final TextView mGoalName;
 
         public PopularGoalHolder(View itemView) {
             super(itemView);
@@ -38,8 +38,8 @@ public class PopularGoalFragmentRecycler extends RecyclerView.Adapter {
         }
     }
 
-    private FragmentActivity mContext;
-    private String[] mPopularGoalArray;
+    private final FragmentActivity mContext;
+    private final String[] mPopularGoalArray;
 
     public PopularGoalFragmentRecycler(FragmentActivity context) {
         this.mContext = context;

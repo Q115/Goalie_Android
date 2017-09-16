@@ -73,7 +73,7 @@ public abstract class BaseRefresherFragment extends Fragment {
         };
     }
 
-    public void syncComplete(boolean isSuccessful, String errMsg) {
+    private void syncComplete(boolean isSuccessful, String errMsg) {
         mSwipeRefreshLayout.setRefreshing(false);
         if (isSuccessful) {
             if (getActivity() instanceof MainActivity)

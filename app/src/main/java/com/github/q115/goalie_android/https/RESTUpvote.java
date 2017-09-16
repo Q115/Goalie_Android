@@ -30,7 +30,7 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTUpvote extends RESTBase<String> {
     private RESTUpvote.Listener mListener;
-    private String mGuid;
+    private final String mGuid;
 
     public RESTUpvote(String username, String guid) {
         mUsername = username;

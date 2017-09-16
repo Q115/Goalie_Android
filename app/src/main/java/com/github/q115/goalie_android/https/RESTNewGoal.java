@@ -35,13 +35,13 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTNewGoal extends RESTBase<String> {
     private RESTNewGoal.Listener mListener;
-    private String mTitle;
-    private long mStart;
-    private long mEnd;
-    private long mWager;
-    private String mEncouragement;
-    private String mReferee;
-    private boolean isGoalPublic;
+    private final String mTitle;
+    private final long mStart;
+    private final long mEnd;
+    private final long mWager;
+    private final String mEncouragement;
+    private final String mReferee;
+    private final boolean isGoalPublic;
 
     public RESTNewGoal(String username, String title, long start, long end, long wager,
                        String encouragement, String referee, boolean isGoalPublic) {

@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTSync extends RESTBase<String> {
     private RESTSync.Listener mListener;
-    private long mLastSyncedTimeEpoch;
+    private final long mLastSyncedTimeEpoch;
     private static boolean isSyncing;
 
     public static boolean isSyncing() {
@@ -168,7 +169,7 @@ public class RESTSync extends RESTBase<String> {
         // check if activieGoals changed
         HashMap<String, Goal> localActiveGoals = UserHelper.getInstance().getOwnerProfile().activeGoals;
 
-        Set<String> keySet = localActiveGoals.keySet();
+        Set<String> keySet = new HashSet<>(localActiveGoals.keySet());
         for (String key : keySet) {
             Goal localActiveGoal = localActiveGoals.get(key);
             Goal fetchedGoal = goalHash.get(localActiveGoal.guid);

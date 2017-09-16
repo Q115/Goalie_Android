@@ -23,7 +23,7 @@ public class MessagingServiceUtil {
         void onNotification();
     }
 
-    private static HashMap<String, MessagingServiceListener> MSGListener = new HashMap<>();
+    private static final HashMap<String, MessagingServiceListener> MSGListener = new HashMap<>();
 
     public static void setMessagingServiceListener(String id, MessagingServiceListener messagingServiceListener) {
         if (messagingServiceListener != null)

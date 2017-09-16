@@ -63,10 +63,10 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
     }
 
     protected static HashMap<String, Drawable> mImages;
-    protected FragmentActivity mContext;
+    protected final FragmentActivity mContext;
     protected ArrayList<Goal> mGoalList;
-    private DateFormat mDF;
-    private boolean isRequest;
+    private final DateFormat mDF;
+    private final boolean isRequest;
 
     protected BaseGoalRecyler(FragmentActivity context, boolean isRequest) {
         this.mContext = context;

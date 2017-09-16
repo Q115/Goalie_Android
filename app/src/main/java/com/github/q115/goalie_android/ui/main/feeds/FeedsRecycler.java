@@ -46,10 +46,10 @@ import java.util.HashSet;
 
 public class FeedsRecycler extends RecyclerView.Adapter {
     private class FeedsHolder extends RecyclerView.ViewHolder {
-        private TextView mGoalPerson;
-        private TextView mGoalResult;
-        private TextView mUpvoteCount;
-        private Button mGoalFeedAction;
+        private final TextView mGoalPerson;
+        private final TextView mGoalResult;
+        private final TextView mUpvoteCount;
+        private final Button mGoalFeedAction;
 
         public FeedsHolder(View itemView) {
             super(itemView);
@@ -63,9 +63,9 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     private static HashSet<String> mHasVoted; // TODO: doesn't persist over restart.
     private static HashMap<String, Drawable> mCachedImages;
 
-    private FragmentActivity mContext;
+    private final FragmentActivity mContext;
     private ArrayList<GoalFeed> mGoalFeedList;
-    private DelayedProgressDialog mProgressDialog;
+    private final DelayedProgressDialog mProgressDialog;
 
     public FeedsRecycler(FragmentActivity context) {
         this.mContext = context;

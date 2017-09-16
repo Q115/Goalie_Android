@@ -166,7 +166,7 @@ public class AddContactDialog extends DialogFragment {
             public void onSuccess() {
                 progressDialog.cancel();
                 mListener.onAdded(mUsername);
-                dismiss();
+                dismissAllowingStateLoss();
             }
 
             @Override

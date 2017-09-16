@@ -35,8 +35,8 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTUploadPhoto extends RESTBase<String> {
     private RESTUploadPhoto.Listener mListener;
-    private Bitmap mProfileImage;
-    private String mBoundary;
+    private final Bitmap mProfileImage;
+    private final String mBoundary;
 
     public RESTUploadPhoto(Bitmap profileImage, String username) {
         this.mProfileImage = profileImage;
@@ -103,7 +103,7 @@ public class RESTUploadPhoto extends RESTBase<String> {
         return baos.toByteArray();
     }
 
-    public byte[] getBytesFromString(String string) {
+    private byte[] getBytesFromString(String string) {
         return string.getBytes(Charset.defaultCharset());
     }
 

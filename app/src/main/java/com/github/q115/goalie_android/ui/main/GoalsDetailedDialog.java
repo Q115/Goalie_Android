@@ -56,9 +56,9 @@ public class GoalsDetailedDialog extends DialogFragment {
     private Bitmap mProfileImage;
 
     private DelayedProgressDialog delayedProgressDialog;
-    private View.OnClickListener deleteAction;
-    private View.OnClickListener remindAction;
-    private View.OnClickListener updateAction;
+    private final View.OnClickListener deleteAction;
+    private final View.OnClickListener remindAction;
+    private final View.OnClickListener updateAction;
 
     public GoalsDetailedDialog() {
         super();
@@ -228,7 +228,7 @@ public class GoalsDetailedDialog extends DialogFragment {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultString);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
-                dismiss();
+                dismissAllowingStateLoss();
             }
 
             @Override
@@ -251,7 +251,7 @@ public class GoalsDetailedDialog extends DialogFragment {
                 delayedProgressDialog.cancel();
                 Toast.makeText(getDialog().getContext(),
                         String.format(getString(R.string.remind_sent), mReferee), Toast.LENGTH_LONG).show();
-                dismiss();
+                dismissAllowingStateLoss();
             }
 
             @Override

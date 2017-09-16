@@ -40,7 +40,7 @@ public class SublimePickerDialog extends DialogFragment {
     // identify which picker (start or end)
     private int viewID;
 
-    private SublimeListenerAdapter mListener;
+    private final SublimeListenerAdapter mListener;
 
     public SublimePickerDialog() {
         mListener = new SublimeListenerAdapter() {

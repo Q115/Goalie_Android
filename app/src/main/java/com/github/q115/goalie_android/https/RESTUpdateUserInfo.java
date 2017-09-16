@@ -33,8 +33,8 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTUpdateUserInfo extends RESTBase<String> {
     private RESTUpdateUserInfo.Listener mListener;
-    private String mBio;
-    private String mPushID;
+    private final String mBio;
+    private final String mPushID;
 
     public RESTUpdateUserInfo(String username, String bio, String pushID) {
         mBio = bio;

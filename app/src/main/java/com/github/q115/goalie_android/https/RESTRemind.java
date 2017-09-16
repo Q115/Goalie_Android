@@ -31,9 +31,9 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTRemind extends RESTBase<String> {
     private RESTRemind.Listener mListener;
-    private String mToUsername;
-    private String mGuid;
-    private boolean isRemindingRef;
+    private final String mToUsername;
+    private final String mGuid;
+    private final boolean isRemindingRef;
 
     public RESTRemind(String fromUsername, String toUsername, String guid, boolean isRemindingRef) {
         this.mUsername = fromUsername;

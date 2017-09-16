@@ -30,7 +30,7 @@ import static junit.framework.Assert.assertEquals;
  */
 @RunWith(RobolectricTestRunner.class)
 public class InstanceIDServiceTest extends BaseTest {
-    private String validToken = "this_is_a_valid_token__this_is_a_valid_token__this_is_a_valid_token";
+    private final String validToken = "this_is_a_valid_token__this_is_a_valid_token__this_is_a_valid_token";
 
     @Before
     public void setup() {

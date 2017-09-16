@@ -34,7 +34,7 @@ import static com.github.q115.goalie_android.Constants.URL;
 
 public class RESTRegister extends RESTBase<String> {
     private RESTRegister.Listener mListener;
-    private String mPushID;
+    private final String mPushID;
     private static boolean isRegistering;
 
     public RESTRegister(String username, String pushID) {

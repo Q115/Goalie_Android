@@ -155,7 +155,7 @@ public class UpdateProfileDialog extends DialogFragment {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("bio", mBio);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
-                dismiss();
+                dismissAllowingStateLoss();
             }
 
             @Override
