@@ -39,9 +39,10 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
 
     public MainActivityPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
-        mTitles = new String[]{context.getString(R.string.tab_feeds),
+        mTitles = new String[]{
                 context.getString(R.string.tab_my_goal),
-                context.getString(R.string.tab_requests)};
+                context.getString(R.string.tab_requests),
+                context.getString(R.string.tab_feeds)};
     }
 
     @Override
@@ -50,13 +51,13 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
         // save the appropriate reference depending on position
         switch (position) {
             case 0:
-                mFeedsPresenter = new FeedsPresenter((FeedsFragment) createdFragment);
-                break;
-            case 1:
                 mMyGoalsPresenter = new MyGoalsPresenter((MyGoalsFragment) createdFragment);
                 break;
-            case 2:
+            case 1:
                 mRequestsPresenter = new RequestsPresenter((RequestsFragment) createdFragment);
+                break;
+            case 2:
+                mFeedsPresenter = new FeedsPresenter((FeedsFragment) createdFragment);
                 break;
         }
         return createdFragment;
@@ -66,11 +67,11 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return FeedsFragment.newInstance();
-            case 1:
                 return MyGoalsFragment.newInstance();
-            case 2:
+            case 1:
                 return RequestsFragment.newInstance();
+            case 2:
+                return FeedsFragment.newInstance();
         }
         return null;
     }

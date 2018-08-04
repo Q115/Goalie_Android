@@ -49,17 +49,6 @@ public class ProfileFragmentPresenter implements BasePresenter {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public File getTempImageFileForOwner() {
-        File newFile = new File(ImageHelper.getInstance().getImagePrivateStorageDirectory(
-                UserHelper.getInstance().getOwnerProfile().username + "Temp.png"));
-        if (!newFile.exists()) {
-            newFile.getParentFile().mkdirs();
-        }
-
-        return newFile;
-    }
-
     public void newProfileImageSelected(final Bitmap image) {
         if (image == null)
             return;

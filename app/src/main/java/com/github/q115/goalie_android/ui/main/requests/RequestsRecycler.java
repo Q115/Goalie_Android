@@ -57,7 +57,7 @@ public class RequestsRecycler extends BaseGoalRecyler {
         Collections.sort(mGoalList, new Comparator<Goal>() {
             @Override
             public int compare(Goal a1, Goal a2) {
-                return (int) (a2.activityDate - a1.activityDate);
+                return (int) (a2.endDate - a1.endDate);
             }
         });
     }

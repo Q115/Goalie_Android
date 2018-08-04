@@ -113,7 +113,7 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
                 break;
             case Ongoing:
                 viewHolder.mStatusTxt.setText(R.string.status_ongoing);
-                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, tab_indicator_text));
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.green));
                 break;
             case Failed:
                 viewHolder.mStatusTxt.setText(R.string.status_failed);

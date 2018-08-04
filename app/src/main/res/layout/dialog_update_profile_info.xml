@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/bio_hint"
         android:imeOptions="flagNoExtractUi"
-        android:inputType="textNoSuggestions"
+        android:inputType="textCapSentences"
         android:maxLength="@integer/bio_length" />
 
     <TextView

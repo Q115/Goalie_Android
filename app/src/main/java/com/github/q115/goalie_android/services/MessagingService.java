@@ -95,7 +95,7 @@ public class MessagingService extends FirebaseMessagingService {
 
     private void remind() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("tab", 1 + mResultCode); // result = isRemindingRef
+        intent.putExtra("tab", mResultCode); // result = isRemindingRef
         showNotification(getString(R.string.notification_remind), mMessage, intent);
     }
 
@@ -105,7 +105,7 @@ public class MessagingService extends FirebaseMessagingService {
             Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[mResultCode];
             if (goalCompleteResult.isActive()) {
                 intent2 = new Intent(this, MainActivity.class);
-                intent2.putExtra("tab", 1);
+                intent2.putExtra("tab", 0);
             } else {
                 intent2 = ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username);
             }
@@ -119,7 +119,7 @@ public class MessagingService extends FirebaseMessagingService {
     private void request() {
         sync();
         Intent intent3 = new Intent(this, MainActivity.class);
-        intent3.putExtra("tab", 2);
+        intent3.putExtra("tab", 0);
         showNotification(getString(R.string.notification_request), mMessage, intent3);
     }
 

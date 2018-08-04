@@ -174,4 +174,14 @@ public class ImageHelper {
                 return "";
         }
     }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public File getTempImageFileForUser(String username) {
+        File newFile = new File(getImagePrivateStorageDirectory(username + "Temp.png"));
+        if (!newFile.exists()) {
+            newFile.getParentFile().mkdirs();
+        }
+
+        return newFile;
+    }
 }

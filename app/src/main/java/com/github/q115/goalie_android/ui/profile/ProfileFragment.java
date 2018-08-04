@@ -1,42 +1,30 @@
 package com.github.q115.goalie_android.ui.profile;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
 import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
-import java.io.File;
-import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -59,10 +47,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment implements ProfileFragmentView, MessagingServiceUtil.MessagingServiceListener {
     private ProfileFragmentPresenter mPresenter;
-
-    private ImageView mEdit;
-    private ImageView mProfile;
     private DelayedProgressDialog mProgressDialog;
+    private ProfileBioViewHolder mProfileBioViewHolder;
 
     public ProfileFragment() {
     }
@@ -76,25 +62,13 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        View itemView = inflater.inflate(R.layout.list_header_profile_bio, container, false);
+        mProfileBioViewHolder = new ProfileBioViewHolder(itemView, this);
+
         RecyclerView activityList = rootView.findViewById(R.id.profile_activity_list);
         activityList.setLayoutManager(new LinearLayoutManager(getContext()));
         activityList.setHasFixedSize(true);
-        activityList.setAdapter(new ProfileFragmentRecycler(getActivity()));
-
-        mEdit = rootView.findViewById(R.id.profile_edit);
-        mEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editProfile();
-            }
-        });
-        mProfile = rootView.findViewById(R.id.profile_image);
-        mProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changePhoto();
-            }
-        });
+        activityList.setAdapter(new ProfileFragmentHeaderRecycler(getActivity(), mProfileBioViewHolder));
 
         mProgressDialog = new DelayedProgressDialog();
         mProgressDialog.setCancelable(false);
@@ -123,59 +97,16 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
 
     @Override
     public void setupView(String username, String bio, long points) {
-        if (getView() != null) {
-            View view = getView();
-            ((TextView) view.findViewById(R.id.profile_username)).setText(username);
-            ((TextView) view.findViewById(R.id.profile_bio)).setText(bio);
-            ((TextView) view.findViewById(R.id.profile_points)).setText(String.format(getString(R.string.reputation), points));
-
-            User user = UserHelper.getInstance().getAllContacts().get(username);
-            if (user != null && user.profileBitmapImage != null)
-                mProfile.setImageDrawable(ImageHelper.getRoundedCornerDrawable(
-                        getResources(), user.profileBitmapImage, Constants.ROUNDED_PROFILE));
+        if (getView() != null && mProfileBioViewHolder != null) {
+            mProfileBioViewHolder.setupUserProfile(username, bio, points);
         }
     }
 
     @Override
     public void toggleOwnerSpecificFeatures(boolean isOwner) {
-        mEdit.setEnabled(isOwner);
-        mProfile.setEnabled(isOwner);
-        mEdit.setVisibility(isOwner ? View.VISIBLE : View.INVISIBLE);
+        mProfileBioViewHolder.toggleOwnerSpecificFeatures(isOwner);
     }
 
-    private void editProfile() {
-        UpdateProfileDialog passwordDialog = new UpdateProfileDialog();
-        Bundle bundle = new Bundle();
-        bundle.putString("bio", UserHelper.getInstance().getOwnerProfile().bio);
-        passwordDialog.setArguments(bundle);
-        passwordDialog.setTargetFragment(ProfileFragment.this, Constants.RESULT_PROFILE_UPDATE);
-        passwordDialog.show(getActivity().getSupportFragmentManager(), "UpdateProfileDialog");
-    }
-
-    private void changePhoto() {
-        int cameraPermission = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA);
-        int storagePermission = ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (cameraPermission != PackageManager.PERMISSION_GRANTED
-                || storagePermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE);
-        } else {
-            String[] opsChars = {getString(R.string.take_photo), getString(R.string.choose_photo)};
-
-            AlertDialog.Builder getImageFrom = new AlertDialog.Builder(getActivity());
-            getImageFrom.setTitle(getString(R.string.select_photo));
-            getImageFrom.setItems(opsChars, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    changePhotoActionSelected(i);
-                }
-            });
-            getImageFrom.show();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -187,39 +118,11 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
                 }
 
                 if (isAllPermissionsGranted)
-                    changePhoto();
+                    mProfileBioViewHolder.changePhoto();
                 else
                     Toast.makeText(getActivity(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
             default:
                 break;
-        }
-    }
-
-    private void changePhotoActionSelected(int position) {
-        if (position == 0) { //take photo
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                File newFile = mPresenter.getTempImageFileForOwner();
-                Uri uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider), newFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-
-                List<ResolveInfo> cameraActivities = getActivity().getPackageManager()
-                        .queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                for (ResolveInfo activity : cameraActivities) {
-                    getActivity().grantUriPermission(
-                            activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                }
-
-                startActivityForResult(takePictureIntent, Constants.RESULT_PROFILE_IMAGE_TAKEN);
-            }
-        } else if (position == 1) { //select photo
-            Intent imageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imageIntent.setType("image/*");
-            imageIntent.putExtra("return-data", true);
-            imageIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            startActivityForResult(
-                    Intent.createChooser(imageIntent, getString(R.string.select_photo)),
-                    Constants.RESULT_PROFILE_IMAGE_SELECTED);
         }
     }
 
@@ -236,7 +139,7 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
         } else if (requestCode == Constants.RESULT_PROFILE_IMAGE_TAKEN) { // image taken. Crop the image
             if (resultCode == RESULT_OK) {
                 Uri uri = FileProvider.getUriForFile(getActivity(), getString(R.string.file_provider),
-                        mPresenter.getTempImageFileForOwner());
+                        ImageHelper.getInstance().getTempImageFileForUser(UserHelper.getInstance().getOwnerProfile().username));
                 getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                 startImageCrop(uri);
@@ -255,7 +158,7 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
             }
         } else if (requestCode == Constants.RESULT_PROFILE_UPDATE && resultCode == Activity.RESULT_OK) { // bio updated
             if (getView() != null) {
-                ((TextView) getView().findViewById(R.id.profile_bio)).setText(data.getStringExtra("bio"));
+                mProfileBioViewHolder.bioUpdated(data.getStringExtra("bio"));
                 Toast.makeText(getActivity(), getString(R.string.updated), Toast.LENGTH_SHORT).show();
             }
         }
@@ -280,8 +183,7 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
 
     public void uploadComplete(boolean isSuccessful, Bitmap image, String err) {
         if (isSuccessful) {
-            mProfile.setImageDrawable(ImageHelper.getRoundedCornerDrawable(
-                    getResources(), image, Constants.ROUNDED_PROFILE));
+            mProfileBioViewHolder.uploadCompleted(image);
             Toast.makeText(getActivity(), getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), err, Toast.LENGTH_SHORT).show();
@@ -292,7 +194,7 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
     public void reloadList() {
         if (getView() != null) {
             RecyclerView profileList = getView().findViewById(R.id.profile_activity_list);
-            ((ProfileFragmentRecycler) profileList.getAdapter()).notifyDataSetHasChanged();
+            ((ProfileFragmentHeaderRecycler) profileList.getAdapter()).notifyDataSetHasChanged();
             showHideEmptyMessage();
         }
     }
@@ -317,8 +219,7 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
             @Override
             public void run() {
                 if (getView() != null) {
-                    ((TextView) getView().findViewById(R.id.profile_points)).setText(
-                            String.format(getString(R.string.reputation), UserHelper.getInstance().getOwnerProfile().reputation));
+                    mProfileBioViewHolder.pointUpdated(UserHelper.getInstance().getOwnerProfile().reputation);
                 }
                 reloadList();
             }

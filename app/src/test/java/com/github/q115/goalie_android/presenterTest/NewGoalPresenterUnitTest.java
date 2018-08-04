@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.Config;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -50,7 +51,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@Config(manifest = Config.NONE)
 public class NewGoalPresenterUnitTest extends BaseTest {
     private NewGoalFragmentPresenter mPresenter;
 
