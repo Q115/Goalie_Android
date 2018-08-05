@@ -6,10 +6,7 @@ import android.support.annotation.NonNull;
 import com.github.q115.goalie_android.https.RESTUploadPhoto;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.ui.BasePresenter;
-import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
-
-import java.io.File;
 
 /*
  * Copyright 2017 Qi Li

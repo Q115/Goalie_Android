@@ -43,7 +43,7 @@ public class AddContactDialog extends DialogFragment {
     private EditText mUsernameText;
     private AddContactOnAddedListener mListener;
 
-    interface AddContactOnAddedListener {
+    public interface AddContactOnAddedListener {
         void onAdded(String username);
     }
 

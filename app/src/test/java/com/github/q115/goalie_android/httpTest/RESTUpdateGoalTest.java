@@ -140,7 +140,8 @@ public class RESTUpdateGoalTest extends BaseRESTTest {
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String guid) {
+                assertTrue(guid != null);
                 RESTSync sm = new RESTSync(username, 0);
                 sm.setListener(new RESTSync.Listener() {
                     @Override

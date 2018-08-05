@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -42,6 +43,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
     private ViewPager mViewPager;
     private MainActivityPagerAdapter mViewPagerAdapter;
     private DelayedProgressDialog progressDialog;
+
+    public static Intent newIntent(Context context, int tab) {
+        Intent newIntent = new Intent(context, MainActivity.class);
+        newIntent.putExtra("tab", tab);
+        return newIntent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

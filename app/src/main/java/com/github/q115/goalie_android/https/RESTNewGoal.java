@@ -56,7 +56,7 @@ public class RESTNewGoal extends RESTBase<String> {
     }
 
     public interface Listener extends RESTBaseListener {
-        void onSuccess();
+        void onSuccess(String guid);
 
         void onFailure(String errMsg);
     }
@@ -117,6 +117,6 @@ public class RESTNewGoal extends RESTBase<String> {
         }
 
         if (mListener != null)
-            mListener.onSuccess();
+            mListener.onSuccess(guid);
     }
 }

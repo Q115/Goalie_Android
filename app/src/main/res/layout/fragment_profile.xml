@@ -7,24 +7,10 @@
     android:layout_margin="4dp"
     card_view:cardCornerRadius="4dp">
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/profile_activity_list"
+        style="@style/RecycleViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/profile_activity_list"
-            style="@style/RecycleViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:id="@+id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="@string/no_profile_activities"
-            android:textStyle="italic"/>
-    </LinearLayout>
 </android.support.v7.widget.CardView>

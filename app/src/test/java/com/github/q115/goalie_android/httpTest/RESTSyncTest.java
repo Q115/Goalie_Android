@@ -42,7 +42,8 @@ public class RESTSyncTest extends BaseRESTTest {
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", username, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String guid) {
+                assertTrue(guid != null);
                 assertEquals(GoalHelper.getInstance().getFeeds().size(), 0);
                 RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
                 sm2.setListener(pair.second);

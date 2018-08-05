@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.widget.ProgressBar;
@@ -34,12 +35,17 @@ import com.github.q115.goalie_android.utils.ImageHelper;
 
 public class DelayedProgressDialog extends DialogFragment {
     private static final int DELAY_MILLISECOND = 450;
-    private static final int SHOW_MIN_MILLISECOND = 300;
+    private static final int MINIMUM_SHOW_DURATION_MILLISECOND = 300;
+    private static final int PROGRESS_CONTENT_SIZE_DP = 80;
 
     private ProgressBar mProgressBar;
     private boolean startedShowing;
     private long mStartMillisecond;
     private long mStopMillisecond;
+
+    private FragmentManager fragmentManager;
+    private String tag;
+    private Handler showHandler;
 
     // default constructor. Needed so rotation doesn't crash
     public DelayedProgressDialog() {
@@ -63,35 +69,53 @@ public class DelayedProgressDialog extends DialogFragment {
         mProgressBar = getDialog().findViewById(R.id.progress);
 
         if (getDialog().getWindow() != null) {
-            int px = ImageHelper.dpToPx(getResources(), 80);
+            int px = ImageHelper.dpToPx(getResources(), PROGRESS_CONTENT_SIZE_DP);
             getDialog().getWindow().setLayout(px, px);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 
     @Override
-    public void show(final FragmentManager fm, final String tag) {
+    public void show(FragmentManager fm, String tag) {
+        if (isAdded())
+            return;
+
+        this.fragmentManager = fm;
+        this.tag = tag;
         mStartMillisecond = System.currentTimeMillis();
         startedShowing = false;
         mStopMillisecond = Long.MAX_VALUE;
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        showHandler = new Handler();
+        showHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                // only show if not already cancelled
                 if (mStopMillisecond > System.currentTimeMillis())
-                    showDialogAfterDelay(fm, tag);
+                    showDialogAfterDelay();
             }
         }, DELAY_MILLISECOND);
     }
 
-    private void showDialogAfterDelay(FragmentManager fm, String tag) {
+    private void showDialogAfterDelay() {
         startedShowing = true;
-        super.show(fm, tag);
+
+        DialogFragment dialogFragment = (DialogFragment) fragmentManager.findFragmentByTag(tag);
+        if (dialogFragment != null) {
+            fragmentManager.beginTransaction().show(dialogFragment).commitAllowingStateLoss();
+        } else {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.add(this, tag);
+            ft.commitAllowingStateLoss();
+        }
     }
 
     public void cancel() {
+        if(showHandler == null)
+            return;
+
         mStopMillisecond = System.currentTimeMillis();
+        showHandler.removeCallbacksAndMessages(null);
 
         if (startedShowing) {
             if (mProgressBar != null) {
@@ -99,20 +123,21 @@ public class DelayedProgressDialog extends DialogFragment {
             } else {
                 cancelWhenNotShowing();
             }
-        }
+        } else
+            dismiss();
     }
 
     private void cancelWhenShowing() {
-        if (mStopMillisecond < mStartMillisecond + DELAY_MILLISECOND + SHOW_MIN_MILLISECOND) {
+        if (mStopMillisecond < mStartMillisecond + DELAY_MILLISECOND + MINIMUM_SHOW_DURATION_MILLISECOND) {
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    dismissAllowingStateLoss();
+                    dismiss();
                 }
-            }, SHOW_MIN_MILLISECOND);
+            }, MINIMUM_SHOW_DURATION_MILLISECOND);
         } else {
-            dismissAllowingStateLoss();
+            dismiss();
         }
     }
 
@@ -121,8 +146,15 @@ public class DelayedProgressDialog extends DialogFragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                dismissAllowingStateLoss();
+                dismiss();
             }
         }, DELAY_MILLISECOND);
+    }
+
+    @Override
+    public void dismiss() {
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.remove(this);
+        ft.commitAllowingStateLoss();
     }
 }

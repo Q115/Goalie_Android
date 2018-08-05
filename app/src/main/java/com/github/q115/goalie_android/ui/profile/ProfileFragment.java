@@ -199,20 +199,6 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
         }
     }
 
-    private void showHideEmptyMessage() {
-        if (getView() != null) {
-            RecyclerView profileList = getView().findViewById(R.id.profile_activity_list);
-
-            if (profileList.getAdapter().getItemCount() == 0) {
-                profileList.setVisibility(View.GONE);
-                getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
-            } else {
-                profileList.setVisibility(View.VISIBLE);
-                getView().findViewById(R.id.empty).setVisibility(View.GONE);
-            }
-        }
-    }
-
     @Override
     public void onNotification() {
         getActivity().runOnUiThread(new Runnable() {
@@ -224,5 +210,12 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
                 reloadList();
             }
         });
+    }
+
+    private void showHideEmptyMessage() {
+        if (getView() != null && mProfileBioViewHolder != null) {
+            RecyclerView profileList = getView().findViewById(R.id.profile_activity_list);
+            mProfileBioViewHolder.toggleEmptyView(profileList.getAdapter().getItemCount() == 1);
+        }
     }
 }

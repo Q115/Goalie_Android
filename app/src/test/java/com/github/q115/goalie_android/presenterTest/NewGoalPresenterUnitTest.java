@@ -71,7 +71,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     @Test
     public void onStart() {
         mPresenter.start();
-        verify(mView).updateTime(false, "(Not Set)");
+        verify(mView).updateTime("(Not Set)");
         verify(mView).updateWager(5, 100, 5);
         verify(mView, never()).updateRefereeOnSpinner(0);
     }
@@ -117,19 +117,24 @@ public class NewGoalPresenterUnitTest extends BaseTest {
 
     @Test
     public void refereeArray() throws Exception {
-        String[] strings = mPresenter.getRefereeArray();
-        assertEquals(strings.length, 1);
+        when(mContext.getString(R.string.new_username))
+            .thenReturn("(New Username)");
+
+        String[] strings = mPresenter.getRefereeArray(mContext);
+        assertEquals(strings.length, 2);
         assertEquals(strings[0], "");
+        assertEquals(strings[1], mContext.getString(R.string.new_username));
 
         UserHelper.getInstance().addUser(new User("user"));
         UserHelper.getInstance().addUser(new User("self"));
         UserHelper.getInstance().getOwnerProfile().username = "self";
 
-        strings = mPresenter.getRefereeArray();
-        assertEquals(strings.length, 3);
+        strings = mPresenter.getRefereeArray(mContext);
+        assertEquals(strings.length, 4);
         assertEquals(strings[0], "");
-        assertEquals(strings[1], "self");
-        assertEquals(strings[2], "user");
+        assertEquals(strings[1], mContext.getString(R.string.new_username));
+        assertEquals(strings[2], "self");
+        assertEquals(strings[3], "user");
     }
 
     @Test
@@ -148,17 +153,17 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         when(mContext.getString(R.string.username_error))
                 .thenReturn("username_error");
 
-        mPresenter.setGoal(mContext, "", encouragement, referee, isGoalPublic);
+        mPresenter.setGoal(mContext, "", encouragement, referee, 0, isGoalPublic);
         verify(mView).onSetGoal(false, "error_goal_no_title");
 
-        mPresenter.setGoal(mContext, title, encouragement, referee, isGoalPublic);
+        mPresenter.setGoal(mContext, title, encouragement, referee, 0, isGoalPublic);
         verify(mView).onSetGoal(false, "error_goal_invalid_date");
 
         pickAValidDate();
-        mPresenter.setGoal(mContext, title, encouragement, "", isGoalPublic);
+        mPresenter.setGoal(mContext, title, encouragement, "", 0, isGoalPublic);
         verify(mView).onSetGoal(false, "error_goal_no_referee");
 
-        mPresenter.setGoal(mContext, title, encouragement, "ref", isGoalPublic);
+        mPresenter.setGoal(mContext, title, encouragement, "ref", 0, isGoalPublic);
         verify(mView).onSetGoal(false, "username_error");
     }
 
@@ -170,7 +175,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
 
         pickAValidDate();
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
-        mPresenter.setGoal(mContext, title, encouragement, referee, true);
+        mPresenter.setGoal(mContext, title, encouragement, referee, 0, true);
         verify(mView).updateProgress(true);
         verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).onSetGoal(true, "");
     }
@@ -179,6 +184,6 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
         Calendar endDate = Calendar.getInstance(Locale.getDefault());
         endDate.add(Calendar.YEAR, 9);
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1, 100);
+        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1,  R.id.goal_end_btn);
     }
 }

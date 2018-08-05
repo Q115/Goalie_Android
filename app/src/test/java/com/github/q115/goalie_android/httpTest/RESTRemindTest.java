@@ -42,7 +42,8 @@ public class RESTRemindTest extends BaseRESTTest {
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String guid) {
+                assertTrue(guid != null);
                 // remind on that goal
                 Object[] array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
                 RESTRemind sm = new RESTRemind(username, friendUsername, ((Goal)array[0]).guid, true);

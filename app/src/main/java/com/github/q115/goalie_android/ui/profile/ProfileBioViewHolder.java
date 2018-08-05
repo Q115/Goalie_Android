@@ -46,6 +46,7 @@ public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
     private android.support.v4.app.Fragment fragment;
     private ImageView mEdit;
     private ImageView mProfile;
+    private TextView emptyView;
 
     public ProfileBioViewHolder(View itemView, android.support.v4.app.Fragment fragment) {
         super(itemView);
@@ -66,6 +67,7 @@ public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
                 changePhoto();
             }
         });
+        emptyView = itemView.findViewById(R.id.empty);
     }
 
     public void setupUserProfile(String username, String bio, long points) {
@@ -160,5 +162,9 @@ public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
     public void pointUpdated(long reputation) {
         ((TextView) itemView.findViewById(R.id.profile_points)).setText(
                 String.format(fragment.getString(R.string.reputation), reputation));
+    }
+
+    public void toggleEmptyView(boolean show) {
+        emptyView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

@@ -2,8 +2,6 @@ package com.github.q115.goalie_android.ui.new_goal;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -46,8 +44,8 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     private final NewGoalFragmentView mNewGoalView;
     private long mStart;
     private long mEnd;
+    private long mAlarmTimeBeforeEnd;
     private int mCurrentRefereeSelection;
-    private boolean mShouldIgnoreRefereeReset;
     private int mWagerIncrement;
 
     public NewGoalFragmentPresenter(@NonNull NewGoalFragmentView newGoalView) {
@@ -60,8 +58,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     }
 
     public void start() {
-        mNewGoalView.updateTime(true, getFormatedTimeString(mStart));
-        mNewGoalView.updateTime(false, mEnd == 0 ? "(Not Set)" : getFormatedTimeString(mEnd));
+        mNewGoalView.updateTime(mEnd == 0 ? "(Not Set)" : getFormatedTimeString(mEnd));
         mNewGoalView.updateWager(getWagering(),
                 UserHelper.getInstance().getOwnerProfile().reputation, mWagerIncrement * WAGER_PERCENTAGE_INCREMENT);
 
@@ -86,13 +83,36 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         return values;
     }
 
-    public String[] getRefereeArray() {
+    public String[] getRefereeArray(Context context) {
         TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
         // include self currently to allow self goals. Uncomment below to remove self as a referee
         //tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
         tempHashMap.put("", null);
+        tempHashMap.put(context.getString(R.string.new_username), null);
 
         return tempHashMap.keySet().toArray(new String[UserHelper.getInstance().getAllContacts().size()]);
+    }
+
+    public String[] getAlarmReminderArray() {
+        return new String[]{"15 Minutes Before", "1 Hour Before", "1 Day Before"};
+    }
+
+    public long getAlarmMillisecondBeforeEndDate(int option) {
+        switch (option) {
+            case 0:
+                mAlarmTimeBeforeEnd = 15 * 60000;
+                break;
+            case 1:
+                mAlarmTimeBeforeEnd = 60 * 60000;
+                break;
+            case 2:
+                mAlarmTimeBeforeEnd = 24 * 60 * 60000;
+                break;
+            default:
+                mAlarmTimeBeforeEnd = 0;
+                break;
+        }
+        return mAlarmTimeBeforeEnd;
     }
 
     private String getFormatedTimeString(long epoch) {
@@ -133,10 +153,8 @@ public class NewGoalFragmentPresenter implements BasePresenter {
 
     // Set correct date and time based on previous selection.
     private void setSublimeDateOptions(SublimeOptions options, int viewID) {
-        long epoch;
-        if (viewID == R.id.goal_start_btn) {
-            epoch = mStart;
-        } else {
+        long epoch = 0;
+        if (viewID == R.id.goal_end_btn) {
             epoch = mEnd;
         }
 
@@ -158,12 +176,10 @@ public class NewGoalFragmentPresenter implements BasePresenter {
                 GregorianCalendar date = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
                 long epoch = date.getTimeInMillis();
 
-                if (viewID == R.id.goal_start_btn)
-                    mStart = epoch;
-                else
+                if (viewID == R.id.goal_end_btn)
                     mEnd = epoch;
 
-                mNewGoalView.updateTime(viewID == R.id.goal_start_btn, getFormatedTimeString(epoch));
+                mNewGoalView.updateTime(getFormatedTimeString(epoch));
             }
         };
     }
@@ -188,7 +204,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         };
     }
 
-    public AdapterView.OnItemSelectedListener getSelectionChangedListener() {
+    public AdapterView.OnItemSelectedListener getRefereeSelectionChangedListener() {
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -196,13 +212,13 @@ public class NewGoalFragmentPresenter implements BasePresenter {
                 if (mCurrentRefereeSelection == i)
                     return;
 
-                // ignore if this field was changed due to a reset
                 mCurrentRefereeSelection = i;
-                if (mShouldIgnoreRefereeReset) {
-                    return;
-                }
 
-                mNewGoalView.resetReferee(true);
+                // new username
+                if (mCurrentRefereeSelection == 1) {
+                    mNewGoalView.resetReferee(true);
+                    mNewGoalView.showNewUsernameDialog();
+                }
             }
 
             @Override
@@ -212,36 +228,17 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         };
     }
 
-    public TextWatcher getTextChangedListener() {
-        return new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //intentionally left blank
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //intentionally left blank
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                mShouldIgnoreRefereeReset = mCurrentRefereeSelection != 0;
-                mNewGoalView.resetReferee(false);
-            }
-        };
-    }
-
-    public void setGoal(Context context, String title, String encouragement, String referee, boolean isGoalPublic) {
-        if (checkGoalIsValid(context, title, referee)) {
+    public void setGoal(Context context, String title, String encouragement, String referee, long alarmMillisecondBeforeEnd, boolean isGoalPublic) {
+        if (checkGoalIsValid(context, title, referee, alarmMillisecondBeforeEnd)) {
             mNewGoalView.updateProgress(true);
             RESTNewGoal rest = new RESTNewGoal(UserHelper.getInstance().getOwnerProfile().username,
                     title, mStart, mEnd, getWagering(), encouragement, referee, isGoalPublic);
             rest.setListener(new RESTNewGoal.Listener() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(String guid) {
                     mNewGoalView.updateProgress(false);
                     mNewGoalView.onSetGoal(true, "");
+                    setAlarmTime(guid);
                 }
 
                 @Override
@@ -254,7 +251,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         }
     }
 
-    private boolean checkGoalIsValid(Context context, String title, String referee) {
+    private boolean checkGoalIsValid(Context context, String title, String referee, long alarmMillisecondBeforeEnd) {
         if (title.isEmpty()) {
             mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_title));
             return false;
@@ -263,6 +260,12 @@ public class NewGoalFragmentPresenter implements BasePresenter {
             mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_invalid_date));
             return false;
         }
+
+        if (mEnd - alarmMillisecondBeforeEnd <= mStart) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.error_alarm_invalid_date));
+            return false;
+        }
+
         if (referee.isEmpty()) {
             mNewGoalView.onSetGoal(false, context.getString(R.string.error_goal_no_referee));
             return false;
@@ -279,5 +282,9 @@ public class NewGoalFragmentPresenter implements BasePresenter {
         }
 
         return true;
+    }
+
+    private void setAlarmTime(String guid) {
+        mNewGoalView.setAlarmTime(mEnd - mAlarmTimeBeforeEnd, guid);
     }
 }

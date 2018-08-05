@@ -42,7 +42,9 @@ public class RESTUpvoteTest extends BaseRESTTest {
         RESTNewGoal sm = new RESTNewGoal(username, "title", 12000, 120000, 55, "encouragement", friendUsername, true);
         sm.setListener(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String guid) {
+                assertTrue(guid != null);
+
                 // upvote on that goal
                 Object[] array = UserHelper.getInstance().getOwnerProfile().activeGoals.values().toArray();
                 RESTUpvote sm = new RESTUpvote(username, ((Goal) array[0]).guid);

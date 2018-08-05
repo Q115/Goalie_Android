@@ -25,8 +25,8 @@
         <LinearLayout
             android:id="@+id/profile_info_layout"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -75,4 +75,13 @@
         android:text="@string/profile_activities"
         android:textColor="@color/white"
         android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="@string/no_profile_activities"
+        android:textStyle="italic"/>
 </LinearLayout>

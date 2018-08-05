@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static android.R.color.tab_indicator_text;
-
 /*
  * Copyright 2017 Qi Li
  *

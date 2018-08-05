@@ -15,19 +15,8 @@
  */
 package com.github.q115.goalie_android.services;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 
-import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTSync;
@@ -83,7 +72,8 @@ public class MessagingService extends FirebaseMessagingService {
                     request();
                     break;
                 default:
-                    showNotification(getString(R.string.notification_title), mMessage, new Intent(this, MainActivity.class));
+                    Intent intent = MainActivity.newIntent(this, 0);
+                    MessagingServiceUtil.showNotification(getString(R.string.notification_title), mMessage, intent, this);
                     break;
             }
         } catch (JSONException je) {
@@ -94,33 +84,30 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void remind() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("tab", mResultCode); // result = isRemindingRef
-        showNotification(getString(R.string.notification_remind), mMessage, intent);
+        Intent intent = MainActivity.newIntent(this, mResultCode); // mResultCode = isRemindingRef
+        MessagingServiceUtil.showNotification(getString(R.string.notification_remind), mMessage, intent, this);
     }
 
     private void response() {
-        Intent intent2;
+        Intent intent;
         if (mResultCode < Goal.GoalCompleteResult.values().length) {
             Goal.GoalCompleteResult goalCompleteResult = Goal.GoalCompleteResult.values()[mResultCode];
             if (goalCompleteResult.isActive()) {
-                intent2 = new Intent(this, MainActivity.class);
-                intent2.putExtra("tab", 0);
+                intent = MainActivity.newIntent(this, 0);
             } else {
-                intent2 = ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username);
+                intent = ProfileActivity.newIntent(this, UserHelper.getInstance().getOwnerProfile().username);
             }
         } else
-            intent2 = new Intent(this, MainActivity.class);
+            intent = MainActivity.newIntent(this, 0);
 
         sync();
-        showNotification(getString(R.string.notification_response), mMessage, intent2);
+        MessagingServiceUtil.showNotification(getString(R.string.notification_response), mMessage, intent, this);
     }
 
     private void request() {
         sync();
-        Intent intent3 = new Intent(this, MainActivity.class);
-        intent3.putExtra("tab", 0);
-        showNotification(getString(R.string.notification_request), mMessage, intent3);
+        Intent intent = MainActivity.newIntent(this, 1);
+        MessagingServiceUtil.showNotification(getString(R.string.notification_request), mMessage, intent, this);
     }
 
     private void sync() {
@@ -138,52 +125,5 @@ public class MessagingService extends FirebaseMessagingService {
             }
         });
         sm.execute();
-    }
-
-    private void showNotification(String title, String description, Intent intent) {
-        String channelID = getNotificationChannelID();
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Bitmap largeNotificationImage = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelID)
-                .setContentIntent(pendingIntent)
-                .setContentTitle(title)
-                .setContentText(description)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setLargeIcon(largeNotificationImage)
-                .setSmallIcon(R.drawable.ic_logo);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
-
-        Notification notification = builder.build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        // Get the notification manager & publish the notification
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(Constants.ID_NOTIFICATION_BROADCAST, notification);
-    }
-
-    private String getNotificationChannelID() {
-        final String channelID = "GoalieChannelID";
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            CharSequence name = getString(R.string.app_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-
-            NotificationChannel mChannel = new NotificationChannel(channelID, name, importance);
-            mChannel.setDescription(description);
-            mChannel.enableLights(true);
-            mChannel.enableVibration(true);
-            mNotificationManager.createNotificationChannel(mChannel);
-        }
-
-        return channelID;
     }
 }

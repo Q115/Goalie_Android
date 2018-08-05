@@ -19,7 +19,7 @@ import com.github.q115.goalie_android.ui.BaseView;
  */
 
 public interface NewGoalFragmentView extends BaseView<NewGoalFragmentPresenter> {
-    void updateTime(boolean isStart, String date);
+    void updateTime(String date);
 
     void updateWager(long wagering, long total, int percent);
 
@@ -27,9 +27,13 @@ public interface NewGoalFragmentView extends BaseView<NewGoalFragmentPresenter> 
 
     void resetReferee(boolean isFromSpinner);
 
+    void showNewUsernameDialog();
+
     void onSetGoal(boolean isSuccessful, String errMsg);
 
     void updateProgress(boolean shouldShow);
 
     void showTimePicker(int viewID);
+
+    void setAlarmTime(long epoch, String guid);
 }

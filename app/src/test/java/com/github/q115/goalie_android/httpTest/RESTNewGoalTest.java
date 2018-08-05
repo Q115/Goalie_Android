@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.util.Pair;
 
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,6 +36,7 @@ import static test_util.RESTUtil.getValidFriendUsername;
  */
 @RunWith(RobolectricTestRunner.class)
 public class RESTNewGoalTest extends BaseRESTTest {
+    private String mGuid;
 
     @Test
     public void setNewGoal() throws Exception {
@@ -51,7 +53,7 @@ public class RESTNewGoalTest extends BaseRESTTest {
             Thread.sleep(1000);
         }
 
-        verify(pair.second).onSuccess();
+        verify(pair.second).onSuccess(mGuid);
 
         User user = UserHelper.getInstance().getAllContacts().get(username);
         assertNotNull(user);
@@ -84,7 +86,7 @@ public class RESTNewGoalTest extends BaseRESTTest {
         sm.setListener(pair.second);
         sm.onResponse("");
 
-        verify(pair.second).onSuccess();
+        verify(pair.second).onSuccess(mGuid);
 
         User friendUser = UserHelper.getInstance().getAllContacts().get(friendUsername);
         assertNotNull(friendUser);
@@ -100,7 +102,9 @@ public class RESTNewGoalTest extends BaseRESTTest {
 
         RESTNewGoal.Listener listener = Mockito.spy(new RESTNewGoal.Listener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String guid) {
+                assertTrue(guid != null);
+                mGuid = guid;
                 isOperationCompleteList.set(index, true);
             }
 

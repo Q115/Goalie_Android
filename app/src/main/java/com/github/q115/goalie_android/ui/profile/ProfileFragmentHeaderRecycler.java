@@ -46,7 +46,7 @@ public class ProfileFragmentHeaderRecycler extends BaseGoalRecyler {
         Collections.sort(mGoalList, new Comparator<Goal>() {
             @Override
             public int compare(Goal a1, Goal a2) {
-                return (int) (a2.endDate - a1.endDate);
+                return (int) (a2.startDate - a1.startDate);
             }
         });
     }
