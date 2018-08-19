@@ -1,10 +1,16 @@
 package com.github.q115.goalie_android.utils;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.GoalFeed;
 import com.github.q115.goalie_android.models.Goal_Table;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.services.AlarmService;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
@@ -122,5 +128,12 @@ public class GoalHelper {
             Diagnostic.logError(Diagnostic.DiagnosticFlag.UserHelper, "Error adding goal: " + ex.toString());
             return false;
         }
+    }
+
+    public void cancelAlarm(String guid, Context context) {
+        Intent intent = AlarmService.newIntent(context, guid);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, guid.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.cancel(pendingIntent);
     }
 }

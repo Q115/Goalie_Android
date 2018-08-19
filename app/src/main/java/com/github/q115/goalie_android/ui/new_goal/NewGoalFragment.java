@@ -245,7 +245,7 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
     @Override
     public void setAlarmTime(long epoch, String guid) {
         Intent intent = AlarmService.newIntent(getActivity(), guid);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), guid.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmMgr.setExact(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);

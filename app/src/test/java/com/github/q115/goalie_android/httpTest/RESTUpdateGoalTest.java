@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.httpTest;
 
+import android.content.Context;
+
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
@@ -8,6 +10,7 @@ import com.github.q115.goalie_android.utils.GoalHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.util.Pair;
@@ -34,6 +37,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricTestRunner.class)
 public class RESTUpdateGoalTest extends BaseRESTTest {
     private boolean isSettingUpGoal;
+
+    @Mock
+    Context mMockContext;
 
     @Test()
     public void acceptGoal() throws Exception {
@@ -142,7 +148,7 @@ public class RESTUpdateGoalTest extends BaseRESTTest {
             @Override
             public void onSuccess(String guid) {
                 assertTrue(guid != null);
-                RESTSync sm = new RESTSync(username, 0);
+                RESTSync sm = new RESTSync(username, 0, mMockContext);
                 sm.setListener(new RESTSync.Listener() {
                     @Override
                     public void onSuccess() {

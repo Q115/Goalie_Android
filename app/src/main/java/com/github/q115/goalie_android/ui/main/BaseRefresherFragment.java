@@ -56,7 +56,7 @@ public abstract class BaseRefresherFragment extends Fragment {
             @Override
             public void onRefresh() {
                 RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
-                        PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+                        PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), getActivity());
                 sm.setListener(new RESTSync.Listener() {
                     @Override
                     public void onSuccess() {

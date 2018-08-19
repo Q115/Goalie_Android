@@ -271,6 +271,8 @@ public class GoalsDetailedDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 GoalHelper.getInstance().deleteGoal(mGuid);
+                GoalHelper.getInstance().cancelAlarm(mGuid, getActivity());
+
                 Intent returnIntent = new Intent();
                 String goalCompleteResultString = String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal());
                 returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultString);

@@ -112,7 +112,7 @@ public class MessagingService extends FirebaseMessagingService {
 
     private void sync() {
         RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
-                PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+                PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), this);
         sm.setListener(new RESTSync.Listener() {
             @Override
             public void onSuccess() {

@@ -1,5 +1,6 @@
 package com.github.q115.goalie_android.ui.main;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTSync;
@@ -33,13 +34,16 @@ public class MainActivityPresenter implements BasePresenter {
     }
 
     public void start() {
+    }
+
+    public void syncIfNeeded(Context context) {
         String accountUsername = PreferenceHelper.getInstance().getAccountUsername();
         if (accountUsername == null || accountUsername.isEmpty()) {
             mMainActivityView.showLogin();
         } else if (!isSyncedOnStartup) {
             isSyncedOnStartup = true;
             mMainActivityView.updateProgress(true);
-            RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+            RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), context);
             sm.setListener(new RESTSync.Listener() {
                 @Override
                 public void onSuccess() {

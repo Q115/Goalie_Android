@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
     @Override
     protected void onStart() {
         super.onStart();
-        mPresenter.start();
+        mPresenter.syncIfNeeded(this);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.https;
 
+import android.content.Context;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -46,14 +48,16 @@ public class RESTSync extends RESTBase<String> {
     private RESTSync.Listener mListener;
     private final long mLastSyncedTimeEpoch;
     private static boolean isSyncing;
+    private Context context;
 
     public static boolean isSyncing() {
         return isSyncing;
     }
 
-    public RESTSync(String username, long lastSyncedTimeEpoch) {
+    public RESTSync(String username, long lastSyncedTimeEpoch, Context context) {
         this.mUsername = username;
         mLastSyncedTimeEpoch = lastSyncedTimeEpoch;
+        this.context = context;
     }
 
     public interface Listener extends RESTBaseListener {
@@ -178,6 +182,7 @@ public class RESTSync extends RESTBase<String> {
 
                     localActiveGoal.goalCompleteResult = fetchedGoal.goalCompleteResult;
                     GoalHelper.getInstance().modifyGoal(localActiveGoal);
+                    GoalHelper.getInstance().cancelAlarm(localActiveGoal.guid, context);
                 }
             }
         }

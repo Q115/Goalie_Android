@@ -35,6 +35,6 @@ Excluding all tests and layout XML files, below is the statistic for Goalie as o
 
 <p align="center">
   <br><br><br>
-  <a href="http://goalie.ga/termsofservice.htm">Terms of Service</a> - 
-  <a href="http://goalie.ga/privacypolicy.htm">Privacy Policy</a>
+  <a href="http://goalie.es/termsofservice.htm">Terms of Service</a> -
+  <a href="http://goalie.es/privacypolicy.htm">Privacy Policy</a>
 </p>

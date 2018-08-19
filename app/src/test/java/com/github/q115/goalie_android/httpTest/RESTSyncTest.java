@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.httpTest;
 
+import android.content.Context;
+
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.utils.GoalHelper;
@@ -8,6 +10,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.util.Pair;
@@ -35,6 +38,9 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(RobolectricTestRunner.class)
 public class RESTSyncTest extends BaseRESTTest {
+    @Mock
+    Context mMockContext;
+
     @Test()
     public void sync() throws Exception {
         final Pair<Integer, RESTSync.Listener> pair = createAListener();
@@ -45,7 +51,7 @@ public class RESTSyncTest extends BaseRESTTest {
             public void onSuccess(String guid) {
                 assertTrue(guid != null);
                 assertEquals(GoalHelper.getInstance().getFeeds().size(), 0);
-                RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+                RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), mMockContext);
                 sm2.setListener(pair.second);
                 sm2.execute();
             }
@@ -73,7 +79,7 @@ public class RESTSyncTest extends BaseRESTTest {
     public void onResponseEmpty() throws Exception {
         final Pair<Integer, RESTSync.Listener> pair = createAListener();
 
-        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), mMockContext);
         sm2.setListener(pair.second);
         sm2.onResponse("");
 
@@ -84,7 +90,7 @@ public class RESTSyncTest extends BaseRESTTest {
     public void onResponseBasic() throws Exception {
         final Pair<Integer, RESTSync.Listener> pair = createAListener();
 
-        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), mMockContext);
         sm2.setListener(pair.second);
         sm2.onResponse("{\"feed\":[], \"my\":[],\"referee\":[],\"info\":{\"reputation\":999},\"time\":123}");
 
@@ -101,7 +107,7 @@ public class RESTSyncTest extends BaseRESTTest {
     public void onResponseInvalid() throws Exception {
         final Pair<Integer, RESTSync.Listener> pair = createAListener();
 
-        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
+        RESTSync sm2 = new RESTSync(username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), mMockContext);
         sm2.setListener(pair.second);
         sm2.onResponse("{\"feed\":[], \"my\":[],\"referee\":[],\"info\":{\"reputation\":999},\"time\":\"invalid\"}");
 

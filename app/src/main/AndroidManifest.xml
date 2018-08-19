@@ -28,9 +28,6 @@
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-
                 <!-- Accepts URIs that begin with "goalie://goals" -->
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -41,6 +38,10 @@
                     android:host="goals"
                     android:scheme="goalie"/>
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
         </activity>
         <activity
             android:name=".ui.profile.ProfileActivity"
@@ -90,6 +91,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/files"/>
         </provider>
-        <receiver android:name=".services.AlarmService" />
+        <receiver android:name=".services.AlarmService"/>
     </application>
 </manifest>

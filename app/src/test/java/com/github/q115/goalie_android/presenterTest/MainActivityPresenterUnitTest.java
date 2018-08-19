@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.presenterTest;
 
+import android.content.Context;
+
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.ui.main.MainActivityPresenter;
@@ -36,6 +38,9 @@ import static test_util.RESTUtil.getValidFriendUsername;
  */
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityPresenterUnitTest extends BaseTest {
+    @Mock
+    Context mMockContext;
+
     private MainActivityPresenter mPresenter;
 
     @Mock
@@ -50,7 +55,7 @@ public class MainActivityPresenterUnitTest extends BaseTest {
     @Test
     public void onStartNotRegistered() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername("");
-        mPresenter.start();
+        mPresenter.syncIfNeeded(mMockContext);
         verify(mView).showLogin();
     }
 
@@ -58,7 +63,7 @@ public class MainActivityPresenterUnitTest extends BaseTest {
     public void onStartRegistered() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername(getValidFriendUsername());
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
-        mPresenter.start();
+        mPresenter.syncIfNeeded(mMockContext);
 
         verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).reloadAll();
     }

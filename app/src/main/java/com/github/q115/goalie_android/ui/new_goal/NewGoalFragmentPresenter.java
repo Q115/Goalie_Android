@@ -94,7 +94,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     }
 
     public String[] getAlarmReminderArray() {
-        return new String[]{"15 Minutes Before", "1 Hour Before", "1 Day Before"};
+        return new String[]{"15 Minutes Before", "1 Hour Before", "1 Day Before", "None"};
     }
 
     public long getAlarmMillisecondBeforeEndDate(int option) {
@@ -107,6 +107,9 @@ public class NewGoalFragmentPresenter implements BasePresenter {
                 break;
             case 2:
                 mAlarmTimeBeforeEnd = 24 * 60 * 60000;
+                break;
+            case 3:
+                mAlarmTimeBeforeEnd = 0;
                 break;
             default:
                 mAlarmTimeBeforeEnd = 0;
@@ -285,6 +288,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     }
 
     private void setAlarmTime(String guid) {
-        mNewGoalView.setAlarmTime(mEnd - mAlarmTimeBeforeEnd, guid);
+        if (mAlarmTimeBeforeEnd > 0)
+            mNewGoalView.setAlarmTime(mEnd - mAlarmTimeBeforeEnd, guid);
     }
 }
