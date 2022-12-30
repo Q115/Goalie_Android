@@ -1,15 +1,13 @@
 package com.github.q115.goalie_android.uiTest;
 
-import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.rule.ActivityTestRule;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
@@ -36,7 +34,6 @@ import static org.junit.Assert.assertTrue;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@RunWith(AndroidJUnit4.class)
 public class FriendActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<FriendsActivity> mActivityRule =

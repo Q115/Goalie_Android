@@ -1,14 +1,13 @@
 package com.github.q115.goalie_android.utilsTest;
 
 import android.graphics.Bitmap;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.q115.goalie_android.utils.ImageHelper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -31,11 +30,10 @@ import static org.junit.Assert.assertNotNull;
  * limitations under the License.
  */
 
-@RunWith(AndroidJUnit4.class)
 public class ImageHelperInstrumentedTest {
     @Before
     public void init() throws Exception {
-        ImageHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
+        ImageHelper.getInstance().initialize(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @Test

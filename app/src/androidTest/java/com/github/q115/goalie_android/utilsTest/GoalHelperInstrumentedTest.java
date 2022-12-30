@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.utilsTest;
 
-import androidx.test.platform.app.InstrumentationRegistry;
-
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -11,6 +9,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +35,7 @@ import static test_util.DatabaseUtil.ReadDatabase;
 public class GoalHelperInstrumentedTest {
     @BeforeClass
     public static void init() {
-        FlowManager.init(InstrumentationRegistry.getTargetContext());
+        FlowManager.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @AfterClass

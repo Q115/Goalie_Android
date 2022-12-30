@@ -1,7 +1,7 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import android.content.res.Resources;
-import android.test.mock.MockContext;
+import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.View;
 
@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.Calendar;
@@ -59,7 +60,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     private NewGoalFragmentView mView;
 
     @Mock
-    private MockContext mContext;
+    private Context mContext = RuntimeEnvironment.application.getApplicationContext();
 
     @Before
     public void setup() {

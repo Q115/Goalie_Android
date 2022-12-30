@@ -1,10 +1,10 @@
 package com.github.q115.goalie_android.presenterTest;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.test.mock.MockContext;
 
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -55,7 +56,7 @@ public class FriendsPresenterUnitTest extends BaseTest {
     private FriendsActivityView mView;
 
     @Mock
-    private MockContext mContext;
+    private Context mContext = RuntimeEnvironment.application.getApplicationContext();
 
     private FriendsListPresenter mListPresenter;
 

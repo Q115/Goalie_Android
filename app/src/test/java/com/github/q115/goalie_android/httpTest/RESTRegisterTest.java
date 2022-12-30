@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.util.Pair;
+import android.util.Pair;
 
 import java.util.UUID;
 

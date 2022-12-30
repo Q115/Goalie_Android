@@ -1,8 +1,6 @@
 package com.github.q115.goalie_android.utilsTest;
 
 import android.graphics.Bitmap;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.ImageHelper;
@@ -12,8 +10,8 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
+import androidx.test.platform.app.InstrumentationRegistry;
 import test_util.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -38,12 +36,12 @@ import static test_util.DatabaseUtil.ReadDatabase;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@RunWith(AndroidJUnit4.class)
+
 public class UserHelperInstrumentedTest {
 
     @BeforeClass
     public static void init() {
-        FlowManager.init(InstrumentationRegistry.getTargetContext());
+        FlowManager.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @AfterClass
@@ -99,7 +97,7 @@ public class UserHelperInstrumentedTest {
         UserHelper.getInstance().getAllContacts().clear();
 
         // save a image for this user
-        ImageHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
+        ImageHelper.getInstance().initialize(InstrumentationRegistry.getInstrumentation().getTargetContext());
         Bitmap newImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         ImageHelper.getInstance().saveImageToPrivateSorageSync(testUser.username, newImage, ImageHelper.ImageType.PNG);
         assertTrue(ImageHelper.getInstance().isImageOnPrivateStorage(testUser.username, ImageHelper.ImageType.PNG));
@@ -113,7 +111,7 @@ public class UserHelperInstrumentedTest {
         assertNotNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);
     }
 
-    private void addUser(User user)  {
+    private void addUser(User user) {
         UserHelper.getInstance().initialize();
         assertEquals(0, UserHelper.getInstance().getAllContacts().size());
         UserHelper.getInstance().addUser(user);

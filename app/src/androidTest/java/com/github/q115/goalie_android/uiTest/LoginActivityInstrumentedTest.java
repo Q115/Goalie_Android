@@ -1,9 +1,6 @@
 package com.github.q115.goalie_android.uiTest;
 
 import android.content.pm.ActivityInfo;
-import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.login.LoginActivity;
@@ -11,10 +8,11 @@ import com.github.q115.goalie_android.ui.login.LoginActivity;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.UUID;
 
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.rule.ActivityTestRule;
 import test_util.RESTUtil;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -43,7 +41,7 @@ import static org.junit.Assert.assertTrue;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@RunWith(AndroidJUnit4.class)
+
 public class LoginActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityRule =
@@ -94,6 +92,7 @@ public class LoginActivityInstrumentedTest {
 
         onView(withId(R.id.username)).perform(clearText(), typeText(RESTUtil.getValidFriendUsername()));
         onView(withId(R.id.btn_register)).perform(click());
+        Thread.sleep(750);
         onView(withId(R.id.register_server_response)).check(matches(withText(usernameERR)));
     }
 

@@ -2,8 +2,6 @@ package com.github.q115.goalie_android.utilsTest;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
@@ -11,7 +9,8 @@ import com.github.q115.goalie_android.utils.PreferenceHelper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,16 +31,15 @@ import static org.junit.Assert.assertNotNull;
  * limitations under the License.
  */
 
-@RunWith(AndroidJUnit4.class)
 public class PreferenceHelperInstrumentedTest {
     @Before
     public void init() throws Exception {
-        PreferenceHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
+        PreferenceHelper.getInstance().initialize(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @AfterClass
     public static void teardown() throws Exception {
-        SharedPreferences sp = InstrumentationRegistry.getTargetContext().getSharedPreferences(Constants.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sp = InstrumentationRegistry.getInstrumentation().getTargetContext().getSharedPreferences(Constants.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         sp.edit().clear().apply();
     }
 
@@ -73,7 +71,7 @@ public class PreferenceHelperInstrumentedTest {
     public void storedOnDisk() throws Exception {
         setAccountUsername();
         setPushID();
-        PreferenceHelper.getInstance().initialize(InstrumentationRegistry.getTargetContext());
+        PreferenceHelper.getInstance().initialize(InstrumentationRegistry.getInstrumentation().getTargetContext());
 
         assertEquals("new pushID", PreferenceHelper.getInstance().getPushID());
         assertEquals("new AccountUsername", PreferenceHelper.getInstance().getAccountUsername());

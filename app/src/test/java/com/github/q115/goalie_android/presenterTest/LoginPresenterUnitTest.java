@@ -1,6 +1,7 @@
 package com.github.q115.goalie_android.presenterTest;
 
-import android.test.mock.MockContext;
+import android.content.Context;
+import android.content.Context;
 
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
@@ -12,8 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.UUID;
 
@@ -46,7 +49,7 @@ public class LoginPresenterUnitTest extends BaseTest {
     private LoginFragmentView mView;
 
     @Mock
-    private MockContext mContext;
+    private Context mContext = RuntimeEnvironment.application.getApplicationContext();
 
     @Before
     public void setup() {

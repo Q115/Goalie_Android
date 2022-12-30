@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.httpTest;
 
+import android.util.Pair;
+
 import com.github.q115.goalie_android.https.RESTGetUserInfo;
 import com.github.q115.goalie_android.models.User;
 import com.github.q115.goalie_android.utils.UserHelper;
@@ -8,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.util.Pair;
 
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static org.junit.Assert.assertEquals;

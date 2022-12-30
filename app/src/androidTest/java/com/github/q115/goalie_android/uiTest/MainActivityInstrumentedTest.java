@@ -2,8 +2,6 @@ package com.github.q115.goalie_android.uiTest;
 
 import android.app.Instrumentation;
 import android.content.pm.ActivityInfo;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.friends.FriendsActivity;
@@ -15,14 +13,15 @@ import com.github.q115.goalie_android.utils.UserHelper;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import androidx.test.rule.ActivityTestRule;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertNotNull;
 
@@ -41,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@RunWith(AndroidJUnit4.class)
+
 public class MainActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule =

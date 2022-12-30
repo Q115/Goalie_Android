@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.util.Pair;
+import android.util.Pair;
 
 import static com.github.q115.goalie_android.Constants.FAILED;
 import static junit.framework.Assert.assertTrue;
