@@ -1,6 +1,6 @@
 package com.github.q115.goalie_android.ui.popular_goal;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.github.q115.goalie_android.ui.BasePresenter;
 

@@ -2,7 +2,7 @@ package com.github.q115.goalie_android.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.github.q115.goalie_android.R;

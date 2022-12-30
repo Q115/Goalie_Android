@@ -1,8 +1,8 @@
 package com.github.q115.goalie_android.ui.popular_goal;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;

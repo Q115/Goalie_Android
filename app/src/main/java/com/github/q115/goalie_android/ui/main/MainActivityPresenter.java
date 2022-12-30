@@ -1,7 +1,7 @@
 package com.github.q115.goalie_android.ui.main;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.ui.BasePresenter;

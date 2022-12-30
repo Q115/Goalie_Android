@@ -1,7 +1,7 @@
 package com.github.q115.goalie_android.ui.main.requests;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BasePresenter;

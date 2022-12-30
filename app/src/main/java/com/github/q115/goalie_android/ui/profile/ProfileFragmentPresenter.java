@@ -1,7 +1,7 @@
 package com.github.q115.goalie_android.ui.profile;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTUploadPhoto;
 import com.github.q115.goalie_android.models.User;

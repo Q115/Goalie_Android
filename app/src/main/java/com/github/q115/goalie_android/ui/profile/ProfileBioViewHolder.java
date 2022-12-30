@@ -9,10 +9,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,12 +44,12 @@ import java.util.List;
  */
 public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
     private View itemView;
-    private android.support.v4.app.Fragment fragment;
+    private Fragment fragment;
     private ImageView mEdit;
     private ImageView mProfile;
     private TextView emptyView;
 
-    public ProfileBioViewHolder(View itemView, android.support.v4.app.Fragment fragment) {
+    public ProfileBioViewHolder(View itemView, Fragment fragment) {
         super(itemView);
 
         this.itemView = itemView;

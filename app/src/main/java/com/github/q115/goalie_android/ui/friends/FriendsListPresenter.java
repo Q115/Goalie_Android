@@ -1,7 +1,7 @@
 package com.github.q115.goalie_android.ui.friends;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.github.q115.goalie_android.https.RESTGetPhoto;
 import com.github.q115.goalie_android.https.RESTGetUserInfo;
