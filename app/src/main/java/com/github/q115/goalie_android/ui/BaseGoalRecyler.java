@@ -38,8 +38,8 @@ import java.util.Locale;
  * limitations under the License.
  */
 
-public abstract class BaseGoalRecyler extends RecyclerView.Adapter {
-    public class BaseGoalsHolder extends RecyclerView.ViewHolder {
+public abstract class BaseGoalRecyler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static class BaseGoalsHolder extends RecyclerView.ViewHolder {
         public final TextView mTitleTxt;
         public final TextView mEndDateTxt;
         public final TextView mStartDateTxt;

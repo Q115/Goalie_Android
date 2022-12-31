@@ -28,18 +28,12 @@ public class MessagingServiceUtilTest extends BaseTest {
     public void callMessagingServiceListenerInvalid() throws Exception {
         MessagingServiceUtil.setMessagingServiceListener(null, null);
         MessagingServiceUtil.setMessagingServiceListener("", null);
-        MessagingServiceUtil.setMessagingServiceListener("", new MessagingServiceUtil.MessagingServiceListener() {
-            @Override
-            public void onNotification() {
+        MessagingServiceUtil.setMessagingServiceListener("", () -> {
 
-            }
         });
 
-        MessagingServiceUtil.setMessagingServiceListener("test", new MessagingServiceUtil.MessagingServiceListener() {
-            @Override
-            public void onNotification() {
+        MessagingServiceUtil.setMessagingServiceListener("test", () -> {
 
-            }
         });
 
         MessagingServiceUtil.callMessagingServiceListeners();

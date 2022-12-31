@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTNewGoal;
@@ -129,12 +128,7 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     }
 
     public View.OnClickListener getTimePickerClickedListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mNewGoalView.showTimePicker(view.getId());
-            }
-        };
+        return view -> mNewGoalView.showTimePicker(view.getId());
     }
 
     public SublimeOptions getSublimePickerOptions(int viewID) {
@@ -170,40 +164,34 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     }
 
     public SublimePickerDialog.Callback getTimePickerCallbackListener() {
-        return new SublimePickerDialog.Callback() {
-            @Override
-            public void onDateTimeRecurrenceSet(SelectedDate selectedDate, int hourOfDay, int minute, int viewID) {
-                int year = selectedDate.getEndDate().get(Calendar.YEAR);
-                int month = selectedDate.getEndDate().get(Calendar.MONTH);
-                int day = selectedDate.getEndDate().get(Calendar.DATE);
-                GregorianCalendar date = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
-                long epoch = date.getTimeInMillis();
+        return (selectedDate, hourOfDay, minute, viewID) -> {
+            int year = selectedDate.getEndDate().get(Calendar.YEAR);
+            int month = selectedDate.getEndDate().get(Calendar.MONTH);
+            int day = selectedDate.getEndDate().get(Calendar.DATE);
+            GregorianCalendar date = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
+            long epoch = date.getTimeInMillis();
 
-                if (viewID == R.id.goal_end_btn)
-                    mEnd = epoch;
+            if (viewID == R.id.goal_end_btn)
+                mEnd = epoch;
 
-                mNewGoalView.updateTime(getFormatedTimeString(epoch));
-            }
+            mNewGoalView.updateTime(getFormatedTimeString(epoch));
         };
     }
 
     public View.OnClickListener getWagerClickedListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                long wagering;
-                int percent;
-                if (view.getId() == R.id.goal_wager_minus && mWagerIncrement > 1) {
-                    mWagerIncrement--;
-                } else if (view.getId() == R.id.goal_wager_plus && mWagerIncrement < 100 / WAGER_PERCENTAGE_INCREMENT) {
-                    mWagerIncrement++;
-                } else
-                    return;
+        return view -> {
+            long wagering;
+            int percent;
+            if (view.getId() == R.id.goal_wager_minus && mWagerIncrement > 1) {
+                mWagerIncrement--;
+            } else if (view.getId() == R.id.goal_wager_plus && mWagerIncrement < 100 / WAGER_PERCENTAGE_INCREMENT) {
+                mWagerIncrement++;
+            } else
+                return;
 
-                wagering = getWagering();
-                percent = mWagerIncrement * WAGER_PERCENTAGE_INCREMENT;
-                mNewGoalView.updateWager(wagering, UserHelper.getInstance().getOwnerProfile().reputation, percent);
-            }
+            wagering = getWagering();
+            percent = mWagerIncrement * WAGER_PERCENTAGE_INCREMENT;
+            mNewGoalView.updateWager(wagering, UserHelper.getInstance().getOwnerProfile().reputation, percent);
         };
     }
 

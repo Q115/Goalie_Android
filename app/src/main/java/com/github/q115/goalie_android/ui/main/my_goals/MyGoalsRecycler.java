@@ -12,8 +12,6 @@ import com.github.q115.goalie_android.ui.BaseGoalRecyler;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /*
  * Copyright 2017 Qi Li
@@ -50,12 +48,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
 
     private void setupDataSet() {
         this.mGoalList = new ArrayList<>(UserHelper.getInstance().getOwnerProfile().activeGoals.values());
-        Collections.sort(mGoalList, new Comparator<Goal>() {
-            @Override
-            public int compare(Goal a1, Goal a2) {
-                return (int) (a2.startDate - a1.startDate);
-            }
-        });
+        mGoalList.sort((a1, a2) -> (int) (a2.startDate - a1.startDate));
     }
 
     @Override
@@ -70,27 +63,24 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
 
         final BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
         final int pos = position;
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mMyGoalsPresenter.isFABOpen()) {
-                    mMyGoalsPresenter.closeFABMenu();
-                } else {
-                    Goal goal = mGoalList.get(pos);
-                    if (mMyGoalsPresenter != null) {
-                        Drawable profileImage = mImages.containsKey(goal.referee) ?
-                                mImages.get(goal.referee)
-                                : viewHolder.mRefereeTxt.getCompoundDrawables()[1];
+        viewHolder.itemView.setOnClickListener(view -> {
+            if (mMyGoalsPresenter.isFABOpen()) {
+                mMyGoalsPresenter.closeFABMenu();
+            } else {
+                Goal goal = mGoalList.get(pos);
+                if (mMyGoalsPresenter != null) {
+                    Drawable profileImage = mImages.containsKey(goal.referee) ?
+                            mImages.get(goal.referee)
+                            : viewHolder.mRefereeTxt.getCompoundDrawables()[1];
 
-                        mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(),
-                                viewHolder.mEndDateTxt.getText().toString(),
-                                viewHolder.mStartDateTxt.getText().toString(),
-                                viewHolder.mWagerTxt.getText().toString(),
-                                viewHolder.mEncouragementTxt.getText().toString(),
-                                viewHolder.mRefereeTxt.getText().toString(),
-                                profileImage,
-                                goal.goalCompleteResult, goal.guid);
-                    }
+                    mMyGoalsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(),
+                            viewHolder.mEndDateTxt.getText().toString(),
+                            viewHolder.mStartDateTxt.getText().toString(),
+                            viewHolder.mWagerTxt.getText().toString(),
+                            viewHolder.mEncouragementTxt.getText().toString(),
+                            viewHolder.mRefereeTxt.getText().toString(),
+                            profileImage,
+                            goal.goalCompleteResult, goal.guid);
                 }
             }
         });

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "33.0.1"
     defaultConfig {
         applicationId "com.github.q115.goalie_android"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 14
         versionName "3.0"

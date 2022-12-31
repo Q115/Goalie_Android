@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
@@ -78,32 +77,21 @@ public class MyGoalsFragment extends BaseRefresherFragment implements MyGoalsVie
         showEmptyWhenNecessary();
 
         mFABMenu1 = rootView.findViewById(R.id.fab_menu1);
-        mFABMenu1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMyGoalsPresenter.closeFABMenu();
-                startActivityForResult(NewGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
-            }
+        mFABMenu1.setOnClickListener(view -> {
+            mMyGoalsPresenter.closeFABMenu();
+            startActivityForResult(NewGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
         });
         mFABMenu1.setVisibility(View.GONE);
 
         mFABMenu2 = rootView.findViewById(R.id.fab_menu2);
-        mFABMenu2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMyGoalsPresenter.closeFABMenu();
-                startActivityForResult(PopularGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
-            }
+        mFABMenu2.setOnClickListener(view -> {
+            mMyGoalsPresenter.closeFABMenu();
+            startActivityForResult(PopularGoalActivity.newIntent(getActivity()), RESULT_GOAL_SET);
         });
         mFABMenu2.setVisibility(View.GONE);
 
         mFAB = rootView.findViewById(R.id.fab_new_goal);
-        mFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMyGoalsPresenter.toggleFAB();
-            }
-        });
+        mFAB.setOnClickListener(view -> mMyGoalsPresenter.toggleFAB());
 
         return rootView;
     }
@@ -143,20 +131,17 @@ public class MyGoalsFragment extends BaseRefresherFragment implements MyGoalsVie
     }
 
     private View.OnTouchListener getCloseFABMenuTouchListener() {
-        return new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (mMyGoalsPresenter.isFABOpen()) {
-                            mMyGoalsPresenter.closeFABMenu();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return false;
+        return (view, motionEvent) -> {
+            switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    if (mMyGoalsPresenter.isFABOpen()) {
+                        mMyGoalsPresenter.closeFABMenu();
+                    }
+                    break;
+                default:
+                    break;
             }
+            return false;
         };
     }
 
@@ -168,9 +153,7 @@ public class MyGoalsFragment extends BaseRefresherFragment implements MyGoalsVie
         mFABMenu2.setVisibility(View.VISIBLE);
         mFABMenu1.animate().translationY(-getResources().getDimension(R.dimen.fab_goal1_translate));
         mFABMenu2.animate().translationY(-getResources().getDimension(R.dimen.fab_goal2_translate));
-
-        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
-            mFAB.animate().rotation(45f);
+        mFAB.animate().rotation(45f);
     }
 
     @Override
@@ -206,9 +189,7 @@ public class MyGoalsFragment extends BaseRefresherFragment implements MyGoalsVie
             mRecyclerView.animate().alpha(1f);
         mFABMenu1.animate().translationY(0);
         mFABMenu2.animate().translationY(0).setListener(mAnimatorListener);
-
-        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
-            mFAB.animate().rotation(0);
+        mFAB.animate().rotation(0);
     }
 
     public void showDialog(String title, String end, String start, String reputation, String encouragment, String referee,

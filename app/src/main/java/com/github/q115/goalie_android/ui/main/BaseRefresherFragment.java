@@ -52,24 +52,21 @@ public abstract class BaseRefresherFragment extends Fragment {
     }
 
     protected SwipeRefreshLayout.OnRefreshListener onRefresherRefreshListener() {
-        return new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
-                        PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), getActivity());
-                sm.setListener(new RESTSync.Listener() {
-                    @Override
-                    public void onSuccess() {
-                        syncComplete(true, "");
-                    }
+        return () -> {
+            RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
+                    PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), getActivity());
+            sm.setListener(new RESTSync.Listener() {
+                @Override
+                public void onSuccess() {
+                    syncComplete(true, "");
+                }
 
-                    @Override
-                    public void onFailure(String errMsg) {
-                        syncComplete(false, errMsg);
-                    }
-                });
-                sm.execute();
-            }
+                @Override
+                public void onFailure(String errMsg) {
+                    syncComplete(false, errMsg);
+                }
+            });
+            sm.execute();
         };
     }
 

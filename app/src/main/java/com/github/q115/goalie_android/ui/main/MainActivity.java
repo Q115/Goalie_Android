@@ -82,12 +82,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
         if (intent != null && intent.hasExtra("tab")) {
             final int tab = intent.getIntExtra("tab", 0);
-            mViewPager.post(new Runnable() {
-                @Override
-                public void run() {
-                    mViewPager.setCurrentItem(tab);
-                }
-            });
+            mViewPager.post(() -> mViewPager.setCurrentItem(tab));
         }
     }
 
@@ -188,12 +183,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView,
 
     @Override
     public void onNotification() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                reloadAll();
-            }
-        });
+        runOnUiThread(this::reloadAll);
     }
 
     @Override

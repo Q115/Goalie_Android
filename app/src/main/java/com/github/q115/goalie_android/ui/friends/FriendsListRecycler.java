@@ -34,8 +34,8 @@ import java.util.TreeMap;
  * limitations under the License.
  */
 
-public class FriendsListRecycler extends RecyclerView.Adapter {
-    private class FriendsHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+public class FriendsListRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static class FriendsHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         private final ImageView mFriendImage;
         private final TextView mFriendName;
         private final TextView mFriendReputation;

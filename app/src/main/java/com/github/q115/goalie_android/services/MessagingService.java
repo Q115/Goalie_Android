@@ -19,7 +19,9 @@ import android.content.Intent;
 
 import com.github.q115.goalie_android.Diagnostic;
 import com.github.q115.goalie_android.R;
+import com.github.q115.goalie_android.https.RESTRegister;
 import com.github.q115.goalie_android.https.RESTSync;
+import com.github.q115.goalie_android.https.RESTUpdateUserInfo;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.main.MainActivity;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
@@ -37,6 +39,43 @@ public class MessagingService extends FirebaseMessagingService {
     private String mMessage;
     private String mGuid;
     private int mResultCode;
+
+    public MessagingService() {
+        super();
+    }
+
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        saveToken(s);
+    }
+
+    public void saveToken(String pushID) {
+        if (pushID == null || pushID.equals(PreferenceHelper.getInstance().getPushID()) || pushID.isEmpty())
+            return;
+        else if (pushID.length() < 12) {
+            Diagnostic.logError(Diagnostic.DiagnosticFlag.Other, "FAILED to obtain correct token");
+            return;
+        } else if (UserHelper.getInstance().getOwnerProfile() == null) {
+            return;
+        }
+
+        // check whether we need to send up to server or not
+        if (UserHelper.getInstance().getOwnerProfile().username == null
+                || UserHelper.getInstance().getOwnerProfile().username.isEmpty()) {
+            // let register take care of sending this to server
+            PreferenceHelper.getInstance().setPushID(pushID);
+        } else if (RESTRegister.isRegistering()) {
+            // let register take care of sending this to server after register call completes
+            PreferenceHelper.getInstance().setPushID(pushID);
+        } else {
+            // update the old pushID on server
+            RESTUpdateUserInfo rest = new RESTUpdateUserInfo(UserHelper.getInstance().getOwnerProfile().username,
+                    UserHelper.getInstance().getOwnerProfile().bio, pushID);
+            rest.setListener(null);
+            rest.execute();
+        }
+    }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

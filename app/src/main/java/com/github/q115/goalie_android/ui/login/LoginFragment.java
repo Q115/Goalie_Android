@@ -2,7 +2,7 @@ package com.github.q115.goalie_android.ui.login;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-import android.view.KeyEvent;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,12 +54,9 @@ public class LoginFragment extends Fragment implements LoginFragmentView {
         mServerMsg = rootView.findViewById(R.id.register_server_response);
         mServerMsg.setVisibility(View.GONE);
 
-        rootView.findViewById(R.id.btn_register).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mServerMsg.setVisibility(View.GONE);
-                mPresenter.register(getActivity(), mUsername.getText().toString());
-            }
+        rootView.findViewById(R.id.btn_register).setOnClickListener(view -> {
+            mServerMsg.setVisibility(View.GONE);
+            mPresenter.register(getActivity(), mUsername.getText().toString());
         });
 
         mProgressDialog = new DelayedProgressDialog();
@@ -86,16 +83,13 @@ public class LoginFragment extends Fragment implements LoginFragmentView {
     }
 
     private EditText.OnEditorActionListener handleEditorAction() {
-        return new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE && getView() != null) {
-                    mServerMsg.setVisibility(View.GONE);
-                    mPresenter.register(getActivity(), mUsername.getText().toString());
-                    return true;
-                }
-                return false;
+        return (v, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE && getView() != null) {
+                mServerMsg.setVisibility(View.GONE);
+                mPresenter.register(getActivity(), mUsername.getText().toString());
+                return true;
             }
+            return false;
         };
     }
 

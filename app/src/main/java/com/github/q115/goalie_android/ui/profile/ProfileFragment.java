@@ -201,14 +201,11 @@ public class ProfileFragment extends Fragment implements ProfileFragmentView, Me
 
     @Override
     public void onNotification() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (getView() != null) {
-                    mProfileBioViewHolder.pointUpdated(UserHelper.getInstance().getOwnerProfile().reputation);
-                }
-                reloadList();
+        getActivity().runOnUiThread(() -> {
+            if (getView() != null) {
+                mProfileBioViewHolder.pointUpdated(UserHelper.getInstance().getOwnerProfile().reputation);
             }
+            reloadList();
         });
     }
 

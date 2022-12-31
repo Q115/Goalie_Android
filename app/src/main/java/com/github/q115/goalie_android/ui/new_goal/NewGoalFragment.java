@@ -1,17 +1,15 @@
 package com.github.q115.goalie_android.ui.new_goal;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +19,20 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.services.AlarmService;
 import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.ui.friends.AddContactDialog;
 
 import java.util.HashMap;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 /*
  * Copyright 2017 Qi Li
@@ -116,14 +122,11 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
         mGoalEncouragement = rootView.findViewById(R.id.goal_encouragement);
 
         // set goal
-        rootView.findViewById(R.id.set_goal).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String referee = (String) mGoalRefereeSpinner.getSelectedItem();
-                long alarmMillisecondBeforeEnd = mNewGoalPresenter.getAlarmMillisecondBeforeEndDate(mAlarmReminderSpinner.getSelectedItemPosition());
-                mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString().trim(),
-                        mGoalEncouragement.getText().toString().trim(), referee, alarmMillisecondBeforeEnd, isGoalPublicFeed.isChecked());
-            }
+        rootView.findViewById(R.id.set_goal).setOnClickListener(view -> {
+            String referee = (String) mGoalRefereeSpinner.getSelectedItem();
+            long alarmMillisecondBeforeEnd = mNewGoalPresenter.getAlarmMillisecondBeforeEndDate(mAlarmReminderSpinner.getSelectedItemPosition());
+            mNewGoalPresenter.setGoal(getActivity(), mGoalTitle.getText().toString().trim(),
+                    mGoalEncouragement.getText().toString().trim(), referee, alarmMillisecondBeforeEnd, isGoalPublicFeed.isChecked());
         });
 
         mProgressDialog = new DelayedProgressDialog();
@@ -244,10 +247,24 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
 
     @Override
     public void setAlarmTime(long epoch, String guid) {
-        Intent intent = AlarmService.newIntent(getActivity(), guid);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), guid.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (isAlarmPermissionGranted()) {
+            Intent intent = AlarmService.newIntent(getActivity(), guid);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), guid.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
+            AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
+        }
+    }
+
+    private boolean isAlarmPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            int permission = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.USE_EXACT_ALARM);
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.USE_EXACT_ALARM}, Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

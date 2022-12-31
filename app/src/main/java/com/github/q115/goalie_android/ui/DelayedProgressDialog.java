@@ -87,13 +87,10 @@ public class DelayedProgressDialog extends DialogFragment {
         mStopMillisecond = Long.MAX_VALUE;
 
         showHandler = new Handler();
-        showHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // only show if not already cancelled
-                if (mStopMillisecond > System.currentTimeMillis())
-                    showDialogAfterDelay();
-            }
+        showHandler.postDelayed(() -> {
+            // only show if not already cancelled
+            if (mStopMillisecond > System.currentTimeMillis())
+                showDialogAfterDelay();
         }, DELAY_MILLISECOND);
     }
 
@@ -130,12 +127,7 @@ public class DelayedProgressDialog extends DialogFragment {
     private void cancelWhenShowing() {
         if (mStopMillisecond < mStartMillisecond + DELAY_MILLISECOND + MINIMUM_SHOW_DURATION_MILLISECOND) {
             final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dismiss();
-                }
-            }, MINIMUM_SHOW_DURATION_MILLISECOND);
+            handler.postDelayed(this::dismiss, MINIMUM_SHOW_DURATION_MILLISECOND);
         } else {
             dismiss();
         }
@@ -143,12 +135,7 @@ public class DelayedProgressDialog extends DialogFragment {
 
     private void cancelWhenNotShowing() {
         final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dismiss();
-            }
-        }, DELAY_MILLISECOND);
+        handler.postDelayed(this::dismiss, DELAY_MILLISECOND);
     }
 
     @Override

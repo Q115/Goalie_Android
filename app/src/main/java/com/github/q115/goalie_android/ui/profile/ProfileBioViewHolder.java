@@ -1,22 +1,18 @@
 package com.github.q115.goalie_android.ui.profile;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
@@ -26,6 +22,12 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.io.File;
 import java.util.List;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 /*
  * Copyright 2018 Qi Li
@@ -55,19 +57,9 @@ public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
         this.itemView = itemView;
         this.fragment = fragment;
         mEdit = itemView.findViewById(R.id.profile_edit);
-        mEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editProfile();
-            }
-        });
+        mEdit.setOnClickListener(view -> editProfile());
         mProfile = itemView.findViewById(R.id.profile_image);
-        mProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changePhoto();
-            }
-        });
+        mProfile.setOnClickListener(view -> changePhoto());
         emptyView = itemView.findViewById(R.id.empty);
     }
 
@@ -93,34 +85,31 @@ public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void changePhoto() {
+        String fileReadPermission = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ? Manifest.permission.READ_EXTERNAL_STORAGE :
+                Manifest.permission.READ_MEDIA_IMAGES;
+
         int cameraPermission = ActivityCompat.checkSelfPermission(fragment.getActivity(), Manifest.permission.CAMERA);
-        int storagePermission = ActivityCompat.checkSelfPermission(fragment.getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int storagePermission = ActivityCompat.checkSelfPermission(fragment.getActivity(), fileReadPermission);
 
         if (cameraPermission != PackageManager.PERMISSION_GRANTED
                 || storagePermission != PackageManager.PERMISSION_GRANTED) {
             fragment.requestPermissions(new String[]{
                     Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE);
+                    fileReadPermission}, Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE);
         } else {
             String[] opsChars = {fragment.getString(R.string.take_photo), fragment.getString(R.string.choose_photo)};
 
             AlertDialog.Builder getImageFrom = new AlertDialog.Builder(fragment.getActivity());
             getImageFrom.setTitle(fragment.getString(R.string.select_photo));
-            getImageFrom.setItems(opsChars, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    changePhotoActionSelected(i);
-                }
-            });
+            getImageFrom.setItems(opsChars, (dialogInterface, i) -> changePhotoActionSelected(i));
             getImageFrom.show();
         }
     }
 
     private void changePhotoActionSelected(int position) {
         if (position == 0) { //take photo
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(fragment.getActivity().getPackageManager()) != null) {
+            try {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File newFile = ImageHelper.getInstance().getTempImageFileForUser(UserHelper.getInstance().getOwnerProfile().username);
                 Uri uri = FileProvider.getUriForFile(fragment.getActivity(), fragment.getString(R.string.file_provider), newFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -128,11 +117,12 @@ public class ProfileBioViewHolder extends RecyclerView.ViewHolder {
                 List<ResolveInfo> cameraActivities = fragment.getActivity().getPackageManager()
                         .queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
                 for (ResolveInfo activity : cameraActivities) {
-                    fragment.getActivity().grantUriPermission(
-                            activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    fragment.getActivity().grantUriPermission(activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 }
 
                 fragment.startActivityForResult(takePictureIntent, Constants.RESULT_PROFILE_IMAGE_TAKEN);
+            } catch (Exception e) {
+                Toast.makeText(fragment.getActivity(), "Failed to take photo", Toast.LENGTH_SHORT).show();
             }
         } else if (position == 1) { //select photo
             Intent imageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

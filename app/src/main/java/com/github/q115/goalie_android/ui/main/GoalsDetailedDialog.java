@@ -63,24 +63,9 @@ public class GoalsDetailedDialog extends DialogFragment {
     public GoalsDetailedDialog() {
         super();
 
-        deleteAction = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delete();
-            }
-        };
-        remindAction = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                remind();
-            }
-        };
-        updateAction = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateGoal((Goal.GoalCompleteResult) view.getTag());
-            }
-        };
+        deleteAction = view -> delete();
+        remindAction = view -> remind();
+        updateAction = view -> updateGoal((Goal.GoalCompleteResult) view.getTag());
     }
 
     @NonNull
@@ -267,18 +252,15 @@ public class GoalsDetailedDialog extends DialogFragment {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle(getString(R.string.are_you_sure));
         alertDialog.setMessage(getString(R.string.no_refund));
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                GoalHelper.getInstance().deleteGoal(mGuid);
-                GoalHelper.getInstance().cancelAlarm(mGuid, getActivity());
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ok), (dialogInterface, i) -> {
+            GoalHelper.getInstance().deleteGoal(mGuid);
+            GoalHelper.getInstance().cancelAlarm(mGuid, getActivity());
 
-                Intent returnIntent = new Intent();
-                String goalCompleteResultString = String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal());
-                returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultString);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
-                dismiss();
-            }
+            Intent returnIntent = new Intent();
+            String goalCompleteResultString = String.valueOf(Goal.GoalCompleteResult.Cancelled.ordinal());
+            returnIntent.putExtra("goalCompleteResultInt", goalCompleteResultString);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, returnIntent);
+            dismiss();
         });
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), (DialogInterface.OnClickListener) null);
         alertDialog.show();

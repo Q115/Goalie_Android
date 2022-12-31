@@ -6,13 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.q115.goalie_android.R;
-import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.ui.BaseGoalRecyler;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /*
  * Copyright 2018 Qi Li
@@ -43,12 +40,7 @@ public class ProfileFragmentHeaderRecycler extends BaseGoalRecyler {
 
     private void setupDataSet() {
         this.mGoalList = new ArrayList<>(UserHelper.getInstance().getOwnerProfile().finishedGoals.values());
-        Collections.sort(mGoalList, new Comparator<Goal>() {
-            @Override
-            public int compare(Goal a1, Goal a2) {
-                return (int) (a2.startDate - a1.startDate);
-            }
-        });
+        mGoalList.sort((a1, a2) -> (int) (a2.startDate - a1.startDate));
     }
 
     public void notifyDataSetHasChanged() {

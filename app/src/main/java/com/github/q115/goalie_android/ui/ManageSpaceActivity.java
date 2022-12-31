@@ -28,12 +28,9 @@ public class ManageSpaceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // do nothing to prevent Preference file from being deleted
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ManageSpaceActivity.this, getString(R.string.cleaned), Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        new Handler().post(() -> {
+            Toast.makeText(ManageSpaceActivity.this, getString(R.string.cleaned), Toast.LENGTH_SHORT).show();
+            finish();
         });
     }
 }

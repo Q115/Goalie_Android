@@ -105,12 +105,7 @@ public class MainActivityInstrumentedTest {
         onView(withId(R.id.fab_menu1)).check(matches(isDisplayed()));
         onView(withId(R.id.fab_menu2)).check(matches(isDisplayed()));
 
-        mActivityRule.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivityRule.getActivity().onBackPressed();
-            }
-        });
+        mActivityRule.getActivity().runOnUiThread(() -> mActivityRule.getActivity().onBackPressed());
         Thread.sleep(750); // wait for animation to finish
         onView(withId(R.id.fab_menu1)).check(matches(not(isDisplayed())));
         onView(withId(R.id.fab_menu2)).check(matches(not(isDisplayed())));

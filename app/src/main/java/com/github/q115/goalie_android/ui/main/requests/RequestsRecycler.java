@@ -12,8 +12,6 @@ import com.github.q115.goalie_android.ui.BaseGoalRecyler;
 import com.github.q115.goalie_android.utils.GoalHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /*
  * Copyright 2017 Qi Li
@@ -54,12 +52,7 @@ public class RequestsRecycler extends BaseGoalRecyler {
 
         if (this.mGoalList == null)
             this.mGoalList = new ArrayList<>();
-        Collections.sort(mGoalList, new Comparator<Goal>() {
-            @Override
-            public int compare(Goal a1, Goal a2) {
-                return (int) (a2.startDate - a1.startDate);
-            }
-        });
+        mGoalList.sort((a1, a2) -> (int) (a2.startDate - a1.startDate));
     }
 
     @Override
@@ -74,25 +67,22 @@ public class RequestsRecycler extends BaseGoalRecyler {
 
         final int pos = position;
         final BaseGoalRecyler.BaseGoalsHolder viewHolder = (BaseGoalRecyler.BaseGoalsHolder) holder;
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Goal goal = mGoalList.get(pos);
+        viewHolder.itemView.setOnClickListener(view -> {
+            Goal goal = mGoalList.get(pos);
 
-                if (mRequestsPresenter != null) {
-                    Drawable profileImage = mImages.containsKey(goal.createdByUsername) ?
-                            mImages.get(goal.createdByUsername)
-                            : viewHolder.mRefereeTxt.getCompoundDrawables()[1];
+            if (mRequestsPresenter != null) {
+                Drawable profileImage = mImages.containsKey(goal.createdByUsername) ?
+                        mImages.get(goal.createdByUsername)
+                        : viewHolder.mRefereeTxt.getCompoundDrawables()[1];
 
-                    mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(),
-                            viewHolder.mEndDateTxt.getText().toString(),
-                            viewHolder.mStartDateTxt.getText().toString(),
-                            viewHolder.mWagerTxt.getText().toString(),
-                            viewHolder.mEncouragementTxt.getText().toString(),
-                            viewHolder.mRefereeTxt.getText().toString(),
-                            profileImage,
-                            goal.goalCompleteResult, goal.guid);
-                }
+                mRequestsPresenter.showDialog(viewHolder.mTitleTxt.getText().toString(),
+                        viewHolder.mEndDateTxt.getText().toString(),
+                        viewHolder.mStartDateTxt.getText().toString(),
+                        viewHolder.mWagerTxt.getText().toString(),
+                        viewHolder.mEncouragementTxt.getText().toString(),
+                        viewHolder.mRefereeTxt.getText().toString(),
+                        profileImage,
+                        goal.goalCompleteResult, goal.guid);
             }
         });
     }

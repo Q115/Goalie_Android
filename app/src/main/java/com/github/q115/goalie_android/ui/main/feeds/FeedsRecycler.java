@@ -44,8 +44,8 @@ import java.util.HashSet;
  * limitations under the License.
  */
 
-public class FeedsRecycler extends RecyclerView.Adapter {
-    private class FeedsHolder extends RecyclerView.ViewHolder {
+public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static class FeedsHolder extends RecyclerView.ViewHolder {
         private final TextView mGoalPerson;
         private final TextView mGoalResult;
         private final TextView mUpvoteCount;
@@ -185,29 +185,26 @@ public class FeedsRecycler extends RecyclerView.Adapter {
     private void setupButtonAction(Button goalFeedAction, final GoalFeed feed, final int position) {
         goalFeedAction.setEnabled(!feed.hasVoted && !mHasVoted.contains(feed.guid));
         if (goalFeedAction.isEnabled()) {
-            goalFeedAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mProgressDialog.show(mContext.getSupportFragmentManager(), "DelayedProgressDialog");
-                    RESTUpvote sm = new RESTUpvote(UserHelper.getInstance().getOwnerProfile().username, feed.guid);
-                    sm.setListener(new RESTUpvote.Listener() {
-                        @Override
-                        public void onSuccess() {
-                            mProgressDialog.cancel();
-                            feed.upvoteCount++;
-                            feed.hasVoted = true;
-                            mHasVoted.add(feed.guid);
-                            notifyItemChanged(position);
-                        }
+            goalFeedAction.setOnClickListener(view -> {
+                mProgressDialog.show(mContext.getSupportFragmentManager(), "DelayedProgressDialog");
+                RESTUpvote sm = new RESTUpvote(UserHelper.getInstance().getOwnerProfile().username, feed.guid);
+                sm.setListener(new RESTUpvote.Listener() {
+                    @Override
+                    public void onSuccess() {
+                        mProgressDialog.cancel();
+                        feed.upvoteCount++;
+                        feed.hasVoted = true;
+                        mHasVoted.add(feed.guid);
+                        notifyItemChanged(position);
+                    }
 
-                        @Override
-                        public void onFailure(String errMsg) {
-                            mProgressDialog.cancel();
-                            Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    sm.execute();
-                }
+                    @Override
+                    public void onFailure(String errMsg) {
+                        mProgressDialog.cancel();
+                        Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                sm.execute();
             });
         }
     }

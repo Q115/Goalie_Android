@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.httpTest;
 
-import android.util.Pair;
-
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;

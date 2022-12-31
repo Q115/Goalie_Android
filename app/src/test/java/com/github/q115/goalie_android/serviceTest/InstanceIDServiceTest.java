@@ -2,7 +2,7 @@ package com.github.q115.goalie_android.serviceTest;
 
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.services.InstanceIDService;
+import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
 import com.github.q115.goalie_android.utils.UserHelper;
 
@@ -39,7 +39,7 @@ public class InstanceIDServiceTest extends BaseTest {
 
     @Test
     public void saveTokenInvalid() throws Exception {
-        InstanceIDService service = new InstanceIDService();
+        MessagingService service = new MessagingService();
         UserHelper.getInstance().setOwnerProfile(new User());
 
         service.saveToken("invalid");
@@ -54,7 +54,7 @@ public class InstanceIDServiceTest extends BaseTest {
 
     @Test
     public void saveTokenWhenNotRegistered() throws Exception {
-        InstanceIDService service = new InstanceIDService();
+        MessagingService service = new MessagingService();
         User user = UserHelper.getInstance().getOwnerProfile();
         user = null;
 
@@ -65,7 +65,7 @@ public class InstanceIDServiceTest extends BaseTest {
 
     @Test
     public void saveToken() throws Exception {
-        InstanceIDService service = new InstanceIDService();
+        MessagingService service = new MessagingService();
         UserHelper.getInstance().setOwnerProfile(new User("username"));
 
         service.saveToken(validToken);

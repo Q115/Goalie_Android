@@ -65,10 +65,8 @@ public class MessagingServiceUtil {
                 .setContentText(description)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setLargeIcon(largeNotificationImage)
-                .setSmallIcon(R.drawable.ic_logo);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                .setSmallIcon(R.drawable.ic_logo)
+                .setColor(ContextCompat.getColor(context, R.color.colorPrimary));
 
         Notification notification = builder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;

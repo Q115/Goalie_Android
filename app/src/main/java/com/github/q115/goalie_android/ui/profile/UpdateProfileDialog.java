@@ -9,7 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
-import android.view.KeyEvent;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -102,31 +102,18 @@ public class UpdateProfileDialog extends DialogFragment {
             Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
             Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
-            positiveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    updateCheck();
-                }
-            });
-            negativeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getDialog().dismiss();
-                }
-            });
+            positiveButton.setOnClickListener(view -> updateCheck());
+            negativeButton.setOnClickListener(view -> getDialog().dismiss());
         }
     }
 
     private EditText.OnEditorActionListener handleEditorAction() {
-        return new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    updateCheck();
-                    return true;
-                }
-                return false;
+        return (v, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                updateCheck();
+                return true;
             }
+            return false;
         };
     }
 

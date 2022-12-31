@@ -28,8 +28,8 @@ import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
  * limitations under the License.
  */
 
-public class PopularGoalFragmentRecycler extends RecyclerView.Adapter {
-    private class PopularGoalHolder extends RecyclerView.ViewHolder {
+public class PopularGoalFragmentRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static class PopularGoalHolder extends RecyclerView.ViewHolder {
         private final TextView mGoalName;
 
         public PopularGoalHolder(View itemView) {
@@ -54,16 +54,13 @@ public class PopularGoalFragmentRecycler extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_popular_goals, parent, false);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = NewGoalActivity.newIntent(mContext);
-                int position = (int) itemView.getTag();
-                if (position < mPopularGoalArray.length) {
-                    intent.putExtra("title", mPopularGoalArray[position] + ": ");
-                }
-                mContext.startActivityForResult(intent, RESULT_GOAL_SET);
+        itemView.setOnClickListener(view -> {
+            Intent intent = NewGoalActivity.newIntent(mContext);
+            int position = (int) itemView.getTag();
+            if (position < mPopularGoalArray.length) {
+                intent.putExtra("title", mPopularGoalArray[position] + ": ");
             }
+            mContext.startActivityForResult(intent, RESULT_GOAL_SET);
         });
 
         return new PopularGoalHolder(itemView);

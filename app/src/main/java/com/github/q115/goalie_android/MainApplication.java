@@ -7,7 +7,7 @@ import android.content.Intent;
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.services.InstanceIDService;
+import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.PreferenceHelper;
@@ -47,7 +47,7 @@ public class MainApplication extends Application {
         VolleyRequestQueue.getInstance().initialize(this);
 
         // start push notification service
-        startService(new Intent(this, InstanceIDService.class));
+        startService(new Intent(this, MessagingService.class));
 
         // instantiate app data
         initialize(this);
