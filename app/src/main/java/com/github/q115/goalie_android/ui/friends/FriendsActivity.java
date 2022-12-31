@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.q115.goalie_android.Constants;
+import com.github.q115.goalie_android.MainBaseActivity;
 import com.github.q115.goalie_android.R;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /*
  * Copyright 2017 Qi Li
@@ -28,7 +29,7 @@ import com.github.q115.goalie_android.R;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FriendsActivity extends AppCompatActivity
+public class FriendsActivity extends MainBaseActivity
         implements FriendsActivityView, AddContactDialog.AddContactOnAddedListener {
     private FriendsActivityPresenter mPresenter;
     private FriendsListPresenter mFriendsListPresenter;
@@ -54,12 +55,8 @@ public class FriendsActivity extends AppCompatActivity
         }
 
         // Create the presenters
-        mPresenter = new FriendsActivityPresenter(this, this);
+        mPresenter = new FriendsActivityPresenter(this);
         mFriendsListPresenter = new FriendsListPresenter(friendsListFragment);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override
@@ -84,9 +81,6 @@ public class FriendsActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case android.R.id.home:
-                finish();
-                return true;
             case R.id.action_invite_friends:
                 Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
                 startActivityForResult(intent, Constants.REQUEST_PERMISSIONS_CONTACT);
@@ -106,7 +100,7 @@ public class FriendsActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.REQUEST_PERMISSIONS_CONTACT && resultCode == RESULT_OK && data != null) {
-            mPresenter.sendSMSInvite(data.getData());
+            mPresenter.sendSMSInvite(this, data.getData());
         }
     }
 

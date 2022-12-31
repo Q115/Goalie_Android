@@ -41,7 +41,7 @@ public class FeedsFragment extends BaseRefresherFragment implements FeedsView {
         mRecyclerView = rootView.findViewById(R.id.feed_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(new FeedsRecycler(getActivity()));
+        mRecyclerView.setAdapter(new FeedsRecycler());
         mRecyclerView.addOnScrollListener(onScrollListener());
 
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipeContainer);

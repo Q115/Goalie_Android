@@ -35,8 +35,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-
 /*
  * Copyright 2017 Qi Li
  *

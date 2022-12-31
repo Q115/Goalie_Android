@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,11 +40,9 @@ public class FriendsListRecycler extends RecyclerView.Adapter<RecyclerView.ViewH
         private final ImageView mFriendImage;
         private final TextView mFriendName;
         private final TextView mFriendReputation;
-        private final FragmentActivity mContext;
 
-        public FriendsHolder(View itemView, FragmentActivity context) {
+        public FriendsHolder(View itemView) {
             super(itemView);
-            mContext = context;
             mFriendImage = itemView.findViewById(R.id.friend_image);
             mFriendName = itemView.findViewById(R.id.friend_name);
             mFriendReputation = itemView.findViewById(R.id.friend_reputation);
@@ -53,17 +52,14 @@ public class FriendsListRecycler extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.setHeaderTitle(mFriendName.getText());
-            menu.add(0, R.string.refresh, getAdapterPosition(), mContext.getString(R.string.refresh));
-            menu.add(0, R.string.delete, getAdapterPosition(), mContext.getString(R.string.delete));
+            menu.add(0, R.string.refresh, getAdapterPosition(), itemView.getContext().getString(R.string.refresh));
+            menu.add(0, R.string.delete, getAdapterPosition(), itemView.getContext().getString(R.string.delete));
         }
     }
 
-    private final FragmentActivity mContext;
     private ArrayList<User> mUserList;
 
-    public FriendsListRecycler(FragmentActivity context) {
-        this.mContext = context;
-
+    public FriendsListRecycler() {
         // remove self and display all others
         TreeMap<String, User> tempHashMap = new TreeMap<>(UserHelper.getInstance().getAllContacts());
         tempHashMap.remove(UserHelper.getInstance().getOwnerProfile().username);
@@ -92,8 +88,8 @@ public class FriendsListRecycler extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_friend, parent, false);
-        return new FriendsHolder(itemView, mContext);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_friend, parent, false);
+        return new FriendsHolder(itemView);
     }
 
     @Override
@@ -106,9 +102,9 @@ public class FriendsListRecycler extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (user.profileBitmapImage == null)
             viewHolder.mFriendImage.setImageDrawable(
-                    ContextCompat.getDrawable(mContext, R.drawable.ic_profile_default_small));
+                    ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_profile_default_small));
         else
             viewHolder.mFriendImage.setImageDrawable(ImageHelper.getRoundedCornerDrawable(
-                    mContext.getResources(), user.profileBitmapImage, Constants.CIRCLE_PROFILE));
+                    holder.itemView.getContext().getResources(), user.profileBitmapImage, Constants.CIRCLE_PROFILE));
     }
 }

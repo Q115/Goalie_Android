@@ -2,9 +2,9 @@ package com.github.q115.goalie_android.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.github.q115.goalie_android.MainBaseActivity;
 import com.github.q115.goalie_android.R;
 
 /*
@@ -23,7 +23,7 @@ import com.github.q115.goalie_android.R;
  * limitations under the License.
  */
 
-public class ManageSpaceActivity extends AppCompatActivity {
+public class ManageSpaceActivity extends MainBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

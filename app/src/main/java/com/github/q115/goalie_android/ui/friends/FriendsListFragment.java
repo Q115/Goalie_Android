@@ -49,7 +49,7 @@ public class FriendsListFragment extends Fragment implements FriendsListView {
         mFriendsList = rootView.findViewById(R.id.friends_list);
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
         mFriendsList.setHasFixedSize(true);
-        mFriendsList.setAdapter(new FriendsListRecycler(getActivity()));
+        mFriendsList.setAdapter(new FriendsListRecycler());
 
         mProgressDialog = new DelayedProgressDialog();
         mProgressDialog.setCancelable(false);

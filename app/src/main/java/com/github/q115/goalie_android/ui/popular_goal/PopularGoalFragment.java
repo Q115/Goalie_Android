@@ -44,7 +44,7 @@ public class PopularGoalFragment extends Fragment implements PopularGoalFragment
         RecyclerView popularlist = rootView.findViewById(R.id.popular_goal_list);
         popularlist.setLayoutManager(new LinearLayoutManager(getContext()));
         popularlist.setHasFixedSize(true);
-        popularlist.setAdapter(new PopularGoalFragmentRecycler(getActivity()));
+        popularlist.setAdapter(new PopularGoalFragmentRecycler(getResources().getStringArray(R.array.popular_goals)));
         return rootView;
     }
 

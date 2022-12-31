@@ -1,14 +1,16 @@
 package com.github.q115.goalie_android.ui.popular_goal;
 
 import android.content.Intent;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.new_goal.NewGoalActivity;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
 
@@ -38,12 +40,10 @@ public class PopularGoalFragmentRecycler extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    private final FragmentActivity mContext;
     private final String[] mPopularGoalArray;
 
-    public PopularGoalFragmentRecycler(FragmentActivity context) {
-        this.mContext = context;
-        this.mPopularGoalArray = context.getResources().getStringArray(R.array.popular_goals);
+    public PopularGoalFragmentRecycler(String[] mPopularGoalArray) {
+        this.mPopularGoalArray = mPopularGoalArray;
     }
 
     @Override
@@ -53,14 +53,14 @@ public class PopularGoalFragmentRecycler extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_popular_goals, parent, false);
+        final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_popular_goals, parent, false);
         itemView.setOnClickListener(view -> {
-            Intent intent = NewGoalActivity.newIntent(mContext);
+            Intent intent = NewGoalActivity.newIntent(itemView.getContext());
             int position = (int) itemView.getTag();
             if (position < mPopularGoalArray.length) {
                 intent.putExtra("title", mPopularGoalArray[position] + ": ");
             }
-            mContext.startActivityForResult(intent, RESULT_GOAL_SET);
+            ((FragmentActivity) itemView.getContext()).startActivityForResult(intent, RESULT_GOAL_SET);
         });
 
         return new PopularGoalHolder(itemView);

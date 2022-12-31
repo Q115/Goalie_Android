@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.q115.goalie_android.MainBaseActivity;
 import com.github.q115.goalie_android.R;
 
 /*
@@ -25,7 +25,7 @@ import com.github.q115.goalie_android.R;
  * limitations under the License.
  */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends MainBaseActivity {
 
     public static Intent newIntent(Context context) {
         return new Intent(context, LoginActivity.class);

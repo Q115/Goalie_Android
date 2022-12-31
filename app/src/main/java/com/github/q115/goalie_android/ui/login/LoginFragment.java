@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.ui.login;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;

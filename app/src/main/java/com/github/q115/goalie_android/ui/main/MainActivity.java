@@ -3,10 +3,11 @@ package com.github.q115.goalie_android.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.github.q115.goalie_android.MainBaseActivity;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +38,7 @@ import com.github.q115.goalie_android.utils.UserHelper;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class MainActivity extends AppCompatActivity implements MainActivityView,
+public class MainActivity extends MainBaseActivity implements MainActivityView,
         MessagingServiceUtil.MessagingServiceListener, ViewPager.OnPageChangeListener {
     private MainActivityPresenter mPresenter;
     private ViewPager mViewPager;

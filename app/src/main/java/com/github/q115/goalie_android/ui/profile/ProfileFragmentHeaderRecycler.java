@@ -2,6 +2,8 @@ package com.github.q115.goalie_android.ui.profile;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,7 +35,7 @@ public class ProfileFragmentHeaderRecycler extends BaseGoalRecyler {
     private ProfileBioViewHolder mProfileBioViewHolder;
 
     public ProfileFragmentHeaderRecycler(FragmentActivity context, ProfileBioViewHolder mProfileBioViewHolder) {
-        super(context, false);
+        super(false);
         this.mProfileBioViewHolder = mProfileBioViewHolder;
         setupDataSet();
     }
@@ -70,7 +72,7 @@ public class ProfileFragmentHeaderRecycler extends BaseGoalRecyler {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
-            View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_my_goal, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_my_goal, parent, false);
             return new BaseGoalsHolder(itemView);
         } else if (viewType == TYPE_HEADER) {
             return mProfileBioViewHolder;

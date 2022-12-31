@@ -3,6 +3,8 @@ package com.github.q115.goalie_android.ui.main.my_goals;
 import android.graphics.drawable.Drawable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -32,7 +34,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
     private MyGoalsPresenter mMyGoalsPresenter;
 
     public MyGoalsRecycler(FragmentActivity context, MyGoalsPresenter myGoalsPresenter) {
-        super(context, false);
+        super(false);
         mMyGoalsPresenter = myGoalsPresenter;
         setupDataSet();
     }
@@ -53,7 +55,7 @@ public class MyGoalsRecycler extends BaseGoalRecyler {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_my_goal, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_my_goal, parent, false);
         return new BaseGoalsHolder(itemView);
     }
 

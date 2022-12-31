@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.github.q115.goalie_android.MainBaseActivity;
+import com.github.q115.goalie_android.R;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.MenuItem;
-
-import com.github.q115.goalie_android.R;
 
 import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
 
@@ -29,7 +29,7 @@ import static com.github.q115.goalie_android.Constants.RESULT_GOAL_SET;
  * limitations under the License.
  */
 
-public class PopularGoalActivity extends AppCompatActivity {
+public class PopularGoalActivity extends MainBaseActivity {
 
     public static Intent newIntent(Context context) {
         return new Intent(context, PopularGoalActivity.class);
@@ -51,23 +51,6 @@ public class PopularGoalActivity extends AppCompatActivity {
 
         // Create the presenters
         new PopularGoalFragmentPresenter(popularGoalFragment);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

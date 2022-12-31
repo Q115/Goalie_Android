@@ -2,9 +2,6 @@ package com.github.q115.goalie_android.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 /*
  * Copyright 2017 Qi Li
@@ -61,13 +61,11 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter<RecyclerView.
     }
 
     protected static HashMap<String, Drawable> mImages;
-    protected final FragmentActivity mContext;
     protected ArrayList<Goal> mGoalList;
     private final DateFormat mDF;
     private final boolean isRequest;
 
-    protected BaseGoalRecyler(FragmentActivity context, boolean isRequest) {
-        this.mContext = context;
+    protected BaseGoalRecyler(boolean isRequest) {
         this.isRequest = isRequest;
         this.mGoalList = new ArrayList<>();
         this.mDF = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
@@ -92,11 +90,11 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter<RecyclerView.
         //Bind our data from our data source to our View References
         viewHolder.mTitleTxt.setText(goal.title);
         viewHolder.mStartDateTxt.setText(
-                String.format(mContext.getString(R.string.start_), mDF.format(new Date(goal.startDate))));
+                String.format(viewHolder.itemView.getContext().getString(R.string.start_), mDF.format(new Date(goal.startDate))));
         viewHolder.mEndDateTxt.setText(
-                String.format(mContext.getString(R.string.end_), mDF.format(new Date(goal.endDate))));
+                String.format(viewHolder.itemView.getContext().getString(R.string.end_), mDF.format(new Date(goal.endDate))));
         viewHolder.mWagerTxt.setText(
-                String.format(mContext.getString(R.string.wagered_), goal.wager));
+                String.format(viewHolder.itemView.getContext().getString(R.string.wagered_), goal.wager));
         viewHolder.mEncouragementTxt.setText(goal.encouragement);
 
         setGoalCompleteColor(viewHolder, goal);
@@ -107,19 +105,19 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter<RecyclerView.
         switch (goal.goalCompleteResult) {
             case Pending:
                 viewHolder.mStatusTxt.setText(R.string.status_pending);
-                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.colorAccent));
                 break;
             case Ongoing:
                 viewHolder.mStatusTxt.setText(R.string.status_ongoing);
-                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.green));
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.green));
                 break;
             case Failed:
                 viewHolder.mStatusTxt.setText(R.string.status_failed);
-                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.red));
                 break;
             case Success:
                 viewHolder.mStatusTxt.setText(R.string.status_successful);
-                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(mContext, R.color.green));
+                viewHolder.mStatusTxt.setTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.green));
                 break;
             default:
                 viewHolder.mStatusTxt.setText("");
@@ -143,9 +141,9 @@ public abstract class BaseGoalRecyler extends RecyclerView.Adapter<RecyclerView.
             Drawable profileDrawableImage = mImages.get(user.username);
 
             if (profileDrawableImage == null) {
-                int size = ImageHelper.dpToPx(mContext.getResources(), Constants.PROFILE_ROW_SIZE);
+                int size = ImageHelper.dpToPx(viewHolder.itemView.getContext().getResources(), Constants.PROFILE_ROW_SIZE);
                 Bitmap temp = Bitmap.createScaledBitmap(user.profileBitmapImage, size, size, false);
-                profileDrawableImage = ImageHelper.getRoundedCornerDrawable(mContext.getResources(),
+                profileDrawableImage = ImageHelper.getRoundedCornerDrawable(viewHolder.itemView.getContext().getResources(),
                         temp, Constants.CIRCLE_PROFILE);
                 mImages.put(user.username, profileDrawableImage);
             }

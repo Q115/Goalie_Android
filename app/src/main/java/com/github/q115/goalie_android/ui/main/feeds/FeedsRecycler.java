@@ -1,9 +1,9 @@
 package com.github.q115.goalie_android.ui.main.feeds;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +27,9 @@ import com.github.q115.goalie_android.utils.UserHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 /*
  * Copyright 2017 Qi Li
@@ -63,12 +66,10 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private static HashSet<String> mHasVoted; // TODO: doesn't persist over restart.
     private static HashMap<String, Drawable> mCachedImages;
 
-    private final FragmentActivity mContext;
     private ArrayList<GoalFeed> mGoalFeedList;
     private final DelayedProgressDialog mProgressDialog;
 
-    public FeedsRecycler(FragmentActivity context) {
-        this.mContext = context;
+    public FeedsRecycler() {
         this.mGoalFeedList = GoalHelper.getInstance().getFeeds();
         this.mProgressDialog = new DelayedProgressDialog();
 
@@ -90,7 +91,7 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mContext.getLayoutInflater().inflate(R.layout.list_item_feed, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_feed, parent, false);
         return new FeedsHolder(itemView);
     }
 
@@ -130,7 +131,7 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 @Override
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (response.getBitmap() != null) {
-                        Drawable profileDrawableImage = convertProfileImageToRoundedDrawable(response.getBitmap());
+                        Drawable profileDrawableImage = convertProfileImageToRoundedDrawable(textView.getContext().getResources(), response.getBitmap());
                         textView.setCompoundDrawablesWithIntrinsicBounds(null, profileDrawableImage, null, null);
                         mCachedImages.put(createdUsername, profileDrawableImage);
                     } else {
@@ -157,36 +158,37 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Drawable profileRoundedDrawableImage = mCachedImages.get(user.username);
 
             if (profileRoundedDrawableImage == null) {
-                profileRoundedDrawableImage = convertProfileImageToRoundedDrawable(user.profileBitmapImage);
+                profileRoundedDrawableImage = convertProfileImageToRoundedDrawable(textView.getContext().getResources(), user.profileBitmapImage);
                 mCachedImages.put(user.username, profileRoundedDrawableImage);
             }
             textView.setCompoundDrawablesWithIntrinsicBounds(null, profileRoundedDrawableImage, null, null);
         }
     }
 
-    private Drawable convertProfileImageToRoundedDrawable(Bitmap profileImage) {
-        int size = ImageHelper.dpToPx(mContext.getResources(), Constants.PROFILE_ROW_SIZE);
+    private Drawable convertProfileImageToRoundedDrawable(Resources res, Bitmap profileImage) {
+        int size = ImageHelper.dpToPx(res, Constants.PROFILE_ROW_SIZE);
         Bitmap image = Bitmap.createScaledBitmap(profileImage, size, size, false);
-        return ImageHelper.getRoundedCornerDrawable(mContext.getResources(), image, Constants.CIRCLE_PROFILE);
+        return ImageHelper.getRoundedCornerDrawable(res, image, Constants.CIRCLE_PROFILE);
     }
 
     private void setupButtonText(TextView goalResult, TextView goalFeedAction, GoalFeed feed) {
         if (feed.goalCompleteResult.isActive()) {
-            goalResult.setText(String.format(mContext.getString(R.string.feed_title),
-                    mContext.getString(R.string.started), feed.wager));
-            goalFeedAction.setText(mContext.getString(R.string.goodluck));
+            goalResult.setText(String.format(goalResult.getContext().getString(R.string.feed_title),
+                    goalResult.getContext().getString(R.string.started), feed.wager));
+            goalFeedAction.setText(goalResult.getContext().getString(R.string.goodluck));
         } else {
-            goalResult.setText(String.format(mContext.getString(R.string.feed_title),
-                    mContext.getString(R.string.completed), feed.wager));
-            goalFeedAction.setText(mContext.getString(R.string.congrats));
+            goalResult.setText(String.format(goalResult.getContext().getString(R.string.feed_title),
+                    goalResult.getContext().getString(R.string.completed), feed.wager));
+            goalFeedAction.setText(goalResult.getContext().getString(R.string.congrats));
         }
     }
 
     private void setupButtonAction(Button goalFeedAction, final GoalFeed feed, final int position) {
         goalFeedAction.setEnabled(!feed.hasVoted && !mHasVoted.contains(feed.guid));
         if (goalFeedAction.isEnabled()) {
+            final FragmentActivity context = (FragmentActivity) goalFeedAction.getContext();
             goalFeedAction.setOnClickListener(view -> {
-                mProgressDialog.show(mContext.getSupportFragmentManager(), "DelayedProgressDialog");
+                mProgressDialog.show(context.getSupportFragmentManager(), "DelayedProgressDialog");
                 RESTUpvote sm = new RESTUpvote(UserHelper.getInstance().getOwnerProfile().username, feed.guid);
                 sm.setListener(new RESTUpvote.Listener() {
                     @Override
@@ -201,7 +203,7 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     @Override
                     public void onFailure(String errMsg) {
                         mProgressDialog.cancel();
-                        Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, errMsg, Toast.LENGTH_SHORT).show();
                     }
                 });
                 sm.execute();

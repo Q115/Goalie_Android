@@ -24,10 +24,8 @@ import androidx.annotation.NonNull;
 
 public class FriendsActivityPresenter {
     private final FriendsActivityView mFriendsView;
-    private final Context mContext;
 
-    public FriendsActivityPresenter(Context context, @NonNull FriendsActivityView friendsView) {
-        mContext = context;
+    public FriendsActivityPresenter(@NonNull FriendsActivityView friendsView) {
         mFriendsView = friendsView;
         mFriendsView.setPresenter(this);
     }
@@ -36,12 +34,11 @@ public class FriendsActivityPresenter {
         // intentionally left blank
     }
 
-    public void sendSMSInvite(Uri contactUri) {
+    public void sendSMSInvite(Context context, Uri contactUri) {
         if(contactUri == null)
             return;
 
-        Cursor c = mContext.getContentResolver().query(contactUri, null, null, null, null);
-
+        Cursor c = context.getContentResolver().query(contactUri, null, null, null, null);
         if (c != null && c.getCount() > 0) {
             try {
                 c.moveToFirst();

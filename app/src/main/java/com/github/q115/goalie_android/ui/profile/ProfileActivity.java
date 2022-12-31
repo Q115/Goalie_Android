@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.MenuItem;
 
+import com.github.q115.goalie_android.MainBaseActivity;
 import com.github.q115.goalie_android.R;
 
 /*
@@ -25,7 +24,7 @@ import com.github.q115.goalie_android.R;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends MainBaseActivity {
     private String mUsername;
 
     public static Intent newIntent(Context context, String username) {
@@ -61,22 +60,5 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Create the presenter
         new ProfileFragmentPresenter(mUsername, profileFragment);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
