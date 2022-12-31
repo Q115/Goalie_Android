@@ -4,6 +4,7 @@
     <string name="file_provider">com.github.q115.goalie_android.fileprovider</string>
     <string name="manage_space">Manage Space</string>
     <string name="channel_description">Shows upcoming goal reminders</string>
+    <string name="registerfirst">Invalid username, please open the app normally first</string>
 
     <!-- Menu -->
     <string name="action_profile">Profile</string>

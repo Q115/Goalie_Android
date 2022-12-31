@@ -1,8 +1,10 @@
 package com.github.q115.goalie_android.ui.login;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.ui.DelayedProgressDialog;
 import com.github.q115.goalie_android.utils.ViewHelper;
+
+import androidx.fragment.app.Fragment;
 
 /*
  * Copyright 2017 Qi Li
@@ -35,6 +40,7 @@ public class LoginFragment extends Fragment implements LoginFragmentView {
     private LoginFragmentPresenter mPresenter;
     private EditText mUsername;
     private TextView mServerMsg;
+    private TextView mDisclaimer;
     private DelayedProgressDialog mProgressDialog;
 
     public LoginFragment() {
@@ -53,6 +59,7 @@ public class LoginFragment extends Fragment implements LoginFragmentView {
         mUsername.setOnEditorActionListener(handleEditorAction());
         mServerMsg = rootView.findViewById(R.id.register_server_response);
         mServerMsg.setVisibility(View.GONE);
+        mDisclaimer = rootView.findViewById(R.id.disclaimer);
 
         rootView.findViewById(R.id.btn_register).setOnClickListener(view -> {
             mServerMsg.setVisibility(View.GONE);
@@ -61,6 +68,8 @@ public class LoginFragment extends Fragment implements LoginFragmentView {
 
         mProgressDialog = new DelayedProgressDialog();
         mProgressDialog.setCancelable(false);
+
+        setupDisclaimer();
 
         return rootView;
     }
@@ -91,6 +100,18 @@ public class LoginFragment extends Fragment implements LoginFragmentView {
             }
             return false;
         };
+    }
+
+    private void setupDisclaimer() {
+        String terms = Constants.URL + "/termsofservice.htm";
+        String privacy = Constants.URL + "/privacypolicy.htm";
+
+        String disclaimer = "By registering, you agree to the<br>" +
+                "<a href=\"" + terms + "\">Terms of Service</a>" +
+                " and <a href=\"" + privacy + "\">Privacy Policy.</a><br>";
+
+        mDisclaimer.setText(Html.fromHtml(disclaimer, Html.FROM_HTML_MODE_LEGACY));
+        mDisclaimer.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
