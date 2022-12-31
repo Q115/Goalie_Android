@@ -132,7 +132,8 @@ public class GoalHelper {
 
     public void cancelAlarm(String guid, Context context) {
         Intent intent = AlarmService.newIntent(context, guid);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, guid.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, guid.hashCode(), intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmMgr.cancel(pendingIntent);
     }

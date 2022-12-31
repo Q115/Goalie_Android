@@ -56,7 +56,7 @@ public class MessagingServiceUtil {
         String channelID = getNotificationChannelID(context);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Bitmap largeNotificationImage = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelID)

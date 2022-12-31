@@ -272,6 +272,11 @@ public class NewGoalFragmentPresenter implements BasePresenter {
             return false;
         }
 
+        if(mAlarmTimeBeforeEnd > 0 && !mNewGoalView.isAlarmPermissionGranted()) {
+            mNewGoalView.onSetGoal(false, context.getString(R.string.alarm_permission_invalid));
+            return false;
+        }
+
         return true;
     }
 

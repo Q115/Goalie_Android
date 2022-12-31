@@ -27,12 +27,15 @@ import com.github.q115.goalie_android.ui.friends.AddContactDialog;
 
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
 
 /*
  * Copyright 2017 Qi Li
@@ -247,24 +250,40 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
 
     @Override
     public void setAlarmTime(long epoch, String guid) {
-        if (isAlarmPermissionGranted()) {
-            Intent intent = AlarmService.newIntent(getActivity(), guid);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), guid.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = AlarmService.newIntent(getActivity(), guid);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), guid.hashCode(), intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-            AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
-        }
+        AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
     }
 
-    private boolean isAlarmPermissionGranted() {
+    @Override
+    public boolean isAlarmPermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            int permission = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.USE_EXACT_ALARM);
+            int permission = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.SCHEDULE_EXACT_ALARM);
             if (permission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.USE_EXACT_ALARM}, Constants.REQUEST_PERMISSIONS_CAMERA_STORAGE);
+                requestPermissions(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM}, Constants.REQUEST_PERMISSIONS_ALARM);
                 return false;
             }
         }
 
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Constants.REQUEST_PERMISSIONS_ALARM:
+                boolean isAllPermissionsGranted = true;
+                for (int grantResult : grantResults) {
+                    isAllPermissionsGranted &= grantResult == PackageManager.PERMISSION_GRANTED;
+                }
+
+                if (!isAllPermissionsGranted)
+                    Toast.makeText(getActivity(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
+            default:
+                break;
+        }
     }
 }

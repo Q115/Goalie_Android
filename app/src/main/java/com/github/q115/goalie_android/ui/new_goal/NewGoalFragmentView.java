@@ -36,4 +36,6 @@ public interface NewGoalFragmentView extends BaseView<NewGoalFragmentPresenter> 
     void showTimePicker(int viewID);
 
     void setAlarmTime(long epoch, String guid);
+
+    boolean isAlarmPermissionGranted();
 }
