@@ -47,6 +47,7 @@ public class Constants {
     public static final int REQUEST_PERMISSIONS_CAMERA_STORAGE = 100;
     public static final int REQUEST_PERMISSIONS_CONTACT = 102;
     public static final int REQUEST_PERMISSIONS_ALARM = 110;
+    public static final int REQUEST_POST_NOTIFICATIONS = 120;
 
     // notification
     public static final int ID_NOTIFICATION_BROADCAST = 607;

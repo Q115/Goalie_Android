@@ -259,9 +259,10 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
     @Override
     public boolean isAlarmPermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            int permission = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.SCHEDULE_EXACT_ALARM);
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM}, Constants.REQUEST_PERMISSIONS_ALARM);
+            int permission1 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.SCHEDULE_EXACT_ALARM);
+            int permission2 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.POST_NOTIFICATIONS);
+            if (permission1 != PackageManager.PERMISSION_GRANTED || permission2 != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM, Manifest.permission.POST_NOTIFICATIONS}, Constants.REQUEST_PERMISSIONS_ALARM);
                 return false;
             }
         }
@@ -279,7 +280,7 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
                 }
 
                 if (!isAllPermissionsGranted)
-                    Toast.makeText(getActivity(), getString(R.string.no_permission), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.no_permission_notification), Toast.LENGTH_SHORT).show();
             default:
                 break;
         }

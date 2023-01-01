@@ -1,17 +1,16 @@
 package com.github.q115.goalie_android.ui.main;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-
-import com.github.q115.goalie_android.MainBaseActivity;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.tabs.TabLayout;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.github.q115.goalie_android.Constants;
+import com.github.q115.goalie_android.MainBaseActivity;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.services.MessagingServiceUtil;
 import com.github.q115.goalie_android.ui.DelayedProgressDialog;
@@ -22,6 +21,12 @@ import com.github.q115.goalie_android.ui.main.my_goals.MyGoalsPresenter;
 import com.github.q115.goalie_android.ui.main.requests.RequestsPresenter;
 import com.github.q115.goalie_android.ui.profile.ProfileActivity;
 import com.github.q115.goalie_android.utils.UserHelper;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 
 /*
  * Copyright 2017 Qi Li
@@ -44,6 +49,7 @@ public class MainActivity extends MainBaseActivity implements MainActivityView,
     private ViewPager mViewPager;
     private MainActivityPagerAdapter mViewPagerAdapter;
     private DelayedProgressDialog progressDialog;
+    private static boolean promptedPushNotification = false;
 
     public static Intent newIntent(Context context, int tab) {
         Intent newIntent = new Intent(context, MainActivity.class);
@@ -75,6 +81,14 @@ public class MainActivity extends MainBaseActivity implements MainActivityView,
 
         if (getIntent() != null)
             onNewIntent(getIntent());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !promptedPushNotification) {
+            promptedPushNotification = true;
+            int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, Constants.REQUEST_POST_NOTIFICATIONS);
+            }
+        }
     }
 
     @Override

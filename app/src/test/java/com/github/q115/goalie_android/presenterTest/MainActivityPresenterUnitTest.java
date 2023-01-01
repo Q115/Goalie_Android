@@ -38,8 +38,6 @@ import static test_util.RESTUtil.getValidFriendUsername;
  */
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityPresenterUnitTest extends BaseTest {
-    @Mock
-    Context mMockContext;
 
     private MainActivityPresenter mPresenter;
 
@@ -55,7 +53,7 @@ public class MainActivityPresenterUnitTest extends BaseTest {
     @Test
     public void onStartNotRegistered() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername("");
-        mPresenter.syncIfNeeded(mMockContext);
+        mPresenter.syncIfNeeded();
         verify(mView).showLogin();
     }
 
@@ -63,7 +61,7 @@ public class MainActivityPresenterUnitTest extends BaseTest {
     public void onStartRegistered() throws Exception {
         PreferenceHelper.getInstance().setAccountUsername(getValidFriendUsername());
         UserHelper.getInstance().getOwnerProfile().username = getValidFriendUsername();
-        mPresenter.syncIfNeeded(mMockContext);
+        mPresenter.syncIfNeeded();
 
         verify(mView, timeout(Constants.ASYNC_CONNECTION_EXTENDED_TIMEOUT).times(1)).reloadAll();
     }

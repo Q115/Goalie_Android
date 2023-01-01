@@ -91,7 +91,7 @@
     <string name="take_photo">Capture photo using Camera</string>
     <string name="choose_photo">Choose photo from Gallery</string>
     <string name="no_permission">Permission not granted to take and access Photos</string>
-
+    <string name="no_permission_notification">Permission not granted to use Notification</string>
 
     <string name="bio_hint">Tell us about yourself</string>
     <string name="bio_label">Enter a short bio about yourself.</string>
@@ -123,7 +123,7 @@
     <string name="error_alarm_invalid_date">Alarm cannot be before start time.</string>
     <string name="error_goal_no_referee">No referee set for this goal.</string>
     <string name="wager_invalid">Wager amount is invalid. If you need more reputation points, you can get them when you become someone\'s referee.</string>
-    <string name="alarm_permission_invalid">Goalie doesn\'t have permission to set alarm.</string>
+    <string name="alarm_permission_invalid">Goalie doesn\'t have permission to set alarm, is Notification enabled for app?</string>
     <string name="new_username">(New Username)</string>
 
     <!-- Notification -->

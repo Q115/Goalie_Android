@@ -63,6 +63,7 @@ public class MessagingServiceUtil {
                 .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(description)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(description))
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setLargeIcon(largeNotificationImage)
                 .setSmallIcon(R.drawable.ic_logo)
@@ -77,7 +78,7 @@ public class MessagingServiceUtil {
     }
 
     private static String getNotificationChannelID(Context context) {
-        final String channelID = "GoalieChannelID";
+        final String channelID = "GoalieRemindersChannel";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager mNotificationManager =

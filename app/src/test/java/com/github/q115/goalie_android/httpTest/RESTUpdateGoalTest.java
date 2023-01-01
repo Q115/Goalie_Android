@@ -38,9 +38,6 @@ import static org.mockito.Mockito.verify;
 public class RESTUpdateGoalTest extends BaseRESTTest {
     private boolean isSettingUpGoal;
 
-    @Mock
-    Context mMockContext;
-
     @Test()
     public void acceptGoal() throws Exception {
         final Pair<Integer, RESTUpdateGoal.Listener> pair = createAListener();
@@ -148,7 +145,7 @@ public class RESTUpdateGoalTest extends BaseRESTTest {
             @Override
             public void onSuccess(String guid) {
                 assertTrue(guid != null);
-                RESTSync sm = new RESTSync(username, 0, mMockContext);
+                RESTSync sm = new RESTSync(username, 0);
                 sm.setListener(new RESTSync.Listener() {
                     @Override
                     public void onSuccess() {
