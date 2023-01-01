@@ -49,6 +49,9 @@ public class VolleyRequestQueue {
                 });
     }
 
+    public Context getContext() {
+        return mContext;
+    }
 
     private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {

@@ -36,14 +36,14 @@ public class MainActivityPresenter implements BasePresenter {
     public void start() {
     }
 
-    public void syncIfNeeded(Context context) {
+    public void syncIfNeeded() {
         String accountUsername = PreferenceHelper.getInstance().getAccountUsername();
         if (accountUsername == null || accountUsername.isEmpty()) {
             mMainActivityView.showLogin();
         } else if (!isSyncedOnStartup) {
             isSyncedOnStartup = true;
             mMainActivityView.updateProgress(true);
-            RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), context);
+            RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username, PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
             sm.setListener(new RESTSync.Listener() {
                 @Override
                 public void onSuccess() {

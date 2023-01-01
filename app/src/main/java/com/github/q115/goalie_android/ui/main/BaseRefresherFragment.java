@@ -54,7 +54,7 @@ public abstract class BaseRefresherFragment extends Fragment {
     protected SwipeRefreshLayout.OnRefreshListener onRefresherRefreshListener() {
         return () -> {
             RESTSync sm = new RESTSync(UserHelper.getInstance().getOwnerProfile().username,
-                    PreferenceHelper.getInstance().getLastSyncedTimeEpoch(), getActivity());
+                    PreferenceHelper.getInstance().getLastSyncedTimeEpoch());
             sm.setListener(new RESTSync.Listener() {
                 @Override
                 public void onSuccess() {

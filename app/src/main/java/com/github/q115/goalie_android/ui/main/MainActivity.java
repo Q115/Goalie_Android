@@ -96,7 +96,7 @@ public class MainActivity extends MainBaseActivity implements MainActivityView,
     @Override
     protected void onStart() {
         super.onStart();
-        mPresenter.syncIfNeeded(this);
+        mPresenter.syncIfNeeded();
     }
 
     @Override

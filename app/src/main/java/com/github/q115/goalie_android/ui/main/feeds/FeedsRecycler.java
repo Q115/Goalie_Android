@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -126,24 +127,31 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         Drawable profileRoundedDrawableImage = mCachedImages.get(createdUsername);
 
         if (profileRoundedDrawableImage == null) {
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
+            textView.setTag(createdUsername);
             ImageLoader imageLoader = VolleyRequestQueue.getInstance().getImageLoader();
             imageLoader.get(RESTGetPhoto.getURL(createdUsername), new ImageLoader.ImageListener() {
                 @Override
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (response.getBitmap() != null) {
                         Drawable profileDrawableImage = convertProfileImageToRoundedDrawable(textView.getContext().getResources(), response.getBitmap());
-                        textView.setCompoundDrawablesWithIntrinsicBounds(null, profileDrawableImage, null, null);
                         mCachedImages.put(createdUsername, profileDrawableImage);
-                    } else {
-                        textView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
-                        mCachedImages.put(createdUsername, textView.getCompoundDrawables()[1]);
+                    } else { // not yet loaded
+                        return;
                     }
+
+                    if (textView.getTag() != null && !((String) textView.getTag()).equals(createdUsername))
+                        return;
+                    textView.setCompoundDrawablesWithIntrinsicBounds(null, mCachedImages.get(createdUsername), null, null);
                 }
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    textView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_profile_default_small, 0, 0);
-                    mCachedImages.put(createdUsername, textView.getCompoundDrawables()[1]);
+                    mCachedImages.put(createdUsername, ContextCompat.getDrawable(textView.getContext(), R.drawable.ic_profile_default_small));
+
+                    if (textView.getTag() != null && !((String) textView.getTag()).equals(createdUsername))
+                        return;
+                    textView.setCompoundDrawablesWithIntrinsicBounds(null, mCachedImages.get(createdUsername), null, null);
                 }
             });
         } else {
@@ -187,12 +195,16 @@ public class FeedsRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         goalFeedAction.setEnabled(!feed.hasVoted && !mHasVoted.contains(feed.guid));
         if (goalFeedAction.isEnabled()) {
             final FragmentActivity context = (FragmentActivity) goalFeedAction.getContext();
+            goalFeedAction.setTag(feed.guid);
             goalFeedAction.setOnClickListener(view -> {
                 mProgressDialog.show(context.getSupportFragmentManager(), "DelayedProgressDialog");
                 RESTUpvote sm = new RESTUpvote(UserHelper.getInstance().getOwnerProfile().username, feed.guid);
                 sm.setListener(new RESTUpvote.Listener() {
                     @Override
                     public void onSuccess() {
+                        if (goalFeedAction.getTag() != null && !((String) goalFeedAction.getTag()).equals(feed.guid))
+                            return;
+
                         mProgressDialog.cancel();
                         feed.upvoteCount++;
                         feed.hasVoted = true;

@@ -46,9 +46,6 @@ public class MainApplication extends Application {
         // instantiate volley request
         VolleyRequestQueue.getInstance().initialize(this);
 
-        // start push notification service
-        startService(new Intent(this, MessagingService.class));
-
         // instantiate app data
         initialize(this);
     }

@@ -3,8 +3,6 @@ package com.github.q115.goalie_android.presenterTest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
@@ -22,6 +20,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -68,7 +69,7 @@ public class FriendsPresenterUnitTest extends BaseTest {
         MockitoAnnotations.initMocks(this);
 
         mView = mock(FriendsActivityView.class);
-        mActivityPresenter = spy(new FriendsActivityPresenter(mContext, mView));
+        mActivityPresenter = spy(new FriendsActivityPresenter(mView));
 
         mListView = mock(FriendsListView.class);
         mListPresenter = spy(new FriendsListPresenter(mListView));
@@ -85,10 +86,10 @@ public class FriendsPresenterUnitTest extends BaseTest {
                     }
                 });
 
-        mActivityPresenter.sendSMSInvite(Uri.EMPTY);
+        mActivityPresenter.sendSMSInvite(mContext, Uri.EMPTY);
         verify(mView, never()).sendSMSInvite("");
 
-        mActivityPresenter.sendSMSInvite(null);
+        mActivityPresenter.sendSMSInvite(mContext, null);
         verify(mView, never()).sendSMSInvite("");
     }
 
