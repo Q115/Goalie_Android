@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -64,9 +65,12 @@ public class FriendsPresenterUnitTest extends BaseTest {
     @Mock
     private FriendsListView mListView;
 
+    @Mock
+    ContentResolver contentResolver;
+
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         mView = mock(FriendsActivityView.class);
         mActivityPresenter = spy(new FriendsActivityPresenter(mView));
@@ -77,14 +81,7 @@ public class FriendsPresenterUnitTest extends BaseTest {
 
     @Test
     public void sendSMSInvite() {
-        when(mContext.getContentResolver())
-                .thenReturn(new ContentResolver(mContext) {
-                    @Nullable
-                    @Override
-                    public String[] getStreamTypes(@NonNull Uri url, @NonNull String mimeTypeFilter) {
-                        return super.getStreamTypes(url, mimeTypeFilter);
-                    }
-                });
+        doReturn(contentResolver).when(mContext).getContentResolver();
 
         mActivityPresenter.sendSMSInvite(mContext, Uri.EMPTY);
         verify(mView, never()).sendSMSInvite("");

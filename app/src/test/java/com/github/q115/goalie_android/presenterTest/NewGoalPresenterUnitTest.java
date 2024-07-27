@@ -1,15 +1,20 @@
 package com.github.q115.goalie_android.presenterTest;
 
+import android.app.Activity;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
+import com.github.q115.goalie_android.ui.new_goal.NewGoalActivity;
 import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentPresenter;
 import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentView;
 import com.github.q115.goalie_android.ui.new_goal.SublimePickerDialog;
@@ -26,8 +31,10 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import static androidx.core.content.ContextCompat.getSystemService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -60,11 +67,11 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     private NewGoalFragmentView mView;
 
     @Mock
-    private Context mContext = RuntimeEnvironment.application.getApplicationContext();
+    private Context mContext = RuntimeEnvironment.getApplication().getApplicationContext();
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         mView = mock(NewGoalFragmentView.class);
         mPresenter = spy(new NewGoalFragmentPresenter(mView));
     }
@@ -90,14 +97,9 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     @Test
     public void onWagerClicked() {
         View.OnClickListener onWagerClicked = mPresenter.getWagerClickedListener();
-        Resources res = mock(Resources.class);
-        when(res.getDisplayMetrics())
-                .thenReturn(new DisplayMetrics());
-        when(mContext.getResources())
-                .thenReturn(res);
 
-        View view = new View(mContext);
-        view.setId(R.id.goal_wager_plus);
+        View view = mock(View.class);
+        when(view.getId()).thenReturn(R.id.goal_wager_plus);
         onWagerClicked.onClick(view);
         verify(mView).updateWager(10, 100, 10);
         onWagerClicked.onClick(view);
@@ -105,7 +107,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         onWagerClicked.onClick(view);
         verify(mView).updateWager(20, 100, 20);
 
-        view.setId(R.id.goal_wager_minus);
+        when(view.getId()).thenReturn(R.id.goal_wager_minus);
         onWagerClicked.onClick(view);
         verify(mView, times(2)).updateWager(15, 100, 15);
     }
@@ -119,7 +121,7 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     @Test
     public void refereeArray() throws Exception {
         when(mContext.getString(R.string.new_username))
-            .thenReturn("(New Username)");
+                .thenReturn("(New Username)");
 
         String[] strings = mPresenter.getRefereeArray(mContext);
         assertEquals(strings.length, 2);
@@ -185,6 +187,6 @@ public class NewGoalPresenterUnitTest extends BaseTest {
         SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
         Calendar endDate = Calendar.getInstance(Locale.getDefault());
         endDate.add(Calendar.YEAR, 9);
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1,  R.id.goal_end_btn);
+        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1, R.id.goal_end_btn);
     }
 }
