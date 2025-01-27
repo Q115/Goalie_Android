@@ -117,6 +117,7 @@
     <string name="new_referee_hint">Username of Referee</string>
     <string name="set_goal">Set Goal</string>
     <string name="ok_goal">New Goal Created</string>
+    <string name="ok">OK</string>
     <string name="error_goal">Failed to Create Goal</string>
     <string name="error_goal_no_title">No title entered for this goal.</string>
     <string name="error_goal_invalid_date">Invalid end time for this goal.</string>

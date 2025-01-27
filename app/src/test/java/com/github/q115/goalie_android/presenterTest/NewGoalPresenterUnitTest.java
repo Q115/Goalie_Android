@@ -1,23 +1,15 @@
 package com.github.q115.goalie_android.presenterTest;
 
-import android.app.Activity;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.content.Context;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 
-import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.github.q115.goalie_android.BaseTest;
 import com.github.q115.goalie_android.Constants;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.ui.new_goal.NewGoalActivity;
+import com.github.q115.goalie_android.ui.new_goal.DateTimePickerDialog;
 import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentPresenter;
 import com.github.q115.goalie_android.ui.new_goal.NewGoalFragmentView;
-import com.github.q115.goalie_android.ui.new_goal.SublimePickerDialog;
 import com.github.q115.goalie_android.utils.UserHelper;
 
 import org.junit.Before;
@@ -27,11 +19,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
@@ -43,6 +30,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static test_util.RESTUtil.getValidFriendUsername;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 /*
  * Copyright 2017 Qi Li
@@ -90,11 +80,6 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     }
 
     @Test
-    public void getOptions() {
-        assertNotNull(mPresenter.getSublimePickerOptions(0));
-    }
-
-    @Test
     public void onWagerClicked() {
         View.OnClickListener onWagerClicked = mPresenter.getWagerClickedListener();
 
@@ -114,8 +99,11 @@ public class NewGoalPresenterUnitTest extends BaseTest {
 
     @Test
     public void onTimePicked() {
-        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(new GregorianCalendar()), 1, 1, 100);
+        Calendar endDate = Calendar.getInstance(Locale.getDefault());
+        endDate.add(Calendar.YEAR, 9);
+
+        DateTimePickerDialog.DateTimePickerDialogCallback pickerDialogCallback = mPresenter.getTimePickerCallbackListener();
+        pickerDialogCallback.onDateTimeSet(endDate.get(Calendar.YEAR), 1, 1, 1, 1);
     }
 
     @Test
@@ -184,9 +172,10 @@ public class NewGoalPresenterUnitTest extends BaseTest {
     }
 
     private void pickAValidDate() {
-        SublimePickerDialog.Callback sublimePickerDialogCallback = mPresenter.getTimePickerCallbackListener();
         Calendar endDate = Calendar.getInstance(Locale.getDefault());
         endDate.add(Calendar.YEAR, 9);
-        sublimePickerDialogCallback.onDateTimeRecurrenceSet(new SelectedDate(endDate), 1, 1, R.id.goal_end_btn);
+
+        DateTimePickerDialog.DateTimePickerDialogCallback pickerDialogCallback = mPresenter.getTimePickerCallbackListener();
+        pickerDialogCallback.onDateTimeSet(endDate.get(Calendar.YEAR), 1, 1, 1, 1);
     }
 }

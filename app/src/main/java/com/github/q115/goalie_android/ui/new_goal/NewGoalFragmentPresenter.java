@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.github.q115.goalie_android.R;
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.models.User;
@@ -128,52 +127,15 @@ public class NewGoalFragmentPresenter implements BasePresenter {
     }
 
     public View.OnClickListener getTimePickerClickedListener() {
-        return view -> mNewGoalView.showTimePicker(view.getId());
+        return view -> mNewGoalView.showTimePicker(mEnd);
     }
 
-    public SublimeOptions getSublimePickerOptions(int viewID) {
-        SublimeOptions options = new SublimeOptions();
-        int displayOptions = 0;
-
-        displayOptions |= SublimeOptions.ACTIVATE_DATE_PICKER;
-        displayOptions |= SublimeOptions.ACTIVATE_TIME_PICKER;
-
-        // disable
-        displayOptions &= ~SublimeOptions.ACTIVATE_RECURRENCE_PICKER;
-
-        options.setDisplayOptions(displayOptions);
-        options.setCanPickDateRange(false);
-        setSublimeDateOptions(options, viewID);
-
-        return options;
-    }
-
-    // Set correct date and time based on previous selection.
-    private void setSublimeDateOptions(SublimeOptions options, int viewID) {
-        long epoch = 0;
-        if (viewID == R.id.goal_end_btn) {
-            epoch = mEnd;
-        }
-
-        if (epoch != 0) {   // User has made a selection before.
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(epoch);
-            options.setDateParams(c);
-            options.setTimeParams(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-        }
-    }
-
-    public SublimePickerDialog.Callback getTimePickerCallbackListener() {
-        return (selectedDate, hourOfDay, minute, viewID) -> {
-            int year = selectedDate.getEndDate().get(Calendar.YEAR);
-            int month = selectedDate.getEndDate().get(Calendar.MONTH);
-            int day = selectedDate.getEndDate().get(Calendar.DATE);
-            GregorianCalendar date = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
+    public DateTimePickerDialog.DateTimePickerDialogCallback getTimePickerCallbackListener() {
+        return (year, month, day, hour, minute) -> {
+            GregorianCalendar date = new GregorianCalendar(year, month, day, hour, minute, 0);
             long epoch = date.getTimeInMillis();
 
-            if (viewID == R.id.goal_end_btn)
-                mEnd = epoch;
-
+            mEnd = epoch;
             mNewGoalView.updateTime(getFormatedTimeString(epoch));
         };
     }

@@ -67,7 +67,7 @@
 
         <!-- Crop -->
         <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:name="com.canhub.cropper.CropImageActivity"
             android:screenOrientation="portrait"/>
 
         <service

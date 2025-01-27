@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,8 +62,8 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
     private TextView mGoalWager;
     private TextView mGoalWagerPercentage;
     private EditText mGoalEncouragement;
-    private AppCompatSpinner mGoalRefereeSpinner;
-    private AppCompatSpinner mAlarmReminderSpinner;
+    private Spinner mGoalRefereeSpinner;
+    private Spinner mAlarmReminderSpinner;
     private Switch isGoalPublicFeed;
 
     public NewGoalFragment() {
@@ -167,18 +168,15 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
     }
 
     @Override
-    public void showTimePicker(int viewID) {
-        SublimePickerDialog pickerFrag = new SublimePickerDialog();
-        SublimePickerDialog.Callback onTimePickedCallback = mNewGoalPresenter.getTimePickerCallbackListener();
-        pickerFrag.setCallback(onTimePickedCallback);
-
+    public void showTimePicker(long endEpoch) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("SUBLIME_OPTIONS", mNewGoalPresenter.getSublimePickerOptions(viewID));
-        bundle.putInt("viewID", viewID);
+        bundle.putLong("endEpoch", endEpoch);
 
+        DateTimePickerDialog.DateTimePickerDialogCallback onTimePickedCallback = mNewGoalPresenter.getTimePickerCallbackListener();
+        DateTimePickerDialog pickerFrag = new DateTimePickerDialog();
+        pickerFrag.mListener = onTimePickedCallback;
         pickerFrag.setArguments(bundle);
-        pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-        pickerFrag.show(getActivity().getSupportFragmentManager(), "SublimePickerDialog");
+        pickerFrag.show(getActivity().getSupportFragmentManager(), "DateTimePickerDialog");
     }
 
     @Override

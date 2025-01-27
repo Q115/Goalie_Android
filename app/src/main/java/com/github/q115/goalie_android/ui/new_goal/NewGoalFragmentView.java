@@ -33,7 +33,7 @@ public interface NewGoalFragmentView extends BaseView<NewGoalFragmentPresenter> 
 
     void updateProgress(boolean shouldShow);
 
-    void showTimePicker(int viewID);
+    void showTimePicker(long endEpoch);
 
     void setAlarmTime(long epoch, String guid);
 

@@ -2,15 +2,12 @@
 
 buildscript {
     repositories {
-        jcenter()
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
+        mavenCentral()
+        maven { url "https://maven.google.com" }
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.8.0'
         classpath 'com.google.gms:google-services:4.4.2' //FCM
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -20,7 +17,7 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
         maven { url "https://www.jitpack.io" } // DBFlow
         maven { url "https://maven.google.com" }
         google() // FCM
