@@ -1,5 +1,7 @@
 package com.github.q115.goalie_android.ui.new_goal;
 
+import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -31,9 +33,7 @@ import java.util.HashMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 /*
@@ -257,10 +257,16 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
     @Override
     public boolean isAlarmPermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            int permission1 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.SCHEDULE_EXACT_ALARM);
             int permission2 = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.POST_NOTIFICATIONS);
-            if (permission1 != PackageManager.PERMISSION_GRANTED || permission2 != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM, Manifest.permission.POST_NOTIFICATIONS}, Constants.REQUEST_PERMISSIONS_ALARM);
+            if (permission2 != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, Constants.REQUEST_PERMISSIONS_ALARM);
+                return false;
+            }
+
+            AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            if (!alarmMgr.canScheduleExactAlarms()) {
+                Toast.makeText(getActivity(), getString(R.string.no_permission_alarm), Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM));
                 return false;
             }
         }
@@ -278,7 +284,7 @@ public class NewGoalFragment extends Fragment implements NewGoalFragmentView, Ad
                 }
 
                 if (!isAllPermissionsGranted)
-                    Toast.makeText(getActivity(), getString(R.string.no_permission_notification), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.no_permission_alarm), Toast.LENGTH_SHORT).show();
             default:
                 break;
         }

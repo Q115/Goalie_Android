@@ -80,20 +80,18 @@ public class MessagingServiceUtil {
     private static String getNotificationChannelID(Context context) {
         final String channelID = "GoalieRemindersChannel";
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager mNotificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            CharSequence name = context.getString(R.string.app_name);
-            String description = context.getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_HIGH;
+        CharSequence name = context.getString(R.string.app_name);
+        String description = context.getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
 
-            NotificationChannel mChannel = new NotificationChannel(channelID, name, importance);
-            mChannel.setDescription(description);
-            mChannel.enableLights(true);
-            mChannel.enableVibration(true);
-            mNotificationManager.createNotificationChannel(mChannel);
-        }
+        NotificationChannel mChannel = new NotificationChannel(channelID, name, importance);
+        mChannel.setDescription(description);
+        mChannel.enableLights(true);
+        mChannel.enableVibration(true);
+        mNotificationManager.createNotificationChannel(mChannel);
 
         return channelID;
     }

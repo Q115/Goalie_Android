@@ -13,7 +13,6 @@ import com.github.q115.goalie_android.utils.UserHelper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -107,8 +106,6 @@ public class NewGoalFragmentPresenter implements BasePresenter {
                 mAlarmTimeBeforeEnd = 24 * 60 * 60000;
                 break;
             case 3:
-                mAlarmTimeBeforeEnd = 0;
-                break;
             default:
                 mAlarmTimeBeforeEnd = 0;
                 break;

@@ -2,12 +2,10 @@ package com.github.q115.goalie_android;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 
 import com.github.q115.goalie_android.https.VolleyRequestQueue;
 import com.github.q115.goalie_android.models.Goal;
 import com.github.q115.goalie_android.models.User;
-import com.github.q115.goalie_android.services.MessagingService;
 import com.github.q115.goalie_android.utils.GoalHelper;
 import com.github.q115.goalie_android.utils.ImageHelper;
 import com.github.q115.goalie_android.utils.PreferenceHelper;

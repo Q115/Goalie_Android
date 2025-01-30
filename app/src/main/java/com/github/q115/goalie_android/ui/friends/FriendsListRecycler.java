@@ -1,6 +1,5 @@
 package com.github.q115.goalie_android.ui.friends;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.ContextMenu;

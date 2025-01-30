@@ -1,7 +1,5 @@
 package com.github.q115.goalie_android.httpTest;
 
-import android.content.Context;
-
 import com.github.q115.goalie_android.https.RESTNewGoal;
 import com.github.q115.goalie_android.https.RESTSync;
 import com.github.q115.goalie_android.https.RESTUpdateGoal;
@@ -10,7 +8,6 @@ import com.github.q115.goalie_android.utils.GoalHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import android.util.Pair;

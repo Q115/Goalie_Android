@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static com.github.q115.goalie_android.Constants.ASYNC_CONNECTION_NORMAL_TIMEOUT;
@@ -79,7 +80,7 @@ public class RESTGetUserInfo extends RESTBase<String> {
     public void onResponse(String response) {
         boolean isSuccessful;
         try {
-            JSONObject jsonObject = new JSONObject(new String(response.getBytes("ISO-8859-1"), "UTF-8"));
+            JSONObject jsonObject = new JSONObject(new String(response.getBytes("ISO-8859-1"), StandardCharsets.UTF_8));
 
             Long lastPhotoModifiedTime = jsonObject.getLong("lastPhotoModifiedTime");
             String bio = jsonObject.getString("bio");

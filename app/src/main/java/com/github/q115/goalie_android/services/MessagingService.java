@@ -80,7 +80,7 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Map<String, String> data = remoteMessage.getData();
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             onJSONParsed(data.get("payload"));
         }
     }

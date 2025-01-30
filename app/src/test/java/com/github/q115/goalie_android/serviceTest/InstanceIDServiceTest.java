@@ -66,10 +66,11 @@ public class InstanceIDServiceTest extends BaseTest {
     @Test
     public void saveToken() throws Exception {
         MessagingService service = new MessagingService();
-        UserHelper.getInstance().setOwnerProfile(new User("username"));
+        UserHelper.getInstance().setOwnerProfile(new User("device"));
 
         service.saveToken(validToken);
 
+        Thread.sleep(1000);
         assertEquals(PreferenceHelper.getInstance().getPushID(), validToken);
     }
 }

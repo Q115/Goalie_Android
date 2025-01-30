@@ -80,7 +80,7 @@ public class UserHelperInstrumentedTest {
         ReadDatabase();
 
         int size = UserHelper.getInstance().getAllContacts().size();
-        assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
+        assertTrue(!UserHelper.getInstance().getAllContacts().isEmpty());
         assertTrue(ModelUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
 
         // delete user
@@ -106,7 +106,7 @@ public class UserHelperInstrumentedTest {
         ReadDatabase();
         UserHelper.getInstance().LoadContacts();
 
-        assertTrue(UserHelper.getInstance().getAllContacts().size() > 0);
+        assertTrue(!UserHelper.getInstance().getAllContacts().isEmpty());
         assertTrue(ModelUtil.isUserEqual(testUser, UserHelper.getInstance().getAllContacts().get(testUser.username)));
         assertNotNull(UserHelper.getInstance().getAllContacts().get(testUser.username).profileBitmapImage);
     }

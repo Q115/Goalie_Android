@@ -86,7 +86,7 @@ public class MainActivity extends MainBaseActivity implements MainActivityView,
             promptedPushNotification = true;
             int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
             if (permission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, Constants.REQUEST_POST_NOTIFICATIONS);
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, Constants.REQUEST_PERMISSIONS_NOTIFICATIONS);
             }
         }
     }

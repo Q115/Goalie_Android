@@ -84,7 +84,7 @@ public class UserHelper {
             if (mAllContacts.containsKey(user.username)) {
                 User oldUser = mAllContacts.get(user.username);
                 oldUser.reputation = user.reputation;
-                oldUser.bio = user.bio.length() > 0 ? user.bio : oldUser.bio;
+                oldUser.bio = !user.bio.isEmpty() ? user.bio : oldUser.bio;
                 oldUser.profileBitmapImage = user.profileBitmapImage != null
                         ? user.profileBitmapImage : oldUser.profileBitmapImage;
                 oldUser.lastPhotoModifiedTime = user.lastPhotoModifiedTime > 0
