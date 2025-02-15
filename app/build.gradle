@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
     defaultConfig {
         applicationId "com.github.q115.goalie_android"
         minSdkVersion 28
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 21
         versionName "3.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
